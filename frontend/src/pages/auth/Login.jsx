@@ -9,23 +9,23 @@ import "../../styles/auth.css";
 
 function Login() {
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [carregando, setCarregando] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setErro("");
-    setCarregando(true);
+  async function handleFormSubmit(event) {
+    event.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
-      const usuario = await login(email, senha);
+      const user = await login(email, password);
       navigate("/dashboard");
-    } catch (error) {
-      setErro(error.message);
+    } catch (catchError) {
+      setError(catchError.message);
     } finally {
-      setCarregando(false);
+      setIsLoading(false);
     }
   }
 
@@ -34,43 +34,43 @@ function Login() {
       <Card className="auth-card">
         <div className="auth-header">
           <h1 className="auth-title">Invest.IA</h1>
-          <p className="auth-subtitle">Gerencie seus investimentos</p>
+          <p className="auth-subtitle">Manage your investments</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleFormSubmit} className="auth-form">
           <Input
             id="email"
             label="Email"
             type="email"
-            placeholder="seu@email.com"
+            placeholder="your@email.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
             autoComplete="email"
             required
           />
 
           <Input
-            id="senha"
-            label="Senha"
+            id="password"
+            label="Password"
             type="password"
             placeholder="••••••••"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
             autoComplete="current-password"
             required
           />
 
-          {erro && <Alert type="error">{erro}</Alert>}
+          {error && <Alert type="error">{error}</Alert>}
 
-          <Button type="primary" className="btn-full" disabled={carregando}>
-            {carregando ? "Entrando..." : "Entrar"}
+          <Button type="primary" className="btn-full" disabled={isLoading}>
+            {isLoading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 
         <p className="auth-footer">
-          Não tem conta?{" "}
+          Don't have an account?{" "}
           <a href="/register" className="auth-link">
-            Cadastre-se
+            Sign Up
           </a>
         </p>
       </Card>

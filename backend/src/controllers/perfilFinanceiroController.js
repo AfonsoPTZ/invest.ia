@@ -1,63 +1,48 @@
+// Financial Profile Controller - Simple request/response handler
 const perfilFinanceiroService = require("../services/perfilFinanceiroService");
 
 class PerfilFinanceiroController {
-  /**
-   * POST /perfil-financeiro
-   * Cria perfil financeiro do usuário
-   */
-  async create(req, res) {
+  // Create financial profile
+  async create(request, response) {
     try {
-      const { usuario_id } = req.body;
+      const { user_id } = request.body;
 
-      if (!usuario_id) {
-        return res.status(400).json({
-          status: "erro",
-          mensagem: "ID do usuário é obrigatório"
-        });
-      }
+      // Service handles all validation
+      const profile = await perfilFinanceiroService.createProfile(user_id, request.body);
 
-      const perfil = await perfilFinanceiroService.createPerfil(usuario_id, req.body);
-
-      return res.status(201).json({
-        status: "sucesso",
-        mensagem: "Perfil financeiro criado com sucesso",
-        perfil
+      return response.status(201).json({
+        status: "success",
+        message: "Financial profile created successfully",
+        profile
       });
+
     } catch (error) {
-      console.error("Erro ao criar perfil:", error.message);
-      return res.status(400).json({
-        status: "erro",
-        mensagem: error.message
+      console.error("Error creating financial profile:", error.message);
+      return response.status(400).json({
+        status: "error",
+        message: error.message
       });
     }
   }
 
-  /**
-   * GET /perfil-financeiro/:usuarioId
-   * Busca perfil financeiro do usuário
-   */
-  async get(req, res) {
+  // Get financial profile
+  async get(request, response) {
     try {
-      const { usuarioId } = req.params;
+      const { userId } = request.params;
 
-      if (!usuarioId) {
-        return res.status(400).json({
-          status: "erro",
-          mensagem: "ID do usuário é obrigatório"
-        });
-      }
+      // Service handles all validation
+      const profile = await perfilFinanceiroService.getProfile(userId);
 
-      const perfil = await perfilFinanceiroService.getPerfil(usuarioId);
-
-      return res.status(200).json({
-        status: "sucesso",
-        perfil
+      return response.status(200).json({
+        status: "success",
+        profile
       });
+
     } catch (error) {
-      console.error("Erro ao buscar perfil:", error.message);
-      return res.status(404).json({
-        status: "erro",
-        mensagem: error.message
+      console.error("Error fetching financial profile:", error.message);
+      return response.status(404).json({
+        status: "error",
+        message: error.message
       });
     }
   }

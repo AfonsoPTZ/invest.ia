@@ -1,179 +1,182 @@
-// backend/src/services/authService.js
+// Authentication Service - Doorkeeper pattern
+// Orchestrates: Validators → Repositories
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authRepository = require("../repositories/authRepository");
+const userValidator = require("../validators/userValidator");
 
-const SALT_ROUNDS = 10;
+const HASH_ROUNDS = 10;
 
-/**
- * Registra novo usuário
- */
-async function register(nome, email, cpf, telefone, senha) {
+async function registerUser(name, email, cpf, phone, password) {
   try {
-    // Validações básicas
-    if (!nome || !email || !cpf || !telefone || !senha) {
-      throw new Error("Todos os campos são obrigatórios");
+    // Step 1: Validate all inputs (validators do the heavy lifting)
+    const validation = userValidator.validateUserRegistration(
+      name,
+      email,
+      cpf,
+      phone,
+      password
+    );
+
+    if (!validation.isValid) {
+      throw new Error(validation.errors.join(", "));
     }
 
-    if (nome.trim().length < 3) {
-      throw new Error("Nome deve ter no mínimo 3 caracteres");
+    // Extract cleaned data from validator
+    const {
+      name: cleanName,
+      email: cleanEmail,
+      cpf: cleanCPF,
+      phone: cleanPhone
+    } = validation.cleanedData;
+
+    // Step 2: Check for duplicates in repository
+    if (await authRepository.emailExists(cleanEmail)) {
+      throw new Error("Email already registered");
     }
 
-    if (!/^\d{11}$/.test(cpf.replace(/[^\d]/g, ""))) {
-      throw new Error("CPF deve ter 11 dígitos");
+    if (await authRepository.cpfExists(cleanCPF)) {
+      throw new Error("CPF already registered");
     }
 
-    if (senha.length < 6) {
-      throw new Error("Senha deve ter no mínimo 6 caracteres");
+    if (await authRepository.phoneExists(cleanPhone)) {
+      throw new Error("Phone already registered");
     }
 
-    // Verifica se email, cpf ou telefone já existem
-    const emailExists = await authRepository.emailExists(email);
-    if (emailExists) {
-      throw new Error("Email já registrado");
-    }
-
-    const cpfExists = await authRepository.cpfExists(cpf);
-    if (cpfExists) {
-      throw new Error("CPF já registrado");
-    }
-
-    const phoneExists = await authRepository.phoneExists(telefone);
-    if (phoneExists) {
-      throw new Error("Telefone já registrado");
-    }
-
-    // Hash da senha
-    const senhaHash = await bcrypt.hash(senha, SALT_ROUNDS);
-
-    // Cria usuário
-    const usuario = await authRepository.create({
-      nome: nome.trim(),
-      email: email.toLowerCase(),
-      cpf: cpf.replace(/[^\d]/g, ""),
-      telefone: telefone.replace(/[^\d]/g, ""),
-      senhaHash
+    // Step 3: Hash password and create user via repository
+    const passwordHash = await bcrypt.hash(password, HASH_ROUNDS);
+    const newUser = await authRepository.create({
+      name: cleanName,
+      email: cleanEmail,
+      cpf: cleanCPF,
+      phone: cleanPhone,
+      passwordHash
     });
 
-    // Gera token JWT
-    const token = jwt.sign(
-      {
-        id: usuario.id,
-        email: usuario.email,
-        nome: usuario.nome
-      },
-      process.env.JWT_SECRET || "sua-chave-secreta",
+    // Step 4: Generate authentication token
+    const jwtSecret = process.env.JWT_SECRET || "your-secret-key";
+    const generatedToken = jwt.sign(
+      { id: newUser.id, email: newUser.email, name: newUser.name },
+      jwtSecret,
       { expiresIn: "7d" }
     );
 
     return {
-      id: usuario.id,
-      nome: usuario.nome,
-      email: usuario.email,
-      token
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      token: generatedToken
     };
+
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-/**
- * Faz login do usuário
- */
-async function login(email, senha) {
+async function login(email, password) {
   try {
-    if (!email || !senha) {
-      throw new Error("Email e senha são obrigatórios");
+    // Step 1: Validate inputs
+    const emailValidation = userValidator.validateEmail(email);
+    if (!emailValidation.isValid) {
+      throw new Error("Invalid email format");
     }
 
-    const usuario = await authRepository.findByEmail(email.toLowerCase());
-    if (!usuario) {
-      throw new Error("Email ou senha incorretos");
+    const passwordValidation = userValidator.validatePassword(password);
+    if (!passwordValidation.isValid) {
+      throw new Error("Invalid password");
     }
 
-    const senhaValida = await bcrypt.compare(senha, usuario.senha_hash);
-    if (!senhaValida) {
-      throw new Error("Email ou senha incorretos");
+    // Step 2: Find user in repository
+    const foundUser = await authRepository.findByEmail(emailValidation.cleanedEmail);
+    if (!foundUser) {
+      throw new Error("Invalid email or password");
     }
 
-    // Gera token JWT
-    const token = jwt.sign(
+    // Step 3: Verify password
+    const validPassword = await bcrypt.compare(password, foundUser.passwordHash);
+    if (!validPassword) {
+      throw new Error("Invalid email or password");
+    }
+
+    // Step 4: Generate authentication token
+    const jwtSecret = process.env.JWT_SECRET || "your-secret-key";
+    const generatedToken = jwt.sign(
       {
-        id: usuario.id,
-        email: usuario.email,
-        nome: usuario.nome
+        id: foundUser.id,
+        email: foundUser.email,
+        name: foundUser.name
       },
-      process.env.JWT_SECRET || "sua-chave-secreta",
+      jwtSecret,
       { expiresIn: "7d" }
     );
 
     return {
-      id: usuario.id,
-      nome: usuario.nome,
-      email: usuario.email,
-      cpf: usuario.cpf,
-      token
+      id: foundUser.id,
+      name: foundUser.name,
+      email: foundUser.email,
+      cpf: foundUser.cpf,
+      token: generatedToken
     };
+
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-/**
- * Busca dados do usuário autenticado
- */
 async function getUserData(userId) {
   try {
-    const usuario = await authRepository.findById(userId);
-    if (!usuario) {
-      throw new Error("Usuário não encontrado");
+    const user = await authRepository.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
     }
-    return usuario;
+    return user;
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-/**
- * Altera senha do usuário
- */
-async function changePassword(userId, senhaAtual, novaSenha) {
+async function changePassword(userId, currentPassword, newPassword) {
   try {
-    if (!senhaAtual || !novaSenha) {
-      throw new Error("Senha atual e nova senha são obrigatórias");
+    // Step 1: Validate passwords via validators
+    const currentPasswordValidation = userValidator.validatePassword(currentPassword);
+    if (!currentPasswordValidation.isValid) {
+      throw new Error("Current password is invalid");
     }
 
-    if (novaSenha.length < 6) {
-      throw new Error("Nova senha deve ter no mínimo 6 caracteres");
+    const newPasswordValidation = userValidator.validatePassword(newPassword);
+    if (!newPasswordValidation.isValid) {
+      throw new Error("New password " + newPasswordValidation.error);
     }
 
-    const usuario = await authRepository.findById(userId);
-    if (!usuario) {
-      throw new Error("Usuário não encontrado");
+    // Step 2: Fetch user from repository
+    const user = await authRepository.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    // Verifica se a senha atual está correta
-    const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha_hash);
-    if (!senhaValida) {
-      throw new Error("Senha atual incorreta");
+    // Step 3: Verify current password
+    const validPassword = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!validPassword) {
+      throw new Error("Current password is incorrect");
     }
 
-    // Hash da nova senha
-    const novaSehaHash = await bcrypt.hash(novaSenha, SALT_ROUNDS);
+    // Step 4: Hash new password and update via repository
+    const newPasswordHash = await bcrypt.hash(newPassword, HASH_ROUNDS);
+    const updated = await authRepository.updatePassword(userId, newPasswordHash);
 
-    const atualizada = await authRepository.updatePassword(userId, novaSehaHash);
-    if (!atualizada) {
-      throw new Error("Erro ao atualizar senha");
+    if (!updated) {
+      throw new Error("Error updating password");
     }
 
-    return { mensagem: "Senha alterada com sucesso" };
+    return { message: "Password updated successfully" };
+
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
 module.exports = {
-  register,
+  registerUser,
   login,
   getUserData,
   changePassword

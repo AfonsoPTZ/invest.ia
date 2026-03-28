@@ -8,13 +8,13 @@ import Navbar from "../../components/Navbar";
 import "../../styles/app.css";
 
 function Dashboard() {
-  const [usuario, setUsuario] = useState(null);
-  const [erro, setErro] = useState("");
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [carregando, setCarregando] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function carregarUsuario() {
+    async function loadUserData() {
       try {
         const token = localStorage.getItem("token");
         
@@ -23,105 +23,105 @@ function Dashboard() {
           return;
         }
 
-        const data = await getMe();
-        setUsuario(data);
-      } catch (error) {
-        setErro(error.message);
+        const userData = await getMe();
+        setUser(userData);
+      } catch (catchError) {
+        setError(catchError.message);
         localStorage.removeItem("token");
         navigate("/login");
       } finally {
-        setCarregando(false);
+        setIsLoading(false);
       }
     }
 
-    carregarUsuario();
+    loadUserData();
   }, [navigate]);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
     logout();
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  if (carregando) {
+  if (isLoading) {
     return (
       <div className="loader-container">
-        <div className="loader-text">Carregando...</div>
+        <div className="loader-text">Loading...</div>
       </div>
     );
   }
 
   return (
     <div className="app-layout">
-      <Navbar userEmail={usuario?.email} onLogout={handleLogout} />
+      <Navbar userEmail={user?.email} onLogout={handleLogoutClick} />
       
       <main className="app-content">
         <div className="app-container">
-          {erro ? (
-            <Alert type="error">{erro}</Alert>
+          {error ? (
+            <Alert type="error">{error}</Alert>
           ) : (
             <>
               {/* Welcome Card */}
               <Card className="mb-8">
                 <h1 className="dashboard-title">
-                  Bem-vindo, {usuario?.nome}! 👋
+                  Welcome, {user?.name}! 👋
                 </h1>
                 <p className="dashboard-subtitle">
-                  Acompanhe seus investimentos e finanças em um só lugar.
+                  Track your investments and finances in one place.
                 </p>
               </Card>
 
               {/* Quick Stats Grid */}
               <div className="stats-grid">
-                {/* Saldo Total */}
+                {/* Total Balance */}
                 <Card className="stat-card">
-                  <p className="stat-label">Saldo Total</p>
-                  <p className="stat-value">R$ 0,00</p>
+                  <p className="stat-label">Total Balance</p>
+                  <p className="stat-value">$0.00</p>
                 </Card>
 
-                {/* Investimentos */}
+                {/* Investments */}
                 <Card className="stat-card">
-                  <p className="stat-label">Investimentos</p>
-                  <p className="stat-value">R$ 0,00</p>
+                  <p className="stat-label">Investments</p>
+                  <p className="stat-value">$0.00</p>
                 </Card>
 
-                {/* Despesas Mês */}
+                {/* Monthly Expenses */}
                 <Card className="stat-card">
-                  <p className="stat-label">Despesas (Mês)</p>
-                  <p className="stat-value">R$ 0,00</p>
+                  <p className="stat-label">Expenses (Month)</p>
+                  <p className="stat-value">$0.00</p>
                 </Card>
 
-                {/* Patrimônio */}
+                {/* Assets */}
                 <Card className="stat-card">
-                  <p className="stat-label">Patrimônio</p>
-                  <p className="stat-value">R$ 0,00</p>
+                  <p className="stat-label">Assets</p>
+                  <p className="stat-value">$0.00</p>
                 </Card>
               </div>
 
               {/* Navigation Cards */}
               <div className="nav-cards">
                 <Card className="nav-card">
-                  <h3 className="nav-card-title">Despesas</h3>
-                  <p className="nav-card-text">Gerencie suas despesas</p>
-                  <Button type="primary">Acessar</Button>
+                  <h3 className="nav-card-title">Expenses</h3>
+                  <p className="nav-card-text">Manage your expenses</p>
+                  <Button type="primary">Access</Button>
                 </Card>
 
                 <Card className="nav-card">
-                  <h3 className="nav-card-title">Investimentos</h3>
-                  <p className="nav-card-text">Acompanhe seus investimentos</p>
-                  <Button type="primary">Acessar</Button>
+                  <h3 className="nav-card-title">Investments</h3>
+                  <p className="nav-card-text">Track your investments</p>
+                  <Button type="primary">Access</Button>
                 </Card>
 
                 <Card className="nav-card">
-                  <h3 className="nav-card-title">Patrimônio</h3>
-                  <p className="nav-card-text">Visualize seu patrimônio</p>
-                  <Button type="primary">Acessar</Button>
+                  <h3 className="nav-card-title">Assets</h3>
+                  <p className="nav-card-text">View your assets</p>
+                  <Button type="primary">Access</Button>
                 </Card>
 
                 <Card className="nav-card">
-                  <h3 className="nav-card-title">Ganhos</h3>
-                  <p className="nav-card-text">Controle seus ganhos</p>
-                  <Button type="primary">Acessar</Button>
+                  <h3 className="nav-card-title">Income</h3>
+                  <p className="nav-card-text">Control your income</p>
+                  <Button type="primary">Access</Button>
                 </Card>
               </div>
             </>

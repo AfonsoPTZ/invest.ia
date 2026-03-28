@@ -1,4 +1,4 @@
-// frontend/src/App.jsx
+// Frontend App Router
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./styles/globals.css";
 
@@ -14,12 +14,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Auth Routes */}
+        {/* Authentication Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/financial-profile" element={<FinancialProfile />} />
         
-        {/* App Routes */}
+        {/* Application Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         
         {/* Default Route */}

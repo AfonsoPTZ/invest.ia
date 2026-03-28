@@ -1,12 +1,10 @@
 import './style.css';
 import Button from '../Button';
 
-/**
- * Navbar para páginas de app
- * Props:
- * - userEmail: email do usuário logado
- * - onLogout: função chamada ao logout
- */
+// Navbar component for app pages
+// Props:
+// - userEmail: logged-in user email
+// - onLogout: function called on logout
 export default function Navbar({ userEmail, onLogout, className = '', ...props }) {
   return (
     <nav className={`navbar ${className}`} {...props}>

@@ -1,57 +1,51 @@
-// frontend/src/services/authService.js
+// Authentication Service
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
-/**
- * Faz login do usuário
- */
-export async function login(email, senha) {
+// User login with email and password
+export async function login(email, password) {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ email, senha })
+    body: JSON.stringify({ email, password })
   });
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.mensagem || "Erro ao fazer login");
+    throw new Error(data.message || "Login error");
   }
 
-  // Armazena o token
+  // Store JWT token
   localStorage.setItem("token", data.token);
 
-  return data.usuario;
+  return data.user;
 }
 
-/**
- * Registra novo usuário
- */
-export async function register(nome, email, cpf, telefone, senha) {
+// Register new user
+export async function register(name, email, cpf, phone, password) {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ nome, email, cpf, telefone, senha })
+    body: JSON.stringify({ name, email, cpf, phone, password })
   });
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.mensagem || "Erro ao registrar");
+    throw new Error(data.message || "Registration error");
   }
 
-  // Armazena o token
+  // Store JWT token
   localStorage.setItem("token", data.token);
 
-  return data.usuario;
+  return data.user;
 }
 
-/**
- * Faz logout do usuário
- */
+// User logout
 export async function logout() {
   const token = localStorage.getItem("token");
 
@@ -63,21 +57,19 @@ export async function logout() {
       }
     });
   } catch (error) {
-    console.error("Erro ao fazer logout:", error);
+    console.error("Logout error:", error);
   }
 
-  // Remove o token do localStorage
+  // Remove JWT token
   localStorage.removeItem("token");
 }
 
-/**
- * Busca dados do usuário autenticado
- */
+// Get authenticated user data
 export async function getMe() {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    throw new Error("Token não encontrado");
+    throw new Error("Token not found");
   }
 
   const response = await fetch(`${API_URL}/auth/me`, {
@@ -89,15 +81,13 @@ export async function getMe() {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.mensagem || "Erro ao buscar dados");
+    throw new Error(data.message || "Error fetching user data");
   }
 
-  return data.usuario;
+  return data.user;
 }
 
-/**
- * Verifica se usuário está autenticado
- */
+// Check if user is authenticated
 export async function checkAuth() {
   const token = localStorage.getItem("token");
 
@@ -113,7 +103,7 @@ export async function checkAuth() {
     });
 
     const data = await response.json();
-    return data.autenticado;
+    return data.authenticated;
   } catch (error) {
     return false;
   }

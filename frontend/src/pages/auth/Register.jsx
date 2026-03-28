@@ -10,43 +10,43 @@ import "../../styles/auth.css";
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    nome: "",
+    name: "",
     email: "",
     cpf: "",
-    telefone: "",
-    senha: ""
+    phone: "",
+    password: ""
   });
-  const [erro, setErro] = useState("");
-  const [carregando, setCarregando] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
     setFormData({
       ...formData,
       [name]: value
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErro("");
-    setCarregando(true);
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
-      const usuario = await register(
-        formData.nome,
+      const user = await register(
+        formData.name,
         formData.email,
         formData.cpf,
-        formData.telefone,
-        formData.senha
+        formData.phone,
+        formData.password
       );
 
-      sessionStorage.setItem("usuarioId", usuario.id);
+      sessionStorage.setItem("userId", user.id);
       navigate("/financial-profile");
-    } catch (error) {
-      setErro(error.message);
+    } catch (catchError) {
+      setError(catchError.message);
     } finally {
-      setCarregando(false);
+      setIsLoading(false);
     }
   };
 
@@ -54,21 +54,21 @@ export default function Register() {
     <div className="auth-container">
       <Card className="auth-card">
         <div className="auth-header">
-          <h1 className="auth-title">Cadastro</h1>
-          <p className="auth-subtitle">Crie sua conta no Invest.IA</p>
+          <h1 className="auth-title">Sign Up</h1>
+          <p className="auth-subtitle">Create your Invest.IA account</p>
         </div>
 
-        {erro && <Alert type="error" className="mb-6">{erro}</Alert>}
+        {error && <Alert type="error" className="mb-6">{error}</Alert>}
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleFormSubmit} className="auth-form">
           <Input
-            id="nome"
-            label="Nome Completo"
+            id="name"
+            label="Full Name"
             type="text"
-            name="nome"
-            value={formData.nome}
-            onChange={handleChange}
-            placeholder="Seu nome completo"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            placeholder="Your full name"
             autoComplete="name"
             required
             minLength="3"
@@ -80,8 +80,8 @@ export default function Register() {
             type="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
-            placeholder="seu@email.com"
+            onChange={handleInputChange}
+            placeholder="your@email.com"
             autoComplete="email"
             required
           />
@@ -92,46 +92,46 @@ export default function Register() {
             type="text"
             name="cpf"
             value={formData.cpf}
-            onChange={handleChange}
+            onChange={handleInputChange}
             placeholder="000.000.000-00"
             autoComplete="off"
             required
           />
 
           <Input
-            id="telefone"
-            label="Telefone"
+            id="phone"
+            label="Phone"
             type="tel"
-            name="telefone"
-            value={formData.telefone}
-            onChange={handleChange}
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
             placeholder="(00) 00000-0000"
             autoComplete="tel"
             required
           />
 
           <Input
-            id="senha"
-            label="Senha"
+            id="password"
+            label="Password"
             type="password"
-            name="senha"
-            value={formData.senha}
-            onChange={handleChange}
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
             placeholder="••••••••"
             autoComplete="new-password"
             required
             minLength="6"
           />
 
-          <Button type="primary" className="btn-full" disabled={carregando}>
-            {carregando ? "Cadastrando..." : "Cadastrar"}
+          <Button type="primary" className="btn-full" disabled={isLoading}>
+            {isLoading ? "Creating account..." : "Sign Up"}
           </Button>
         </form>
 
         <p className="auth-footer">
-          Já tem conta?{" "}
+          Already have an account?{" "}
           <a href="/login" className="auth-link">
-            Faça login
+            Sign In
           </a>
         </p>
       </Card>

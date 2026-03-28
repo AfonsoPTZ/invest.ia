@@ -12,29 +12,29 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 export default function FinancialProfile() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    rendaMensal: "",
-    saldoInicial: "",
-    possuiInvestimentos: false,
-    possuiPatrimonio: false,
-    objetivoFinanceiro: "",
-    perfilComportamento: "moderado"
+    monthlyIncome: "",
+    initialBalance: "",
+    hasInvestments: false,
+    hasAssets: false,
+    financialGoal: "",
+    behaviorProfile: "moderate"
   });
-  const [erro, setErro] = useState("");
-  const [carregando, setCarregando] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const usuarioId = sessionStorage.getItem("usuarioId");
+  const userId = sessionStorage.getItem("userId");
 
-  if (!usuarioId) {
+  if (!userId) {
     return (
       <div className="auth-container">
         <Card className="auth-card">
-          <h2 className="auth-title">Erro</h2>
+          <h2 className="auth-title">Error</h2>
           <p className="auth-subtitle mb-6">
-            Usuário não encontrado. Por favor, cadastre-se novamente.
+            User not found. Please sign up again.
           </p>
           <a href="/register">
             <Button type="primary" className="btn-full">
-              Voltar ao cadastro
+              Back to Sign Up
             </Button>
           </a>
         </Card>
@@ -42,18 +42,18 @@ export default function FinancialProfile() {
     );
   }
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleInputChange = (event) => {
+    const { name, value, type, checked } = event.target;
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErro("");
-    setCarregando(true);
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -65,28 +65,28 @@ export default function FinancialProfile() {
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          usuario_id: usuarioId,
-          renda_mensal: parseFloat(formData.rendaMensal),
-          saldo_inicial: parseFloat(formData.saldoInicial),
-          possui_investimentos: formData.possuiInvestimentos,
-          possui_patrimonio: formData.possuiPatrimonio,
-          objetivo_financeiro: formData.objetivoFinanceiro,
-          perfil_comportamento: formData.perfilComportamento
+          user_id: userId,
+          monthly_income: parseFloat(formData.monthlyIncome),
+          initial_balance: parseFloat(formData.initialBalance),
+          has_investments: formData.hasInvestments,
+          has_assets: formData.hasAssets,
+          financial_goal: formData.financialGoal,
+          behavior_profile: formData.behaviorProfile
         })
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.mensagem || "Erro ao criar perfil");
+        throw new Error(data.message || "Error creating profile");
       }
 
-      sessionStorage.removeItem("usuarioId");
+      sessionStorage.removeItem("userId");
       navigate("/dashboard");
-    } catch (error) {
-      setErro(error.message);
+    } catch (catchError) {
+      setError(catchError.message);
     } finally {
-      setCarregando(false);
+      setIsLoading(false);
     }
   };
 
@@ -94,49 +94,49 @@ export default function FinancialProfile() {
     <div className="auth-container">
       <Card className="auth-card">
         <div className="auth-header">
-          <h1 className="auth-title">Perfil Financeiro</h1>
+          <h1 className="auth-title">Financial Profile</h1>
           <p className="auth-subtitle">
-            Algumas perguntas para conhecer melhor sua situação financeira
+            A few questions to understand your financial situation
           </p>
         </div>
 
-        {erro && <Alert type="error" className="mb-6">{erro}</Alert>}
+        {error && <Alert type="error" className="mb-6">{error}</Alert>}
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleFormSubmit} className="auth-form">
           <Input
-            id="rendaMensal"
-            label="Renda Mensal (R$)"
+            id="monthlyIncome"
+            label="Monthly Income ($)"
             type="number"
-            name="rendaMensal"
-            value={formData.rendaMensal}
-            onChange={handleChange}
+            name="monthlyIncome"
+            value={formData.monthlyIncome}
+            onChange={handleInputChange}
             placeholder="0.00"
             step="0.01"
             required
           />
 
           <Input
-            id="saldoInicial"
-            label="Saldo Inicial (R$)"
+            id="initialBalance"
+            label="Initial Balance ($)"
             type="number"
-            name="saldoInicial"
-            value={formData.saldoInicial}
-            onChange={handleChange}
+            name="initialBalance"
+            value={formData.initialBalance}
+            onChange={handleInputChange}
             placeholder="0.00"
             step="0.01"
             required
           />
 
           <div className="form-group">
-            <label htmlFor="objetivoFinanceiro" className="form-label">
-              Objetivo Financeiro
+            <label htmlFor="financialGoal" className="form-label">
+              Financial Goal
             </label>
             <textarea
-              id="objetivoFinanceiro"
-              name="objetivoFinanceiro"
-              value={formData.objetivoFinanceiro}
-              onChange={handleChange}
-              placeholder="Descreva seu objetivo financeiro..."
+              id="financialGoal"
+              name="financialGoal"
+              value={formData.financialGoal}
+              onChange={handleInputChange}
+              placeholder="Describe your financial goal..."
               rows="3"
               required
               className="form-textarea"
@@ -144,20 +144,20 @@ export default function FinancialProfile() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="perfilComportamento" className="form-label">
-              Qual é seu perfil de comportamento?
+            <label htmlFor="behaviorProfile" className="form-label">
+              What is your behavior profile?
             </label>
             <select
-              id="perfilComportamento"
-              name="perfilComportamento"
-              value={formData.perfilComportamento}
-              onChange={handleChange}
+              id="behaviorProfile"
+              name="behaviorProfile"
+              value={formData.behaviorProfile}
+              onChange={handleInputChange}
               required
               className="form-select"
             >
-              <option value="conservador">Conservador</option>
-              <option value="moderado">Moderado</option>
-              <option value="gastador">Gastador</option>
+              <option value="conservative">Conservative</option>
+              <option value="moderate">Moderate</option>
+              <option value="aggressive">Aggressive</option>
             </select>
           </div>
 
@@ -165,26 +165,26 @@ export default function FinancialProfile() {
             <label className="checkbox-label">
               <input
                 type="checkbox"
-                name="possuiInvestimentos"
-                checked={formData.possuiInvestimentos}
-                onChange={handleChange}
+                name="hasInvestments"
+                checked={formData.hasInvestments}
+                onChange={handleInputChange}
               />
-              Possuo investimentos
+              I have investments
             </label>
 
             <label className="checkbox-label">
               <input
                 type="checkbox"
-                name="possuiPatrimonio"
-                checked={formData.possuiPatrimonio}
-                onChange={handleChange}
+                name="hasAssets"
+                checked={formData.hasAssets}
+                onChange={handleInputChange}
               />
-              Possuo patrimônio
+              I have assets
             </label>
           </div>
 
-          <Button type="primary" className="btn-full" disabled={carregando}>
-            {carregando ? "Criando perfil..." : "Criar perfil"}
+          <Button type="primary" className="btn-full" disabled={isLoading}>
+            {isLoading ? "Creating profile..." : "Create Profile"}
           </Button>
         </form>
       </Card>

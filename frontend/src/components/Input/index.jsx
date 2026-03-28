@@ -1,16 +1,14 @@
 import './style.css';
 
-/**
- * Input reutilizável com label e error
- * Props:
- * - label: texto do label
- * - type: tipo do input (padrão: 'text')
- * - error: mensagem de erro
- * - value: valor do input
- * - onChange: função chamada ao mudar
- * - name: nome do input
- * - placeholder: placeholder
- */
+// Reusable input component with label and error message
+// Props:
+// - label: label text
+// - type: input type (default: 'text')
+// - error: error message
+// - value: input value
+// - onChange: function called on change
+// - name: input name
+// - placeholder: placeholder text
 export default function Input({ 
   label, 
   error, 

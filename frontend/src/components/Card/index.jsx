@@ -1,11 +1,9 @@
 import './style.css';
 
-/**
- * Card reutilizável
- * Props:
- * - children: conteúdo do card
- * - className: classes CSS adicionais
- */
+// Reusable card component
+// Props:
+// - children: card content
+// - className: additional CSS classes
 export default function Card({ children, className = '', ...props }) {
   return (
     <div className={`card ${className}`} {...props}>

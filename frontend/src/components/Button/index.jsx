@@ -1,13 +1,11 @@
 import './style.css';
 
-/**
- * Botão reutilizável
- * Props:
- * - type: 'primary' | 'secondary' | 'danger' (padrão: 'primary')
- * - onClick: função chamada ao clicar
- * - disabled: desabilita o botão
- * - children: texto do botão
- */
+// Reusable button component
+// Props:
+// - type: 'primary' | 'secondary' | 'danger' (default: 'primary')
+// - onClick: function called on click
+// - disabled: disable button
+// - children: button text
 export default function Button({ 
   type = 'primary', 
   onClick, 
