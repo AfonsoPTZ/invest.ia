@@ -5,11 +5,11 @@ USE investia;
 -- =========================
 INSERT INTO usuarios (nome, email, cpf, telefone, senha_hash)
 VALUES (
-    'Rafael Monteiro',
-    'rafael.monteiro@exemplo.com',
-    '12345678901',
-    '41999123456',
-    'hash_teste_rafael_123'
+    'Afonso Braga Plentz',
+    'afonsobplentz@gmail.com',
+    '02153179203',
+    '41988309669',
+    '$2b$10$tsfgEfURbWXDAu41JupLe8rpHbnJHfDRynRd/gpFd4yo4fQAFyEu'
 );
 
 -- =========================
@@ -25,11 +25,11 @@ INSERT INTO perfil_financeiro (
     perfil_comportamento
 ) VALUES (
     1,
-    4500.00,
-    1200.00,
-    TRUE,
-    TRUE,
-    'Economizar mais e investir melhor ao longo do ano',
+    1800.00,
+    150.00,
+    FALSE,
+    FALSE,
+    'Quero aprender a economizar e investir.',
     'moderado'
 );
 
@@ -38,7 +38,7 @@ INSERT INTO perfil_financeiro (
 -- =========================
 INSERT INTO ganhos (usuario_id, descricao, valor, data_ganho, fixo)
 VALUES
-(1, 'Salário mensal', 4500.00, '2026-03-05', TRUE),
+(1, 'Salário mensal', 1800.00, '2026-03-05', TRUE),
 (1, 'Freelance de site institucional', 400.00, '2026-03-12', FALSE),
 (1, 'Ganhei 20 reais no Tigrinho KKK', 20.00, '2026-03-14', FALSE);
 
@@ -47,7 +47,7 @@ VALUES
 -- =========================
 INSERT INTO despesas (usuario_id, descricao, valor, data_despesa, fixo)
 VALUES
-(1, 'Aluguel', 1200.00, '2026-03-01', TRUE),
+(1, 'Aluguel', 800.00, '2026-03-01', TRUE),
 (1, 'Internet', 99.90, '2026-03-03', TRUE),
 (1, 'Lanche da tarde', 5.00, '2026-03-06', FALSE),
 (1, 'iFood pizza', 49.90, '2026-03-08', FALSE),

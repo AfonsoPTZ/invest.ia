@@ -1,24 +1,22 @@
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
+// backend/src/app.js
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+
+const authRoutes = require("./routes/authRoutes");
+const perfilFinanceiroRoutes = require("./routes/perfilFinanceiroRoutes");
 
 const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(morgan('dev'));
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Rotas
-// app.use('/api', require('./routes'));
-
-// Tratamento de erros
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error',
-  });
-});
+app.use("/api/auth", authRoutes);
+app.use("/api/perfil-financeiro", perfilFinanceiroRoutes);
 
 module.exports = app;
