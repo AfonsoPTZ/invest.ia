@@ -1,0 +1,70 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+*/node_modules
+
+# Build outputs
+dist
+dist-ssr
+build
+*/dist
+*/dist-ssr
+*/build
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE and Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS
+.DS_Store
+*.pem
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Local files
+*.local
+.cache
+.eslintcache
+
+# Temporary files
+tmp
+temp
+*.tmp
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE workspace
+.vscode/
+.idea/
+*.code-workspace
