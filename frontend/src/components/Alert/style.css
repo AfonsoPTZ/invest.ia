@@ -24,9 +24,9 @@
 }
 
 .alert-error {
-  background: linear-gradient(135deg, #fef2f2 0%, #fde8e8 100%);
-  border-color: #fb9999;
-  color: #7f1d1d;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(185, 28, 28, 0.08) 100%);
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #fecaca;
 }
 
 .alert-error::before {
@@ -35,9 +35,9 @@
 }
 
 .alert-success {
-  background: linear-gradient(135deg, #f0fdf4 0%, #e7fce4 100%);
-  border-color: #86efac;
-  color: #15803d;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.08) 100%);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
 }
 
 .alert-success::before {
@@ -47,9 +47,9 @@
 }
 
 .alert-info {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border-color: #7dd3fc;
-  color: #0c4a6e;
+  background: linear-gradient(135deg, rgba(59, 182, 246, 0.1) 0%, rgba(14, 165, 233, 0.08) 100%);
+  border-color: rgba(59, 182, 246, 0.3);
+  color: #bae6fd;
 }
 
 .alert-info::before {
@@ -58,9 +58,9 @@
 }
 
 .alert-warning {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  border-color: #fde047;
-  color: #78350f;
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(249, 115, 22, 0.08) 100%);
+  border-color: rgba(251, 146, 60, 0.3);
+  color: #fed7aa;
 }
 
 .alert-warning::before {

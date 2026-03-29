@@ -1,0 +1,243 @@
+/* Premium Animations Library */
+/* Subtle entrance, fade-in, and interactive animations */
+
+/* ============================================
+   Page Load & Entrance Animations
+   ============================================ */
+
+/* Fade in on page load */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide up entrance with fade */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale up entrance with fade */
+@keyframes scaleInFade {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Subtle pop entrance */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ============================================
+   Card & Content Animations
+   ============================================ */
+
+/* Stagger effect for multiple cards */
+.card-stagger {
+  animation: slideUpFade 0.5s ease-out forwards;
+}
+
+.card-stagger:nth-child(1) { animation-delay: 0.1s; }
+.card-stagger:nth-child(2) { animation-delay: 0.2s; }
+.card-stagger:nth-child(3) { animation-delay: 0.3s; }
+.card-stagger:nth-child(4) { animation-delay: 0.4s; }
+.card-stagger:nth-child(5) { animation-delay: 0.5s; }
+.card-stagger:nth-child(6) { animation-delay: 0.6s; }
+
+/* ============================================
+   Floating & Subtle Motion
+   ============================================ */
+
+/* Gentle floating animation for decorative elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* Floating with slight rotation */
+@keyframes floatRotate {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(2deg);
+  }
+}
+
+/* Slow rotation */
+@keyframes slowSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   Hover & Interaction Animations
+   ============================================ */
+
+/* Glow pulse on hover */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.25);
+  }
+}
+
+/* Text glow effect */
+@keyframes textGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(220, 38, 38, 0.3),
+                 0 0 0px rgba(220, 38, 38, 0);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(220, 38, 38, 0.5),
+                 0 0 10px rgba(220, 38, 38, 0.3);
+  }
+}
+
+/* ============================================
+   Loading & Pulse Animations
+   ============================================ */
+
+/* Pulse effect */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Skeleton loading shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* ============================================
+   Transition Animations
+   ============================================ */
+
+/* Smooth transitions for theme changes */
+@keyframes colorShift {
+  0%, 100% {
+    color: #f5f5f5;
+  }
+  50% {
+    color: #dc2626;
+  }
+}
+
+/* Backdrop blur effect */
+@keyframes blurIn {
+  from {
+    backdrop-filter: blur(0px);
+  }
+  to {
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* ============================================
+   Utility Animation Classes
+   ============================================ */
+
+/* Apply fade-in to any element */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Apply slide-up to any element */
+.animate-slide-up {
+  animation: slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Apply scale-in to any element */
+.animate-scale-in {
+  animation: scaleInFade 0.5s ease-out;
+}
+
+/* Apply pop-in to any element */
+.animate-pop-in {
+  animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Apply float animation */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Apply slow spin */
+.animate-spin-slow {
+  animation: slowSpin 20s linear infinite;
+}
+
+/* Apply pulse */
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Page Transition
+   ============================================ */
+
+/* Main layout fade out/in */
+.page-transition-enter {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.page-transition-exit {
+  animation: fadeIn 0.3s ease-out reverse;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

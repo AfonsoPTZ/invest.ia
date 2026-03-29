@@ -1,7 +1,7 @@
 .navbar {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  border-bottom: 1px solid rgba(248, 250, 252, 0.1);
-  box-shadow: 0 6px 20px rgba(30, 60, 114, 0.16), 0 2px 8px rgba(42, 82, 152, 0.1);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1a1a 100%);
+  border-bottom: 1px solid rgba(125, 30, 30, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(220, 38, 38, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -22,12 +22,19 @@
   margin: 0;
   font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(90deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(90deg, #f5f5f5 0%, #dc2626 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -0.5px;
   transition: all 0.3s ease;
+}
+
+.navbar-logo-image {
+  height: 40px;
+  width: auto;
+  margin-right: 12px;
+  animation: float 3s ease-in-out infinite;
 }
 
 .navbar-menu {
@@ -38,28 +45,29 @@
 
 .navbar-email {
   font-size: 14px;
-  color: #cbd5e1;
+  color: #d4d4d4;
   font-weight: 500;
   transition: all 0.3s ease;
 }
 
 .navbar-logout {
   padding: 10px 20px;
-  background: rgba(248, 250, 252, 0.95);
-  color: #1e3c72;
-  border: none;
+  background: rgba(220, 38, 38, 0.9);
+  color: #f5f5f5;
+  border: 1px solid rgba(220, 38, 38, 0.5);
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 14px;
-  box-shadow: 0 2px 8px rgba(248, 250, 252, 0.2);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
 }
 
 .navbar-logout:hover {
-  background: white;
-  box-shadow: 0 6px 16px rgba(248, 250, 252, 0.3);
+  background: #dc2626;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
   transform: translateY(-1px);
+  border-color: #ef4444;
 }
 
 .navbar-logout:active {

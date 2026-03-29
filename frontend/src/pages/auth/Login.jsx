@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
 import { validateLoginForm } from "../../validators/authValidator";
+import { useAnimateOnMount } from "../../utils/useAnimations";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
@@ -31,6 +32,9 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Apply fade in animation to card
+  const cardRef = useAnimateOnMount('animate-scale-in', 100);
 
   /**
    * Handle form submission
@@ -61,7 +65,17 @@ function Login() {
 
   return (
     <div className="auth-container">
-      <Card className="auth-card">
+      {/* Panda Mascot - Add panda-login-top.png to public folder */}
+      <div className="auth-panda-wrapper">
+        <img 
+          src="/panda-login-top.png" 
+          alt="Invest_IA Mascot"
+          className="auth-panda-image"
+          onError={(e) => e.target.style.display = 'none'}
+        />
+      </div>
+
+      <Card className="auth-card" ref={cardRef}>
         <div className="auth-header">
           <div className="auth-logo">
             <div className="logo-icon">📊</div>

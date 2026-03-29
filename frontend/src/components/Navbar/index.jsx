@@ -10,6 +10,13 @@ export default function Navbar({ userEmail, onLogout, className = '', ...props }
     <nav className={`navbar ${className}`} {...props}>
       <div className="navbar-content">
         <div className="navbar-brand">
+          {/* Panda Logo - Add panda-icon-navbar.png to public folder */}
+          <img 
+            src="/panda-icon-navbar.png"
+            alt="Invest_IA Logo"
+            className="navbar-logo-image"
+            onError={(e) => e.target.style.display = 'none'}
+          />
           <h1>Invest_IA</h1>
         </div>
         

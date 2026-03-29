@@ -1,6 +1,7 @@
 // Frontend App Router
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./styles/globals.css";
+import "./styles/animations.css";
 
 // Auth Pages
 import Login from "./pages/auth/Login";

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/authService";
 import { getDashboardName, getDashboardData } from "../../services/dashboardService";
+import { useIntersectionAnimation } from "../../utils/useAnimations";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
@@ -62,6 +63,12 @@ function Dashboard() {
 
     loadUserData();
   }, [navigate]);
+
+  /**
+   * Apply entrance animations to dashboard elements when they appear in viewport
+   */
+  useIntersectionAnimation('.stat-card-wrapper', 'animate-slide-up');
+  useIntersectionAnimation('.nav-card', 'animate-slide-up');
 
   /**
    * Handle logout action
@@ -197,6 +204,17 @@ function Dashboard() {
           )}
         </div>
       </main>
+
+      {/* Panda Mascot - Dashboard background accent */}
+      {/* Add panda-investments-bottom.png to public folder */}
+      <div className="dashboard-panda-wrapper">
+        <img 
+          src="/panda-investments-bottom.png" 
+          alt="Invest_IA Mascot"
+          className="dashboard-panda-image"
+          onError={(e) => e.target.style.display = 'none'}
+        />
+      </div>
     </div>
   );
 }

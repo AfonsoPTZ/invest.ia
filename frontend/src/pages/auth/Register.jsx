@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../../services/authService";
 import { validateRegisterForm } from "../../validators/authValidator";
+import { useAnimateOnMount } from "../../utils/useAnimations";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
@@ -38,6 +39,9 @@ export default function Register() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Apply scale in animation to card
+  const cardRef = useAnimateOnMount('animate-scale-in', 100);
 
   /**
    * Handle input change - update form state and clear errors
@@ -100,7 +104,17 @@ export default function Register() {
 
   return (
     <div className="auth-container">
-      <Card className="auth-card">
+      {/* Panda Mascot - Add panda-login-top.png to public folder */}
+      <div className="auth-panda-wrapper">
+        <img 
+          src="/panda-login-top.png" 
+          alt="Invest_IA Mascot"
+          className="auth-panda-image"
+          onError={(e) => e.target.style.display = 'none'}
+        />
+      </div>
+
+      <Card className="auth-card" ref={cardRef}>
         {/* Step Indicator */}
         <div className="form-steps">
           <div className="step-item active">

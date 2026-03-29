@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 40%, #2d1a1a 100%);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -18,7 +18,7 @@
   right: -20%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(59, 182, 246, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.12) 0%, transparent 70%);
   border-radius: 50%;
   filter: blur(60px);
   pointer-events: none;
@@ -31,7 +31,7 @@
   left: -10%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(100, 116, 139, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(125, 30, 30, 0.1) 0%, transparent 70%);
   border-radius: 50%;
   filter: blur(50px);
   pointer-events: none;
@@ -40,14 +40,36 @@
 .auth-card {
   width: 100%;
   max-width: 480px;
-  background: white;
+  background: rgba(26, 26, 26, 0.85);
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 
+              0 0 40px rgba(220, 38, 38, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
   padding: 48px 40px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(125, 30, 30, 0.3);
   position: relative;
   z-index: 10;
   backdrop-filter: blur(10px);
+}
+
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.4), transparent);
+}
+
+.auth-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.2), transparent);
 }
 
 .auth-header {
@@ -80,10 +102,10 @@
 .auth-title {
   font-size: 32px;
   font-weight: 800;
-  color: #0f172a;
+  color: #f5f5f5;
   margin: 0 0 8px 0;
   letter-spacing: -0.8px;
-  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -91,7 +113,7 @@
 
 .auth-subtitle {
   font-size: 15px;
-  color: #64748b;
+  color: #d4d4d4;
   margin: 0;
   font-weight: 400;
   line-height: 1.5;
@@ -106,27 +128,27 @@
 
 .auth-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  background: linear-gradient(90deg, transparent, rgba(125, 30, 30, 0.3), transparent);
   margin: 28px 0;
 }
 
 .auth-footer {
   text-align: center;
   font-size: 14px;
-  color: #64748b;
+  color: #a3a3a3;
   margin: 0;
   font-weight: 400;
 }
 
 .auth-link {
-  color: #3b82f6;
+  color: #dc2626;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .auth-link:hover {
-  color: #2563eb;
+  color: #ef4444;
   text-decoration: underline;
   text-decoration-style: wavy;
   text-underline-offset: 3px;
@@ -138,6 +160,32 @@
 
 .mb-6 {
   margin-bottom: 24px;
+}
+
+/* Panda Mascot Image */
+.auth-panda-wrapper {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.auth-panda-image {
+  max-width: 180px;
+  height: auto;
+  animation: pandaBounce 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 20px rgba(220, 38, 38, 0.2));
+}
+
+@keyframes pandaBounce {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* Responsive */
