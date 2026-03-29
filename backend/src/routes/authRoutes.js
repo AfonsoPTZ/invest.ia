@@ -8,7 +8,7 @@ const {
   registerValidationRules,
   loginValidationRules,
   handleValidationErrors
-} = require("../middlewares/authValidator");
+} = require("../validators/authValidator");
 
 // Public routes with validation
 router.post(

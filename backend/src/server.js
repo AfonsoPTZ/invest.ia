@@ -1,9 +1,10 @@
 // Main Server
 const app = require("./app");
+const logger = require("./utils/logger");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+  logger.info(`Server running at http://localhost:${PORT}`);
 });
