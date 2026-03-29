@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMe, logout } from "../../services/authService";
+import { logout } from "../../services/authService";
+import { getDashboardName, getDashboardData } from "../../services/dashboardService";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
@@ -9,6 +10,7 @@ import "../../styles/app.css";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -23,8 +25,13 @@ function Dashboard() {
           return;
         }
 
-        const userData = await getMe();
-        setUser(userData);
+        // Get user name first
+        const nameData = await getDashboardName();
+        setUser(nameData);
+
+        // Fetch dashboard data (user + financial profile)
+        const dashboard = await getDashboardData();
+        setDashboardData(dashboard);
       } catch (catchError) {
         setError(catchError.message);
         localStorage.removeItem("token");
@@ -76,13 +83,17 @@ function Dashboard() {
                 {/* Total Balance */}
                 <Card className="stat-card">
                   <p className="stat-label">Total Balance</p>
-                  <p className="stat-value">$0.00</p>
+                  <p className="stat-value">
+                    ${dashboardData?.financialProfile?.saldo_inicial?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
+                  </p>
                 </Card>
 
                 {/* Investments */}
                 <Card className="stat-card">
                   <p className="stat-label">Investments</p>
-                  <p className="stat-value">$0.00</p>
+                  <p className="stat-value">
+                    ${dashboardData?.financialProfile?.renda_mensal?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
+                  </p>
                 </Card>
 
                 {/* Monthly Expenses */}
