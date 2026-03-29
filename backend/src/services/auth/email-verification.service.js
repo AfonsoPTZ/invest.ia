@@ -1,5 +1,5 @@
 // Email Verification Service - Fluxo de verificação de email
-const { sendOtpEmail, sendVerificationSuccessEmail } = require("./email.service");
+const { sendOtpEmail } = require("./email.service");
 const { generateAndSaveOtp, verifyOtp, clearOtp, markEmailAsVerified } = require("./otp.service");
 const logger = require("../../utils/logger");
 

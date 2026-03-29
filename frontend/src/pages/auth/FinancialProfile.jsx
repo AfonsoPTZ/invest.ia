@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { createFinancialProfile } from "../../services/financialProfileService";
 import { validateFinancialProfileForm } from "../../validators/authValidator";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
@@ -8,8 +9,6 @@ import Card from "../../components/Card";
 import logger from "../../utils/logger";
 import "../../styles/auth.css";
 import "../../styles/forms.css";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 /**
  * Financial Profile Setup Page
@@ -37,7 +36,6 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
  */
 export default function FinancialProfile() {
   const navigate = useNavigate();
-  const [token, setToken] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -55,20 +53,17 @@ export default function FinancialProfile() {
 
   /**
    * Validate temporary token on page load
-   * Token is stored in sessionStorage after OTP verification
+   * Token should be stored in sessionStorage after OTP verification
+   * If not found, redirect to register (user needs to complete OTP first)
    */
   useEffect(() => {
     const tempToken = sessionStorage.getItem("tempProfileToken");
 
     if (!tempToken) {
       logger.warn({}, "FinancialProfile: Temporary token not found");
-      setError("Token expired. Please register again.");
+      setError("Session expired. Please register again.");
       setTimeout(() => navigate("/register"), 3000);
-      return;
     }
-
-    logger.info({}, "FinancialProfile: Temporary token validated");
-    setToken(tempToken);
   }, [navigate]);
 
   /**
@@ -109,28 +104,16 @@ export default function FinancialProfile() {
 
       logger.info({}, "FinancialProfile: Attempting to create financial profile");
 
-      const response = await fetch(`${API_URL}/financial-profile`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          monthly_income: formData.has_monthly_income ? parseFloat(formData.monthly_income) || 0 : 0,
-          initial_balance: formData.has_initial_balance ? parseFloat(formData.initial_balance) || 0 : 0,
-          has_investments: formData.has_investments,
-          has_assets: formData.has_assets,
-          financial_goal: formData.financial_goal,
-          behavior_profile: formData.behavior_profile
-        })
-      });
+      const profileData = {
+        monthly_income: formData.has_monthly_income ? parseFloat(formData.monthly_income) || 0 : 0,
+        initial_balance: formData.has_initial_balance ? parseFloat(formData.initial_balance) || 0 : 0,
+        has_investments: formData.has_investments,
+        has_assets: formData.has_assets,
+        financial_goal: formData.financial_goal,
+        behavior_profile: formData.behavior_profile
+      };
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        logger.warn({}, `FinancialProfile: Failed to save profile - ${data.message}`);
-        throw new Error(data.message || "Error saving financial profile");
-      }
+      const data = await createFinancialProfile(profileData);
 
       logger.info({}, "FinancialProfile: Profile saved successfully. Redirecting to login");
 
@@ -162,11 +145,11 @@ export default function FinancialProfile() {
         </p>
 
         {error && (
-          <Alert type="error" message={error} />
+          <Alert type="error">{error}</Alert>
         )}
 
         {success && (
-          <Alert type="success" message={success} />
+          <Alert type="success">{success}</Alert>
         )}
 
         <form onSubmit={handleFormSubmit} className="auth-form">

@@ -1,8 +1,6 @@
 // Register Service - Cadastro de usuário
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const authRepository = require("../../repositories/user.repository");
-const userValidator = require("../../validators/user.validator");
 const { sendVerificationCode } = require("./email-verification.service");
 const logger = require("../../utils/logger");
 
@@ -10,69 +8,50 @@ const HASH_ROUNDS = 10;
 
 /**
  * Registrar novo usuário e enviar código de verificação
- * @param {string} name - Nome do usuário
- * @param {string} email - Email do usuário
- * @param {string} cpf - CPF do usuário
- * @param {string} phone - Telefone do usuário
- * @param {string} password - Senha do usuário
+ * Dados já vêm validados do middleware
+ * @param {string} name - Nome do usuário (validado)
+ * @param {string} email - Email do usuário (validado)
+ * @param {string} cpf - CPF do usuário (validado)
+ * @param {string} phone - Telefone do usuário (validado)
+ * @param {string} password - Senha do usuário (validada)
  * @returns {Promise<{userId: number, message: string}>}
  */
 async function registerUser(name, email, cpf, phone, password) {
   try {
     logger.info({ email, cpf }, "RegisterService: Starting user registration");
 
-    // Step 1: Validar entrada
-    const validation = userValidator.validateUserRegistration(
+    // Dados já chegam validados do middleware
+    // Verificar duplicatas
+    if (await authRepository.emailExists(email)) {
+      logger.warn({ email }, "RegisterService: Email already registered");
+      throw new Error("Email already registered");
+    }
+
+    if (await authRepository.cpfExists(cpf)) {
+      logger.warn({ cpf }, "RegisterService: CPF already registered");
+      throw new Error("CPF already registered");
+    }
+
+    if (await authRepository.phoneExists(phone)) {
+      logger.warn({ phone }, "RegisterService: Phone already registered");
+      throw new Error("Phone already registered");
+    }
+
+    // Hash de senha e criar usuário
+    const passwordHash = await bcrypt.hash(password, HASH_ROUNDS);
+    const newUser = await authRepository.create({
       name,
       email,
       cpf,
       phone,
-      password
-    );
-
-    if (!validation.isValid) {
-      logger.warn({ email, errors: validation.errors }, "RegisterService: Validation failed");
-      throw new Error(validation.errors.join(", "));
-    }
-
-    const {
-      name: cleanName,
-      email: cleanEmail,
-      cpf: cleanCpf,
-      phone: cleanPhone
-    } = validation.cleanedData;
-
-    // Step 2: Verificar duplicatas
-    if (await authRepository.emailExists(cleanEmail)) {
-      logger.warn({ email: cleanEmail }, "RegisterService: Email already registered");
-      throw new Error("Email já registrado");
-    }
-
-    if (await authRepository.cpfExists(cleanCpf)) {
-      logger.warn({ cpf: cleanCpf }, "RegisterService: CPF already registered");
-      throw new Error("CPF já registrado");
-    }
-
-    if (await authRepository.phoneExists(cleanPhone)) {
-      logger.warn({ phone: cleanPhone }, "RegisterService: Phone already registered");
-      throw new Error("Telefone já registrado");
-    }
-
-    // Step 3: Hash de senha e criar usuário
-    const passwordHash = await bcrypt.hash(password, HASH_ROUNDS);
-    const newUser = await authRepository.create({
-      name: cleanName,
-      email: cleanEmail,
-      cpf: cleanCpf,
-      phone: cleanPhone,
       passwordHash
     });
 
-    logger.info({ userId: newUser.id, email: cleanEmail }, "RegisterService: User created");
+    logger.info({ userId: newUser.id, email }, "RegisterService: User created");
 
-    // Step 4: Enviar código de verificação
+    // Enviar código de verificação
     try {
-      await sendVerificationCode(newUser.id, cleanEmail);
+      await sendVerificationCode(newUser.id, email);
       logger.info({ userId: newUser.id }, "RegisterService: Verification code sent");
     } catch (emailError) {
       logger.error({ error: emailError.message, userId: newUser.id }, "RegisterService: Error sending verification code");
@@ -81,7 +60,7 @@ async function registerUser(name, email, cpf, phone, password) {
 
     return {
       userId: newUser.id,
-      message: "Usuário registrado com sucesso! Verifique seu email para confirmar."
+      message: "User registered successfully! Check your email to verify."
     };
 
   } catch (error) {

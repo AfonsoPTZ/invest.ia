@@ -295,11 +295,112 @@ function validateUserRegistration(name, email, cpf, phone, password) {
   };
 }
 
+/**
+ * Validar login do usuário
+ * @param {string} email - Email do usuário
+ * @param {string} password - Senha do usuário
+ * @returns {Promise<{isValid: boolean, error: string, cleanedData: object}>}
+ */
+function validateUserLogin(email, password) {
+  const errors = [];
+
+  // Validate email
+  const emailValidation = validateEmail(email);
+  if (!emailValidation.isValid) {
+    errors.push(emailValidation.error);
+  }
+
+  // Validate password
+  if (!password || password.length === 0) {
+    errors.push("Password is required");
+  }
+
+  if (errors.length > 0) {
+    return {
+      isValid: false,
+      errors: errors
+    };
+  }
+
+  return {
+    isValid: true,
+    cleanedData: {
+      email: emailValidation.cleanedEmail,
+      password: password
+    }
+  };
+}
+
+/**
+ * Validar verificação de OTP
+ * @param {number} userId - ID do usuário
+ * @param {string} otpCode - Código OTP
+ * @returns {Promise<{isValid: boolean, error: string, cleanedData: object}>}
+ */
+function validateOtpVerification(userId, otpCode) {
+  const errors = [];
+
+  // Validate userId
+  if (!userId || !Number.isInteger(parseInt(userId)) || parseInt(userId) < 1) {
+    errors.push("Valid User ID is required");
+  }
+
+  // Validate OTP code format
+  if (!otpCode || typeof otpCode !== "string") {
+    errors.push("OTP code is required");
+  } else {
+    const cleanOtp = String(otpCode).replace(/\D/g, "");
+    if (cleanOtp.length !== 6) {
+      errors.push("OTP code must be 6 digits");
+    }
+  }
+
+  if (errors.length > 0) {
+    return {
+      isValid: false,
+      errors: errors
+    };
+  }
+
+  return {
+    isValid: true,
+    cleanedData: {
+      userId: parseInt(userId),
+      otpCode: String(otpCode).replace(/\D/g, "")
+    }
+  };
+}
+
+/**
+ * Validar resend OTP
+ * @param {number} userId - ID do usuário
+ * @returns {Promise<{isValid: boolean, error: string, cleanedData: object}>}
+ */
+function validateResendOtp(userId) {
+  // Validate userId
+  if (!userId || !Number.isInteger(parseInt(userId)) || parseInt(userId) < 1) {
+    return {
+      isValid: false,
+      error: "Valid User ID is required"
+    };
+  }
+
+  return {
+    isValid: true,
+    cleanedData: {
+      userId: parseInt(userId)
+    }
+  };
+}
+
 module.exports = {
   validateCPF,
   validateEmail,
   validatePhone,
   validateName,
   validatePassword,
-  validateUserRegistration
+  validateUserRegistration,
+  validateUserLogin,
+  validateOtpVerification,
+  validateResendOtp
 };

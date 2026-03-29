@@ -1,12 +1,13 @@
 // Financial Profile Service - Doorkeeper pattern
-// Orchestrates: Validators → Repositories
+// Orchestrates: Repositories
+// Dados já vêm validados do middleware
 const financialProfileRepository = require("../repositories/financial-profile.repository");
 const userRepository = require("../repositories/user.repository");
-const financialProfileValidator = require("../validators/financial-profile.validator");
 const logger = require("../utils/logger");
 
 class FinancialProfileService {
   // Create user financial profile
+  // Dados já validados pelo middleware
   async createProfile(userId, profileData) {
     try {
       logger.info({ userId }, "Service: Starting financial profile creation");
@@ -17,32 +18,15 @@ class FinancialProfileService {
         throw new Error("User ID is required");
       }
 
-      // Step 2: Validate all profile data via validator
-      const validation = financialProfileValidator.validateFinancialProfileRegistration(
-        profileData.monthly_income,
-        profileData.initial_balance,
-        profileData.has_investments,
-        profileData.has_assets,
-        profileData.financial_goal,
-        profileData.behavior_profile
-      );
-
-      if (!validation.isValid) {
-        logger.warn({ userId, errors: validation.errors }, "Service: Financial profile validation failed");
-        throw new Error(validation.errors.join(", "));
-      }
-
-      const cleanedData = validation.cleanedData;
-
-      // Step 3: Verify user exists in repository
+      // Step 2: Verify user exists in repository
       const user = await userRepository.findById(userId);
       if (!user) {
         logger.warn({ userId }, "Service: User not found for profile creation");
         throw new Error("User not found");
       }
 
-      // Step 4: Create or update profile via repository
-      const profile = await financialProfileRepository.createOrUpdate(userId, cleanedData);
+      // Step 3: Create or update profile via repository
+      const profile = await financialProfileRepository.createOrUpdate(userId, profileData);
       logger.info({ userId, profileId: profile.id }, "Service: Financial profile saved successfully");
       return profile;
 

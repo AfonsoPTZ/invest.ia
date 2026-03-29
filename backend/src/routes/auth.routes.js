@@ -10,8 +10,7 @@ const {
   registerValidationRules,
   loginValidationRules,
   validateEmailVerificationRules,
-  validateResendOtpRules,
-  handleValidationErrors
+  validateResendOtpRules
 } = require("../validators/auth.validator");
 
 // Helper: wrap userValidator functions to accept data object
@@ -25,22 +24,34 @@ const validateRegistrationWithOtp = (data) => {
   );
 };
 
-// Public routes with validation
+// Helper: wrap login validator
+const validateLogin = (data) => {
+  return userValidator.validateUserLogin(data.email, data.password);
+};
+
+// Helper: wrap OTP verification validator
+const validateOtpVerification = (data) => {
+  return userValidator.validateOtpVerification(data.userId, data.otpCode);
+};
+
+// Helper: wrap resend OTP validator
+const validateResendOtp = (data) => {
+  return userValidator.validateResendOtp(data.userId);
+};
+
+// Public routes with validation middleware
 router.post(
   "/register",
-  registerValidationRules(),
-  handleValidationErrors,
+  validatorMiddleware(validateRegistrationWithOtp, "User Registration"),
   authController.register.bind(authController)
 );
 
 router.post(
   "/login",
-  loginValidationRules(),
-  handleValidationErrors,
+  validatorMiddleware(validateLogin, "User Login"),
   authController.login.bind(authController)
 );
 
-// Email verification with OTP - using validator middleware
 router.post(
   "/register-with-otp",
   validatorMiddleware(validateRegistrationWithOtp, "Register with OTP"),
@@ -49,20 +60,18 @@ router.post(
 
 router.post(
   "/verify-email",
-  validateEmailVerificationRules(),
-  handleValidationErrors,
+  validatorMiddleware(validateOtpVerification, "Email Verification"),
   authController.verifyEmail.bind(authController)
 );
 
 router.post(
   "/resend-otp",
-  validateResendOtpRules(),
-  handleValidationErrors,
+  validatorMiddleware(validateResendOtp, "Resend OTP"),
   authController.resendOtp.bind(authController)
 );
 
-// Protected (require token)
-router.post(
+// Protected routes (require token)
+router.delete(
   "/logout",
   authMiddleware,
   authController.logout.bind(authController)

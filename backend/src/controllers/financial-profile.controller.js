@@ -18,8 +18,8 @@ class PerfilFinanceiroController {
 
       logger.info({ userId }, "Creating financial profile");
 
-      // Service handles validation and persistence
-      const profile = await financialProfileService.createProfile(userId, request.body);
+      // Data already validated by middleware
+      const profile = await financialProfileService.createProfile(userId, request.validatedData || request.body);
 
       logger.info({ userId, profileId: profile.id }, "Financial profile created successfully");
 

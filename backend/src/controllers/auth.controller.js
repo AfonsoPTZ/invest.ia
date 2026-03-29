@@ -6,19 +6,25 @@ const logger = require("../utils/logger");
 const RegisterDTO = require("../dtos/register.dto");
 const LoginDTO = require("../dtos/login.dto");
 const VerifyOtpDTO = require("../dtos/verify-otp.dto");
-const AuthResponseDTO = require("../dtos/auth-response.dto");
 
 class AuthController {
   // Register new user
   async register(request, response) {
     try {
-      const { name, email, cpf, phone, password } = request.body;
+      // Create DTO from validated data (from middleware)
+      const registerDTO = RegisterDTO.fromRequest(request.validatedData || request.body);
 
-      logger.info({ email }, "Attempting user registration");
+      logger.info(registerDTO.toJSON(), "Attempting user registration");
 
-      const registerResult = await registerService.registerUser(name, email, cpf, phone, password);
+      const registerResult = await registerService.registerUser(
+        registerDTO.name,
+        registerDTO.email,
+        registerDTO.cpf,
+        registerDTO.phone,
+        registerDTO.password
+      );
 
-      logger.info({ userId: registerResult.userId, email }, "User registered successfully");
+      logger.info({ userId: registerResult.userId, email: registerDTO.email }, "User registered successfully");
 
       return response.status(201).json({
         status: "success",
@@ -27,7 +33,7 @@ class AuthController {
       });
 
     } catch (error) {
-      logger.error({ error: error.message, email: request.body.email }, "Error on user registration");
+      logger.error({ error: error.message, email: request.validatedData?.email || request.body?.email }, "Error on user registration");
       return response.status(400).json({
         status: "error",
         message: error.message
@@ -38,8 +44,8 @@ class AuthController {
   // Login user
   async login(request, response) {
     try {
-      // Create DTO from request
-      const loginDTO = LoginDTO.fromRequest(request.body);
+      // Create DTO from validated data (from middleware)
+      const loginDTO = LoginDTO.fromRequest(request.validatedData || request.body);
 
       logger.info(loginDTO.toJSON(), "Attempting user login");
 
@@ -59,7 +65,7 @@ class AuthController {
       });
 
     } catch (error) {
-      logger.error({ error: error.message, email: request.body?.email }, "Error on user login");
+      logger.error({ error: error.message, email: request.validatedData?.email || request.body?.email }, "Error on user login");
       return response.status(401).json({
         status: "error",
         message: error.message
@@ -146,8 +152,8 @@ class AuthController {
   // Verify email with OTP
   async verifyEmail(request, response) {
     try {
-      // Create DTO from request
-      const verifyOtpDTO = VerifyOtpDTO.fromRequest(request.body);
+      // Create DTO from validated data (from middleware)
+      const verifyOtpDTO = VerifyOtpDTO.fromRequest(request.validatedData || request.body);
 
       logger.info(verifyOtpDTO.toJSON(), "Attempting email verification");
 
@@ -174,7 +180,7 @@ class AuthController {
       });
 
     } catch (error) {
-      logger.error({ error: error.message, userId: request.body?.userId }, "Error on email verification");
+      logger.error({ error: error.message, userId: request.validatedData?.userId || request.body?.userId }, "Error on email verification");
       
       return response.status(400).json({
         success: false,
@@ -186,15 +192,8 @@ class AuthController {
   // Resend OTP code
   async resendOtp(request, response) {
     try {
-      const { userId } = request.body;
-
-      if (!userId) {
-        logger.warn({}, "Missing userId");
-        return response.status(400).json({
-          success: false,
-          message: "userId is required"
-        });
-      }
+      // Create DTO from validated data (from middleware)
+      const { userId } = request.validatedData || request.body;
 
       logger.info({ userId }, "Attempting to resend OTP");
 
@@ -205,7 +204,7 @@ class AuthController {
       return response.status(200).json(result);
 
     } catch (error) {
-      logger.error({ error: error.message, userId: request.body.userId }, "Error on resend OTP");
+      logger.error({ error: error.message, userId: request.validatedData?.userId || request.body?.userId }, "Error on resend OTP");
       
       return response.status(400).json({
         success: false,

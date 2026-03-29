@@ -9,11 +9,11 @@ const logger = require("../utils/logger");
 const loggerMiddleware = pinoHttp(
   {
     logger: logger,
-    customProps: (request, response) => ({
+    customProps: (request) => ({
       clientIp: request.ip,
       userAgent: request.get("user-agent")
     }),
-    customLogLevel: (request, response, error) => {
+    customLogLevel: (_, response, error) => {
       if (response.statusCode >= 400 && response.statusCode < 500) {
         return "warn";
       } else if (response.statusCode >= 500 || error) {

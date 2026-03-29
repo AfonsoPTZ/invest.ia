@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { register } from "../../services/authService";
 import { validateRegisterForm } from "../../validators/authValidator";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
@@ -7,8 +8,6 @@ import Alert from "../../components/Alert";
 import Card from "../../components/Card";
 import "../../styles/auth.css";
 import "../../styles/forms.css";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 /**
  * Register Page
@@ -77,25 +76,13 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/auth/register-with-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          cpf: formData.cpf.replace(/\D/g, ""),
-          phone: formData.phone.replace(/\D/g, ""),
-          password: formData.password
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Error registering");
-      }
+      const data = await register(
+        formData.name,
+        formData.email,
+        formData.cpf.replace(/\D/g, ""),
+        formData.phone.replace(/\D/g, ""),
+        formData.password
+      );
 
       navigate("/verify-otp", {
         state: {
@@ -117,32 +104,35 @@ export default function Register() {
         <h2 className="auth-title">Criar Conta</h2>
         
         {error && (
-          <Alert type="error" message={error} />
+          <Alert type="error">{error}</Alert>
         )}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <Input
+            label="Name"
             type="text"
             name="name"
-            placeholder="Seu Nome"
+            placeholder="Your Name"
             value={formData.name}
             onChange={handleInputChange}
             disabled={isLoading}
           />
 
           <Input
+            label="Email"
             type="email"
             name="email"
-            placeholder="seuemail@example.com"
+            placeholder="your@email.com"
             value={formData.email}
             onChange={handleInputChange}
             disabled={isLoading}
           />
 
           <Input
+            label="CPF"
             type="text"
             name="cpf"
-            placeholder="CPF (11 dígitos)"
+            placeholder="CPF (11 digits)"
             value={formData.cpf}
             onChange={handleInputChange}
             disabled={isLoading}
@@ -150,9 +140,10 @@ export default function Register() {
           />
 
           <Input
+            label="Phone"
             type="tel"
             name="phone"
-            placeholder="Telefone (11 dígitos)"
+            placeholder="Phone (11 digits)"
             value={formData.phone}
             onChange={handleInputChange}
             disabled={isLoading}
@@ -160,18 +151,20 @@ export default function Register() {
           />
 
           <Input
+            label="Password"
             type="password"
             name="password"
-            placeholder="Senha"
+            placeholder="Password"
             value={formData.password}
             onChange={handleInputChange}
             disabled={isLoading}
           />
 
           <Input
+            label="Confirm Password"
             type="password"
             name="confirmPassword"
-            placeholder="Confirmar Senha"
+            placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleInputChange}
             disabled={isLoading}

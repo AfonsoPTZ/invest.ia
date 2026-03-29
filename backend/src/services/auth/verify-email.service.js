@@ -1,30 +1,22 @@
 // Verify Email Service - Confirmação de email com OTP
-const jwt = require("jsonwebtoken");
 const { verifyEmailWithOtp, resendVerificationCode } = require("./email-verification.service");
 const { generateTempToken } = require("./token.service");
-const otpValidator = require("../../validators/otp.validator");
 const authRepository = require("../../repositories/user.repository");
 const logger = require("../../utils/logger");
 
 /**
  * Confirmar email com código OTP
+ * Dados já validados pelo middleware
  * @param {number} userId - ID do usuário
- * @param {string} otpCode - Código OTP fornecido
+ * @param {string} otpCode - Código OTP fornecido (já validado)
  * @returns {Promise<{success: boolean, message: string, token: string, redirectUrl: string}>}
  */
 async function confirmEmailWithOtp(userId, otpCode) {
   try {
     logger.info({ userId }, "VerifyEmailService: Confirming email with OTP");
 
-    // Validar formato do OTP
-    const validation = otpValidator.validateOtpFormat(otpCode);
-    if (!validation.isValid) {
-      logger.warn({ userId }, `VerifyEmailService: Invalid OTP format - ${validation.error}`);
-      throw new Error(validation.error);
-    }
-
     // Verificar OTP
-    const verification = await verifyEmailWithOtp(userId, validation.cleanedOtp);
+    const verification = await verifyEmailWithOtp(userId, otpCode);
 
     if (!verification.isValid) {
       logger.warn({ userId }, "VerifyEmailService: OTP verification failed");
@@ -39,7 +31,7 @@ async function confirmEmailWithOtp(userId, otpCode) {
     const user = await authRepository.findById(userId);
     if (!user) {
       logger.warn({ userId }, "VerifyEmailService: User not found after OTP verification");
-      throw new Error("Usuário não encontrado");
+      throw new Error("User not found");
     }
 
     // Gerar token temporário para completar perfil financeiro
@@ -49,7 +41,7 @@ async function confirmEmailWithOtp(userId, otpCode) {
 
     return {
       success: true,
-      message: "Email verificado com sucesso!",
+      message: "Email verified successfully!",
       token: tempToken,
       redirectUrl: "/financial-profile"
     };
@@ -72,7 +64,7 @@ async function resendOtpCode(userId) {
     const user = await authRepository.findById(userId);
     if (!user) {
       logger.warn({ userId }, "VerifyEmailService: User not found");
-      throw new Error("Usuário não encontrado");
+      throw new Error("User not found");
     }
 
     await resendVerificationCode(userId, user.email);
@@ -81,7 +73,7 @@ async function resendOtpCode(userId) {
 
     return {
       success: true,
-      message: "Código reenviado! Verifique seu email."
+      message: "Code resent! Check your email."
     };
 
   } catch (error) {

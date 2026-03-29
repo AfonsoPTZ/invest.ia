@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { verifyEmail, resendOtp } from "../../services/authService";
 import { validateOTPCode } from "../../validators/authValidator";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
@@ -7,8 +8,6 @@ import Alert from "../../components/Alert";
 import logger from "../../utils/logger";
 import "../../styles/auth.css";
 import "../../styles/forms.css";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 /**
  * Email OTP Verification Page
@@ -118,20 +117,7 @@ export default function VerifyOtp() {
     try {
       logger.info({ userId }, "VerifyOtp: Attempting email verification");
 
-      const response = await fetch(`${API_URL}/auth/verify-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ userId, otpCode })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        logger.warn({ userId }, "VerifyOtp: Email verification failed");
-        throw new Error(data.message || "Invalid code");
-      }
+      const data = await verifyEmail(userId, otpCode);
 
       // Store temporary token and userId for next page
       if (data.token) {
@@ -170,20 +156,7 @@ export default function VerifyOtp() {
     try {
       logger.info({ userId }, "VerifyOtp: Attempting to resend OTP");
 
-      const response = await fetch(`${API_URL}/auth/resend-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ userId })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        logger.warn({ userId }, "VerifyOtp: Resend OTP failed");
-        throw new Error(data.message || "Error resending code");
-      }
+      const data = await resendOtp(userId);
 
       logger.info({ userId }, "VerifyOtp: OTP resent successfully");
 
@@ -211,7 +184,7 @@ export default function VerifyOtp() {
         </p>
 
         {error && (
-          <Alert type="error" message={error} />
+          <Alert type="error">{error}</Alert>
         )}
 
         <form onSubmit={handleSubmit} className="auth-form">

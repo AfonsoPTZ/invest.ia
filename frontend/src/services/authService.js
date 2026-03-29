@@ -127,7 +127,7 @@ export async function logout() {
 
     // Notify backend (best effort)
     await fetch(`${API_URL}/auth/logout`, {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -224,5 +224,83 @@ export async function checkAuth() {
   } catch (error) {
     logger.error({ error: error.message }, "AuthService: Error checking authentication");
     return false;
+  }
+}
+/**
+ * Verify email with OTP code
+ * 
+ * User enters OTP code received via email after registration
+ * Backend validates OTP and returns temporary token for profile completion
+ * 
+ * @async
+ * @param {number} userId - User ID from registration
+ * @param {string} otpCode - 6-digit OTP code
+ * @returns {Promise<Object>} { success, message, token, redirectUrl }
+ * @throws {Error} Verification error from API or network
+ */
+export async function verifyEmail(userId, otpCode) {
+  try {
+    logger.info({ userId }, "AuthService: Attempting email verification with OTP");
+
+    const response = await fetch(`${API_URL}/auth/verify-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId, otpCode })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      logger.warn({ userId }, `AuthService: Email verification failed - ${data.message}`);
+      throw new Error(data.message || "Email verification error");
+    }
+
+    logger.info({ userId }, "AuthService: Email verified successfully. Token generated");
+
+    return data;
+  } catch (error) {
+    logger.error({ userId, error: error.message }, "AuthService: Error on email verification");
+    throw error;
+  }
+}
+
+/**
+ * Resend OTP code to user email
+ * 
+ * Requested when user doesn't receive initial OTP or code expires
+ * Generates new OTP and sends to registered email
+ * 
+ * @async
+ * @param {number} userId - User ID who needs new OTP
+ * @returns {Promise<Object>} { success, message }
+ * @throws {Error} Resend error from API or network
+ */
+export async function resendOtp(userId) {
+  try {
+    logger.info({ userId }, "AuthService: Attempting to resend OTP");
+
+    const response = await fetch(`${API_URL}/auth/resend-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      logger.warn({ userId }, `AuthService: Resend OTP failed - ${data.message}`);
+      throw new Error(data.message || "Resend OTP error");
+    }
+
+    logger.info({ userId }, "AuthService: OTP resent successfully");
+
+    return data;
+  } catch (error) {
+    logger.error({ userId, error: error.message }, "AuthService: Error on resend OTP");
+    throw error;
   }
 }
