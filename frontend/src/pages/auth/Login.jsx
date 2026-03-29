@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaChartLine, FaFire } from "react-icons/fa";
 import { login } from "../../services/authService";
 import { validateLoginForm } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
@@ -78,9 +79,12 @@ function Login() {
       <Card className="auth-card" ref={cardRef}>
         <div className="auth-header">
           <div className="auth-logo">
-            <div className="logo-icon">📊</div>
+            <div className="logo-icon"><FaChartLine /></div>
           </div>
-          <h1 className="auth-title">Invest_IA</h1>
+          <h1 className="auth-title">
+            <span className="invest-text">Invest</span>
+            <span className="panda-ia-text">PandaIA</span>
+          </h1>
           <p className="auth-subtitle">Sign in to your account</p>
         </div>
 

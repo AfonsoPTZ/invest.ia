@@ -4,12 +4,31 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%), url('../../assets/images/img-fundo.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+}
+
+.app-layout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at bottom right, rgba(220, 38, 38, 0.05) 0%, rgba(15, 15, 15, 0.95) 60%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .app-content {
   flex: 1;
   padding: 32px 24px;
+  padding-top: 104px;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -77,6 +96,25 @@
   margin: 0 0 12px 0;
   letter-spacing: -1px;
   line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.user-name {
+  background: linear-gradient(135deg, #f5f5f5 0%, #dc2626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}
+
+.hero-icon {
+  color: #dc2626;
+  font-size: 36px;
+  animation: float 3s ease-in-out infinite;
 }
 
 @media (max-width: 768px) {
@@ -141,21 +179,23 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
+  max-width: 900px;
 }
 
 @media (max-width: 768px) {
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
 }
 
 @media (max-width: 480px) {
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+    max-width: 100%;
   }
 }
 
@@ -168,17 +208,18 @@
 }
 
 .stat-card {
-  padding: 28px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
-  border: 1.5px solid rgba(125, 30, 30, 0.2);
-  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(38, 38, 38, 0.9) 100%);
+  border: 1.5px solid rgba(220, 38, 38, 0.25);
+  border-radius: 16px;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(220, 38, 38, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(220, 38, 38, 0.08);
+  min-height: 200px;
 }
 
 @media (max-width: 768px) {
@@ -220,6 +261,10 @@
   font-size: 32px;
   margin-bottom: 12px;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
 }
 
 .stat-icon.balance {
@@ -265,8 +310,9 @@
   font-weight: 400;
 }
 
-/* Actions Section */
+/* Actions Section - Minimized/Hidden initially */
 .actions-section {
+  display: none;
   margin-bottom: 24px;
 }
 
@@ -389,18 +435,18 @@
 }
 
 /* ============================================
-   Panda Mascot Image
+   Panda Mascot Image - Premium Integration
    ============================================ */
 
 .dashboard-panda-wrapper {
   position: fixed;
-  bottom: -20px;
-  right: -40px;
-  width: 300px;
-  height: 300px;
+  bottom: -40px;
+  right: -60px;
+  width: 420px;
+  height: 420px;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .dashboard-panda-image {
@@ -408,21 +454,35 @@
   height: 100%;
   object-fit: cover;
   animation: float 4s ease-in-out infinite;
-  filter: drop-shadow(0 10px 30px rgba(220, 38, 38, 0.15));
+  filter: drop-shadow(0 20px 40px rgba(220, 38, 38, 0.1));
+}
+
+@media (max-width: 1024px) {
+  .dashboard-panda-wrapper {
+    width: 350px;
+    height: 350px;
+    bottom: -30px;
+    right: -50px;
+    opacity: 0.7;
+  }
 }
 
 @media (max-width: 768px) {
+  .dashboard-panda-wrapper {
+    width: 280px;
+    height: 280px;
+    bottom: -20px;
+    right: -40px;
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 480px) {
   .dashboard-panda-wrapper {
     width: 200px;
     height: 200px;
     bottom: -10px;
     right: -30px;
     opacity: 0.5;
-  }
-}
-
-@media (max-width: 480px) {
-  .dashboard-panda-wrapper {
-    display: none;
   }
 }

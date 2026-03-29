@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
+import { FaTools } from "react-icons/fa";
 import LogViewer from "../../components/LogViewer";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import Button from "../../components/Button";
 import "../../styles/app.css";
 
@@ -23,10 +25,6 @@ import "../../styles/app.css";
 export default function Logs() {
   const navigate = useNavigate();
 
-  const handleBack = () => {
-    navigate("/dashboard");
-  };
-
   return (
     <div className="app-layout">
       <Navbar onLogout={() => navigate("/login")} />
@@ -34,20 +32,13 @@ export default function Logs() {
       <main className="app-content">
         <div className="app-container">
           {/* Page Header */}
-          <div style={{ marginBottom: '32px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
-              <div>
-                <h1 style={{ margin: 0, fontSize: '32px', fontWeight: '700', color: '#0f172a' }}>
-                  Frontend Logs 📋
-                </h1>
-              </div>
-              <Button type="secondary" onClick={handleBack}>
-                Back to Dashboard
-              </Button>
+          <div className="dashboard-hero">
+            <div className="hero-content">
+              <h1 className="hero-title">System Diagnostics <FaTools className="hero-icon" /></h1>
+              <p className="hero-subtitle">
+                Real-time debugging: Monitor application performance and troubleshoot issues
+              </p>
             </div>
-            <p style={{ color: '#64748b', margin: 0, fontSize: '15px', fontWeight: '400' }}>
-              Real-time debugging: View all frontend application logs, filter by level, or export for analysis.
-            </p>
           </div>
 
           {/* Log Viewer */}
@@ -65,8 +56,17 @@ export default function Logs() {
               <li>Open browser console (F12) to see styled logs</li>
             </ul>
           </div>
+
+          {/* Back Button */}
+          <div style={{ marginTop: '40px' }}>
+            <Button type="secondary" onClick={() => navigate('/dashboard')}>
+              ← Back to Dashboard
+            </Button>
+          </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

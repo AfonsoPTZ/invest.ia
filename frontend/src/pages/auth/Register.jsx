@@ -8,7 +8,6 @@ import Input from "../../components/Input";
 import Alert from "../../components/Alert";
 import Card from "../../components/Card";
 import "../../styles/auth.css";
-import "../../styles/forms.css";
 
 /**
  * Register Page
@@ -143,82 +142,67 @@ export default function Register() {
         )}
 
         <form onSubmit={handleSubmit} className="auth-form">
-          {/* Personal Information Section */}
-          <div className="form-section">
-            <h3 className="form-section-title">Personal Information</h3>
-            
-            <Input
-              label="Full Name"
-              type="text"
-              name="name"
-              placeholder="Your Name"
-              value={formData.name}
-              onChange={handleInputChange}
-              disabled={isLoading}
-            />
+          <Input
+            label="Full Name"
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            value={formData.name}
+            onChange={handleInputChange}
+            disabled={isLoading}
+          />
 
-            <Input
-              label="Email Address"
-              type="email"
-              name="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={handleInputChange}
-              disabled={isLoading}
-            />
-          </div>
+          <Input
+            label="Email Address"
+            type="email"
+            name="email"
+            placeholder="your@email.com"
+            value={formData.email}
+            onChange={handleInputChange}
+            disabled={isLoading}
+          />
 
-          {/* Contact Information Section */}
-          <div className="form-section">
-            <h3 className="form-section-title">Contact Information</h3>
-            
-            <Input
-              label="CPF"
-              type="text"
-              name="cpf"
-              placeholder="CPF (11 digits)"
-              value={formData.cpf}
-              onChange={handleInputChange}
-              disabled={isLoading}
-              maxLength="14"
-            />
+          <Input
+            label="CPF"
+            type="text"
+            name="cpf"
+            placeholder="CPF (11 digits)"
+            value={formData.cpf}
+            onChange={handleInputChange}
+            disabled={isLoading}
+            maxLength="14"
+          />
 
-            <Input
-              label="Phone Number"
-              type="tel"
-              name="phone"
-              placeholder="Phone (11 digits)"
-              value={formData.phone}
-              onChange={handleInputChange}
-              disabled={isLoading}
-              maxLength="15"
-            />
-          </div>
+          <Input
+            label="Phone Number"
+            type="tel"
+            name="phone"
+            placeholder="Phone (11 digits)"
+            value={formData.phone}
+            onChange={handleInputChange}
+            disabled={isLoading}
+            maxLength="15"
+          />
 
-          {/* Security Section */}
-          <div className="form-section">
-            <h3 className="form-section-title">Security</h3>
-            
-            <Input
-              label="Password"
-              type="password"
-              name="password"
-              placeholder="Create a strong password"
-              value={formData.password}
-              onChange={handleInputChange}
-              disabled={isLoading}
-            />
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Create a strong password"
+            value={formData.password}
+            onChange={handleInputChange}
+            disabled={isLoading}
+          />
 
-            <Input
-              label="Confirm Password"
-              type="password"
-              name="confirmPassword"
-              placeholder="Re-enter your password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              disabled={isLoading}
-            />
-          </div>
+          <Input
+            label="Confirm Password"
+            type="password"
+            name="confirmPassword"
+            placeholder="Re-enter your password"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            disabled={isLoading}
+          />
 
           <Button
             type="primary"
@@ -228,6 +212,8 @@ export default function Register() {
             {isLoading ? "Creating Account..." : "Continue to Verification"}
           </Button>
         </form>
+
+        <div className="auth-divider"></div>
 
         <p className="auth-footer">
           Already have an account? <a href="/login" className="auth-link">Sign in instead</a>

@@ -12,6 +12,10 @@ import FinancialProfile from "./pages/auth/FinancialProfile";
 // App Pages
 import Dashboard from "./pages/app/Dashboard";
 import Logs from "./pages/app/Logs";
+import Investments from "./pages/app/Investments";
+import Assets from "./pages/app/Assets";
+import Income from "./pages/app/Income";
+import Expense from "./pages/app/Expense";
 
 function App() {
   return (
@@ -26,6 +30,10 @@ function App() {
         {/* Application Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/logs" element={<Logs />} />
+        <Route path="/investments" element={<Investments />} />
+        <Route path="/assets" element={<Assets />} />
+        <Route path="/income" element={<Income />} />
+        <Route path="/expense" element={<Expense />} />
         
         {/* Default Route */}
         <Route path="/" element={<Navigate to="/login" replace />} />

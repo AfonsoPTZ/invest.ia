@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaCheck } from "react-icons/fa";
 import { createFinancialProfile } from "../../services/financialProfileService";
 import { validateFinancialProfileForm } from "../../validators/authValidator";
+import { useAnimateOnMount } from "../../utils/useAnimations";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
 import Card from "../../components/Card";
 import logger from "../../utils/logger";
 import "../../styles/auth.css";
-import "../../styles/forms.css";
 
 /**
  * Financial Profile Setup Page
@@ -39,6 +40,9 @@ export default function FinancialProfile() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Apply scale in animation to card
+  const cardRef = useAnimateOnMount('animate-scale-in', 100);
 
   const [formData, setFormData] = useState({
     monthly_income: "",
@@ -97,7 +101,8 @@ export default function FinancialProfile() {
     setIsLoading(true);
 
     try {
-      if (!token) {
+      const tempToken = sessionStorage.getItem("tempProfileToken");
+      if (!tempToken) {
         logger.warn({}, "FinancialProfile: Token not found for submission");
         throw new Error("Token not found. Please register again.");
       }
@@ -137,16 +142,26 @@ export default function FinancialProfile() {
 
   return (
     <div className="auth-container">
-      <Card className="auth-card">
+      {/* Panda Mascot - Add panda-login-top.png to public folder */}
+      <div className="auth-panda-wrapper">
+        <img 
+          src="/panda-login-top.png" 
+          alt="Invest_IA Mascot"
+          className="auth-panda-image"
+          onError={(e) => e.target.style.display = 'none'}
+        />
+      </div>
+
+      <Card className="auth-card" ref={cardRef}>
         {/* Step Indicator */}
         <div className="form-steps">
           <div className="step-item completed">
-            <div className="step-number">✓</div>
+            <div className="step-number"><FaCheck /></div>
             <div className="step-label">Register</div>
           </div>
           <div className="step-connector completed"></div>
           <div className="step-item completed">
-            <div className="step-number">✓</div>
+            <div className="step-number"><FaCheck /></div>
             <div className="step-label">Verify</div>
           </div>
           <div className="step-connector"></div>
@@ -172,137 +187,125 @@ export default function FinancialProfile() {
         )}
 
         <form onSubmit={handleFormSubmit} className="auth-form">
-          {/* Financial Assets Section */}
-          <div className="form-section">
-            <h3 className="form-section-title">💰 Your Financial Assets</h3>
-            
-            <div className="form-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="has_monthly_income"
-                  checked={formData.has_monthly_income}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                />
-                I have monthly income
-              </label>
-              {formData.has_monthly_income && (
-                <Input
-                  id="monthly_income"
-                  type="number"
-                  name="monthly_income"
-                  label="Monthly Income Amount"
-                  value={formData.monthly_income}
-                  onChange={handleInputChange}
-                  placeholder="Enter amount (e.g., 5000)"
-                  disabled={isLoading}
-                />
-              )}
-            </div>
-
-            <div className="form-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="has_initial_balance"
-                  checked={formData.has_initial_balance}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                />
-                I have initial balance / savings
-              </label>
-              {formData.has_initial_balance && (
-                <Input
-                  id="initial_balance"
-                  type="number"
-                  name="initial_balance"
-                  label="Initial Balance Amount"
-                  value={formData.initial_balance}
-                  onChange={handleInputChange}
-                  placeholder="Enter amount (e.g., 50000)"
-                  disabled={isLoading}
-                />
-              )}
-            </div>
-
-            <div className="form-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="has_investments"
-                  checked={formData.has_investments}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                />
-                I have active investments
-              </label>
-            </div>
-
-            <div className="form-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="has_assets"
-                  checked={formData.has_assets}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                />
-                I have assets (real estate, vehicles, etc)
-              </label>
-            </div>
-          </div>
-
-          {/* Financial Goals Section */}
-          <div className="form-section">
-            <h3 className="form-section-title">🎯 Your Financial Goals</h3>
-            
-            <div className="form-group">
-              <label htmlFor="financial_goal" className="form-label">What is your primary financial goal?</label>
-              <select
-                id="financial_goal"
-                name="financial_goal"
-                value={formData.financial_goal}
+          {/* Financial Assets */}
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="has_monthly_income"
+                checked={formData.has_monthly_income}
                 onChange={handleInputChange}
                 disabled={isLoading}
-                required
-                className="form-select"
-              >
-                <option value="">Select your goal</option>
-                <option value="accumulate_wealth">Accumulate wealth</option>
-                <option value="retirement_planning">Retirement planning</option>
-                <option value="education_funding">Fund education</option>
-                <option value="home_purchase">Buy a home</option>
-                <option value="emergency_fund">Emergency fund</option>
-                <option value="debt_reduction">Reduce debt</option>
-                <option value="short_term_savings">Short-term savings</option>
-                <option value="wealth_transfer">Wealth transfer</option>
-                <option value="business_expansion">Business expansion</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
+              />
+              I have monthly income
+            </label>
+            {formData.has_monthly_income && (
+              <Input
+                id="monthly_income"
+                type="number"
+                name="monthly_income"
+                label="Monthly Income Amount"
+                value={formData.monthly_income}
+                onChange={handleInputChange}
+                placeholder="Enter amount (e.g., 5000)"
+                disabled={isLoading}
+              />
+            )}
           </div>
 
-          {/* Investment Profile Section */}
-          <div className="form-section">
-            <h3 className="form-section-title">📊 Your Investment Profile</h3>
-            
-            <div className="form-group">
-              <label htmlFor="behavior_profile" className="form-label">What's your investor risk profile?</label>
-              <select
-                id="behavior_profile"
-                name="behavior_profile"
-                value={formData.behavior_profile}
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="has_initial_balance"
+                checked={formData.has_initial_balance}
                 onChange={handleInputChange}
                 disabled={isLoading}
-                required
-                className="form-select"
-              >
-                <option value="conservative">🛡️ Conservative - Low risk, stable returns</option>
-                <option value="moderate">⚖️ Moderate - Balanced approach</option>
-                <option value="aggressive">🚀 Aggressive - High risk, high potential returns</option>
-              </select>
-            </div>
+              />
+              I have initial balance / savings
+            </label>
+            {formData.has_initial_balance && (
+              <Input
+                id="initial_balance"
+                type="number"
+                name="initial_balance"
+                label="Initial Balance Amount"
+                value={formData.initial_balance}
+                onChange={handleInputChange}
+                placeholder="Enter amount (e.g., 50000)"
+                disabled={isLoading}
+              />
+            )}
+          </div>
+
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="has_investments"
+                checked={formData.has_investments}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+              I have active investments
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="has_assets"
+                checked={formData.has_assets}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+              I have assets (real estate, vehicles, etc)
+            </label>
+          </div>
+
+          {/* Financial Goals */}
+          <div className="form-group">
+            <label htmlFor="financial_goal" className="form-label">What is your primary financial goal?</label>
+            <select
+              id="financial_goal"
+              name="financial_goal"
+              value={formData.financial_goal}
+              onChange={handleInputChange}
+              disabled={isLoading}
+              required
+              className="form-select"
+            >
+              <option value="">Select your goal</option>
+              <option value="accumulate_wealth">Accumulate wealth</option>
+              <option value="retirement_planning">Retirement planning</option>
+              <option value="education_funding">Fund education</option>
+              <option value="home_purchase">Buy a home</option>
+              <option value="emergency_fund">Emergency fund</option>
+              <option value="debt_reduction">Reduce debt</option>
+              <option value="short_term_savings">Short-term savings</option>
+              <option value="wealth_transfer">Wealth transfer</option>
+              <option value="business_expansion">Business expansion</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          {/* Investment Profile */}
+          <div className="form-group">
+            <label htmlFor="behavior_profile" className="form-label">What's your investor risk profile?</label>
+            <select
+              id="behavior_profile"
+              name="behavior_profile"
+              value={formData.behavior_profile}
+              onChange={handleInputChange}
+              disabled={isLoading}
+              required
+              className="form-select"
+            >
+              <option value="conservative">🛡️ Conservative - Low risk, stable returns</option>
+              <option value="moderate">⚖️ Moderate - Balanced approach</option>
+              <option value="aggressive">🚀 Aggressive - High risk, high potential returns</option>
+            </select>
           </div>
 
           <Button

@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaWallet, FaChartLine, FaCreditCard, FaHome, FaFire } from "react-icons/fa";
 import { logout } from "../../services/authService";
 import { getDashboardName, getDashboardData } from "../../services/dashboardService";
 import { useIntersectionAnimation } from "../../utils/useAnimations";
-import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import "../../styles/app.css";
 
 /**
  * Dashboard Page
  * 
  * Main application page after user authentication
- * Displays user information and financial overview
+ * Displays user financial summary and profile overview
  * 
  * Flow:
  * 1. On mount, checks if user has JWT token in localStorage
  * 2. If no token, redirects to login
  * 3. Fetches user name and dashboard data (user + financial profile)
- * 4. Displays welcome card and financial stats
- * 5. Provides navigation to other features (expenses, investments, etc)
+ * 4. Displays financial overview cards (Current Balance, Monthly Income, etc)
  * 
  * @component
  */
@@ -102,7 +102,7 @@ function Dashboard() {
               {/* Hero Section */}
               <div className="dashboard-hero">
                 <div className="hero-content">
-                  <h1 className="hero-title">Welcome back, {user?.name}! 👋</h1>
+                  <h1 className="hero-title">Welcome back, <span className="user-name">{user?.name}</span>! <FaFire className="hero-icon" /></h1>
                   <p className="hero-subtitle">
                     Here's an overview of your financial profile and investment opportunities.
                   </p>
@@ -117,93 +117,57 @@ function Dashboard() {
                 </div>
 
                 <div className="stats-grid">
-                  {/* Total Balance */}
+                  {/* Current Balance */}
                   <div className="stat-card-wrapper">
                     <Card className="stat-card">
-                      <div className="stat-icon balance">💰</div>
-                      <p className="stat-label">Total Balance</p>
+                      <div className="stat-icon"><FaWallet /></div>
+                      <p className="stat-label">Current Balance</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.initial_balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
                       </p>
-                      <p className="stat-meta">Your total savings</p>
+                      <p className="stat-meta">Available funds</p>
                     </Card>
                   </div>
 
                   {/* Monthly Income */}
                   <div className="stat-card-wrapper">
                     <Card className="stat-card">
-                      <div className="stat-icon income">📈</div>
+                      <div className="stat-icon"><FaChartLine /></div>
                       <p className="stat-label">Monthly Income</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.monthly_income?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
                       </p>
-                      <p className="stat-meta">Income per month</p>
+                      <p className="stat-meta">Fixed monthly income</p>
                     </Card>
                   </div>
 
-                  {/* Monthly Expenses */}
+                  {/* Total Expenses */}
                   <div className="stat-card-wrapper">
                     <Card className="stat-card">
-                      <div className="stat-icon expenses">💳</div>
-                      <p className="stat-label">Monthly Expenses</p>
+                      <div className="stat-icon"><FaCreditCard /></div>
+                      <p className="stat-label">Total Expenses</p>
                       <p className="stat-value">$0.00</p>
                       <p className="stat-meta">Tracked spending</p>
                     </Card>
                   </div>
 
-                  {/* Assets */}
+                  {/* Total Assets */}
                   <div className="stat-card-wrapper">
                     <Card className="stat-card">
-                      <div className="stat-icon assets">🏠</div>
-                      <p className="stat-label">Assets</p>
+                      <div className="stat-icon"><FaHome /></div>
+                      <p className="stat-label">Total Assets</p>
                       <p className="stat-value">$0.00</p>
-                      <p className="stat-meta">Real estate & items</p>
+                      <p className="stat-meta">Property and valuables</p>
                     </Card>
                   </div>
-                </div>
-              </div>
-
-              {/* Main Actions Section */}
-              <div className="actions-section">
-                <div className="section-header">
-                  <h2 className="section-title">Quick Actions</h2>
-                  <p className="section-description">Access your financial management tools</p>
-                </div>
-
-                <div className="nav-cards">
-                  <Card className="nav-card">
-                    <div className="nav-card-icon">💸</div>
-                    <h3 className="nav-card-title">Expenses</h3>
-                    <p className="nav-card-text">Track and manage your spending</p>
-                    <Button type="primary" className="nav-card-btn">View Expenses</Button>
-                  </Card>
-
-                  <Card className="nav-card">
-                    <div className="nav-card-icon">📊</div>
-                    <h3 className="nav-card-title">Investments</h3>
-                    <p className="nav-card-text">Monitor your investment portfolio</p>
-                    <Button type="primary" className="nav-card-btn">View Investments</Button>
-                  </Card>
-
-                  <Card className="nav-card">
-                    <div className="nav-card-icon">🏦</div>
-                    <h3 className="nav-card-title">Assets</h3>
-                    <p className="nav-card-text">Manage your valuable assets</p>
-                    <Button type="primary" className="nav-card-btn">View Assets</Button>
-                  </Card>
-
-                  <Card className="nav-card">
-                    <div className="nav-card-icon">💹</div>
-                    <h3 className="nav-card-title">Income</h3>
-                    <p className="nav-card-text">Control your income streams</p>
-                    <Button type="primary" className="nav-card-btn">View Income</Button>
-                  </Card>
                 </div>
               </div>
             </>
           )}
         </div>
       </main>
+
+      <Footer />
 
       {/* Panda Mascot - Dashboard background accent */}
       {/* Add panda-investments-bottom.png to public folder */}

@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FaCheck } from "react-icons/fa";
 import { verifyEmail, resendOtp } from "../../services/authService";
 import { validateOTPCode } from "../../validators/authValidator";
+import { useAnimateOnMount } from "../../utils/useAnimations";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
@@ -40,6 +42,7 @@ export default function VerifyOtp() {
   const [resendTimer, setResendTimer] = useState(0);
   
   const inputRefs = useRef([]);
+  const cardRef = useAnimateOnMount('animate-scale-in', 100);
 
   /**
    * Redirect to register if no userId/email passed from previous page
@@ -176,11 +179,21 @@ export default function VerifyOtp() {
 
   return (
     <div className="auth-container">
-      <Card className="auth-card">
+      {/* Panda Mascot - Add panda-login-top.png to public folder */}
+      <div className="auth-panda-wrapper">
+        <img 
+          src="/panda-login-top.png" 
+          alt="Invest_IA Mascot"
+          className="auth-panda-image"
+          onError={(e) => e.target.style.display = 'none'}
+        />
+      </div>
+
+      <Card className="auth-card" ref={cardRef}>
         {/* Step Indicator */}
         <div className="form-steps">
           <div className="step-item completed">
-            <div className="step-number">✓</div>
+            <div className="step-number"><FaCheck /></div>
             <div className="step-label">Register</div>
           </div>
           <div className="step-connector completed"></div>
