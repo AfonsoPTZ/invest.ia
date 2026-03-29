@@ -1,8 +1,12 @@
 // Authentication Controller - Simple request/response handler
 const registerService = require("../services/auth/register.service");
 const loginService = require("../services/auth/login.service");
-const verifyEmailService = require("../services/auth/verifyEmail.service");
+const verifyEmailService = require("../services/auth/verify-email.service");
 const logger = require("../utils/logger");
+const RegisterDTO = require("../dtos/register.dto");
+const LoginDTO = require("../dtos/login.dto");
+const VerifyOtpDTO = require("../dtos/verify-otp.dto");
+const AuthResponseDTO = require("../dtos/auth-response.dto");
 
 class AuthController {
   // Register new user
@@ -34,13 +38,14 @@ class AuthController {
   // Login user
   async login(request, response) {
     try {
-      const { email, password } = request.body;
+      // Create DTO from request
+      const loginDTO = LoginDTO.fromRequest(request.body);
 
-      logger.info({ email }, "Attempting user login");
+      logger.info(loginDTO.toJSON(), "Attempting user login");
 
-      const loginResult = await loginService.loginUser(email, password);
+      const loginResult = await loginService.loginUser(loginDTO.email, loginDTO.password);
 
-      logger.info({ userId: loginResult.id, email }, "User logged in successfully");
+      logger.info({ userId: loginResult.id, email: loginResult.email }, "User logged in successfully");
 
       return response.status(200).json({
         status: "success",
@@ -54,7 +59,7 @@ class AuthController {
       });
 
     } catch (error) {
-      logger.error({ error: error.message, email: request.body.email }, "Error on user login");
+      logger.error({ error: error.message, email: request.body?.email }, "Error on user login");
       return response.status(401).json({
         status: "error",
         message: error.message
@@ -107,14 +112,20 @@ class AuthController {
   // Register with OTP verification
   async registerWithOtp(request, response) {
     try {
-      // Using validated data from validatorMiddleware
-      const { name, email, cpf, phone, password } = request.validatedData || request.body;
+      // Create DTO from request (validated data from middleware)
+      const registerDTO = RegisterDTO.fromRequest(request.validatedData || request.body);
 
-      logger.info({ email }, "Attempting user registration with OTP");
+      logger.info(registerDTO.toJSON(), "Attempting user registration with OTP");
 
-      const result = await registerService.registerUser(name, email, cpf, phone, password);
+      const result = await registerService.registerUser(
+        registerDTO.name,
+        registerDTO.email,
+        registerDTO.cpf,
+        registerDTO.phone,
+        registerDTO.password
+      );
 
-      logger.info({ userId: result.userId, email }, "User registered successfully. OTP sent");
+      logger.info({ userId: result.userId, email: registerDTO.email }, "User registered successfully. OTP sent");
 
       return response.status(201).json({
         status: "success",
@@ -135,29 +146,25 @@ class AuthController {
   // Verify email with OTP
   async verifyEmail(request, response) {
     try {
-      const { userId, otpCode } = request.body;
+      // Create DTO from request
+      const verifyOtpDTO = VerifyOtpDTO.fromRequest(request.body);
 
-      if (!userId || !otpCode) {
-        logger.warn({ userId, otpCode }, "Missing userId or otpCode");
-        return response.status(400).json({
-          success: false,
-          message: "userId and otpCode are required"
-        });
-      }
+      logger.info(verifyOtpDTO.toJSON(), "Attempting email verification");
 
-      logger.info({ userId }, "Attempting email verification");
-
-      const result = await verifyEmailService.confirmEmailWithOtp(userId, otpCode);
+      const result = await verifyEmailService.confirmEmailWithOtp(
+        verifyOtpDTO.userId,
+        verifyOtpDTO.otpCode
+      );
 
       if (!result.success) {
-        logger.warn({ userId }, "Email verification failed");
+        logger.warn({ userId: verifyOtpDTO.userId }, "Email verification failed");
         return response.status(400).json({
           success: false,
           message: result.message
         });
       }
 
-      logger.info({ userId }, "Email verified successfully with temporary token generated");
+      logger.info({ userId: verifyOtpDTO.userId }, "Email verified successfully with temporary token generated");
 
       return response.status(200).json({
         success: true,
@@ -167,7 +174,7 @@ class AuthController {
       });
 
     } catch (error) {
-      logger.error({ error: error.message, userId: request.body.userId }, "Error on email verification");
+      logger.error({ error: error.message, userId: request.body?.userId }, "Error on email verification");
       
       return response.status(400).json({
         success: false,

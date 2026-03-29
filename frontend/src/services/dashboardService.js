@@ -1,9 +1,38 @@
-// Dashboard Service - Handles all dashboard data fetching
+/**
+ * Dashboard Service
+ * 
+ * Centralized HTTP client for dashboard data operations
+ * Fetches user information, financial profiles, and related data
+ * Utilizes frontend logger for debugging
+ * 
+ * Layer Responsibility:
+ * - HTTP communication only (fetch, headers, response handling)
+ * - Token retrieval from localStorage
+ * - Error transformation to/from API format
+ * 
+ * DO NOT:
+ * - Business logic (calculations, aggregations)
+ * - UI state management
+ * - Page redirects
+ * 
+ * @module dashboardService
+ */
+
 import logger from "../utils/logger";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
-// Get user name only
+/**
+ * Get user name only
+ * 
+ * Lightweight endpoint returning only user name
+ * Used for quick display on navbar/header
+ * Requires valid JWT token
+ * 
+ * @async
+ * @returns {Promise<Object>} { id, name, email }
+ * @throws {Error} If not authenticated or API error
+ */
 export async function getDashboardName() {
   const token = localStorage.getItem("token");
 
@@ -37,7 +66,17 @@ export async function getDashboardName() {
   }
 }
 
-// Get dashboard data (user + financial profile)
+/**
+ * Get complete dashboard data
+ * 
+ * Includes user information and financial profile
+ * Used on first dashboard load for all stats
+ * Requires valid JWT token
+ * 
+ * @async
+ * @returns {Promise<Object>} { user, financialProfile, ... }
+ * @throws {Error} If not authenticated or API error
+ */
 export async function getDashboardData() {
   const token = localStorage.getItem("token");
 
@@ -71,7 +110,17 @@ export async function getDashboardData() {
   }
 }
 
-// Get investments only
+/**
+ * Get investment data only
+ * 
+ * Fetches user's investment information and summaries
+ * Can be paginated for large datasets
+ * Requires valid JWT token
+ * 
+ * @async
+ * @returns {Promise<Object>} { investments, total, ... }
+ * @throws {Error} If not authenticated or API error
+ */
 export async function getDashboardInvestments() {
   const token = localStorage.getItem("token");
 

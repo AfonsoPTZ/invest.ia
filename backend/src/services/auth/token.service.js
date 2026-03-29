@@ -2,14 +2,14 @@
 const jwt = require("jsonwebtoken");
 const logger = require("../../utils/logger");
 
-// Definir secrets com fallback seguro
-const JWT_SECRET = process.env.JWT_SECRET || "invest_ia_jwt_secret_key_2024_production_v1";
+// Definir secrets usando variáveis de ambiente (obrigatório)
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRATION = process.env.JWT_EXPIRATION || "24h";
 const TEMP_TOKEN_EXPIRATION = "30m"; // Token temporário para perfil financeiro
 
-// Validar que JWT_SECRET não é undefined
+// Validar que JWT_SECRET é obrigatório
 if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET must be defined in environment variables or use default");
+  throw new Error("JWT_SECRET must be defined in environment variables (.env file required)");
 }
 
 /**
@@ -20,7 +20,6 @@ if (!JWT_SECRET) {
  */
 function generateToken(userId, email) {
   try {
-    console.log("🔍 TOKEN.SERVICE.generateToken called with:", { userId, email });
     logger.info({ userId, email, userIdType: typeof userId, emailType: typeof email }, "TokenService: generateToken called");
     
     if (!userId || !email) {
@@ -41,7 +40,6 @@ function generateToken(userId, email) {
     logger.info({ userId }, "TokenService: JWT generated");
     return token;
   } catch (error) {
-    console.error("🔍 TOKEN.SERVICE ERROR:", error.message);
     logger.error({ error: error.message, userId }, "TokenService: Error generating JWT");
     throw new Error("Erro ao gerar token");
   }

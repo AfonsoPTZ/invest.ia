@@ -1,9 +1,9 @@
 USE `invest_ia`;
 
 -- =========================
--- USUÁRIO
+-- USER
 -- =========================
-INSERT INTO usuarios (nome, email, cpf, telefone, senha_hash)
+INSERT INTO users (name, email, cpf, phone, password_hash)
 VALUES (
     'Afonso Braga Plentz',
     'afonsobplentz@gmail.com',
@@ -13,120 +13,120 @@ VALUES (
 );
 
 -- =========================
--- PERFIL FINANCEIRO
+-- FINANCIAL PROFILE
 -- =========================
-INSERT INTO perfil_financeiro (
-    usuario_id,
-    renda_mensal,
-    saldo_inicial,
-    possui_investimentos,
-    possui_patrimonio,
-    objetivo_financeiro,
-    perfil_comportamento
+INSERT INTO financial_profiles (
+    user_id,
+    monthly_income,
+    initial_balance,
+    has_investments,
+    has_assets,
+    financial_goal,
+    behavior_profile
 ) VALUES (
     1,
     1800.00,
     150.00,
     FALSE,
     FALSE,
-    'Quero aprender a economizar e investir.',
-    'moderado'
+    'I want to learn how to save and invest.',
+    'moderate'
 );
 
 -- =========================
--- GANHOS
+-- EARNINGS
 -- =========================
-INSERT INTO ganhos (usuario_id, descricao, valor, data_ganho, fixo)
+INSERT INTO earnings (user_id, description, amount, earned_date, is_fixed)
 VALUES
-(1, 'Salário mensal', 1800.00, '2026-03-05', TRUE),
-(1, 'Freelance de site institucional', 400.00, '2026-03-12', FALSE),
-(1, 'Ganhei 20 reais no Tigrinho KKK', 20.00, '2026-03-14', FALSE);
+(1, 'Monthly salary', 1800.00, '2026-03-05', TRUE),
+(1, 'Freelance web development', 400.00, '2026-03-12', FALSE),
+(1, 'Lottery winnings', 20.00, '2026-03-14', FALSE);
 
 -- =========================
--- DESPESAS
+-- EXPENSES
 -- =========================
-INSERT INTO despesas (usuario_id, descricao, valor, data_despesa, fixo)
+INSERT INTO expenses (user_id, description, amount, expense_date, is_fixed)
 VALUES
-(1, 'Aluguel', 800.00, '2026-03-01', TRUE),
+(1, 'Rent', 800.00, '2026-03-01', TRUE),
 (1, 'Internet', 99.90, '2026-03-03', TRUE),
-(1, 'Lanche da tarde', 5.00, '2026-03-06', FALSE),
-(1, 'iFood pizza', 49.90, '2026-03-08', FALSE),
-(1, 'Uber para faculdade', 18.00, '2026-03-09', FALSE),
-(1, 'Mercado do mês', 210.75, '2026-03-10', FALSE);
+(1, 'Snack', 5.00, '2026-03-06', FALSE),
+(1, 'Pizza delivery', 49.90, '2026-03-08', FALSE),
+(1, 'Uber to college', 18.00, '2026-03-09', FALSE),
+(1, 'Grocery shopping', 210.75, '2026-03-10', FALSE);
 
 -- =========================
--- INVESTIMENTOS
+-- INVESTMENTS
 -- =========================
-INSERT INTO investimentos (
-    usuario_id,
-    tipo_investimento,
-    nome_ativo,
-    valor_aplicado,
-    valor_atual,
-    risco,
-    data_aplicacao,
-    observacao
+INSERT INTO investments (
+    user_id,
+    investment_type,
+    asset_name,
+    invested_amount,
+    current_amount,
+    risk_level,
+    investment_date,
+    notes
 ) VALUES (
     1,
-    'Criptomoeda',
+    'Cryptocurrency',
     'Bitcoin',
     300.00,
     328.50,
-    'alto',
+    'high',
     '2026-03-15',
-    'Primeiro aporte pequeno em cripto'
+    'First small investment in crypto'
 );
 
 -- =========================
--- PATRIMÔNIOS
+-- ASSETS
 -- =========================
-INSERT INTO patrimonios (
-    usuario_id,
-    tipo_bem,
-    descricao,
-    valor_estimado,
-    data_aquisicao
+INSERT INTO assets (
+    user_id,
+    asset_type,
+    description,
+    estimated_value,
+    acquisition_date
 ) VALUES (
     1,
-    'Eletrônico',
-    'Notebook Lenovo IdeaPad',
+    'Equipment',
+    'Lenovo IdeaPad Notebook',
     3200.00,
     '2025-07-20'
 );
 
 -- =========================
--- METAS FINANCEIRAS
+-- FINANCIAL GOALS
 -- =========================
-INSERT INTO metas_financeiras (
-    usuario_id,
-    titulo,
-    descricao,
-    valor_meta,
-    valor_atual,
-    data_objetivo,
+INSERT INTO financial_goals (
+    user_id,
+    title,
+    description,
+    target_amount,
+    current_amount,
+    target_date,
     status
 ) VALUES (
     1,
-    'Reserva de emergência',
-    'Guardar dinheiro para ter segurança financeira',
+    'Emergency fund',
+    'Save money for financial security',
     6000.00,
     1200.00,
     '2026-12-31',
-    'em_andamento'
+    'in_progress'
 );
 
 -- =========================
--- RESUMO MENSAL
+-- MONTHLY SUMMARY
 -- =========================
-INSERT INTO resumos_mensais (
-    usuario_id,
-    ano,
-    mes,
-    total_ganhos,
-    total_despesas,
-    saldo_inicial_mes,
-    saldo_final_mes,
-    economia_mes
+INSERT INTO monthly_summaries (
+    user_id,
+    year,
+    month,
+    total_earnings,
+    total_expenses,
+    beginning_balance,
+    ending_balance,
+    savings_amount
 ) VALUES (
     1,
     2026,
@@ -139,60 +139,60 @@ INSERT INTO resumos_mensais (
 );
 
 -- =========================
--- NOTÍCIA FINANCEIRA
+-- FINANCIAL NEWS
 -- =========================
-INSERT INTO noticias_financeiras (
-    titulo,
-    fonte,
+INSERT INTO financial_news (
+    title,
+    source,
     url,
-    resumo,
-    categoria,
-    data_publicacao
+    summary,
+    category,
+    published_at
 ) VALUES (
-    'Bitcoin volta a subir com melhora do mercado global',
+    'Bitcoin rises again with improvement in global market',
     'Portal Finance News',
-    'https://portalfinance-news.com/bitcoin-sobe-mercado-global',
-    'O ativo apresentou valorização após melhora do sentimento do mercado internacional.',
-    'Criptomoedas',
+    'https://portalfinance-news.com/bitcoin-rises-global-market',
+    'The asset appreciated after improvements in international market sentiment.',
+    'Cryptocurrency',
     '2026-03-18 10:30:00'
 );
 
 -- =========================
--- SUGESTÃO DE ECONOMIA
+-- SAVINGS SUGGESTION
 -- =========================
-INSERT INTO sugestoes_economia (
-    usuario_id,
-    titulo,
-    descricao,
-    fonte,
-    prioridade,
+INSERT INTO savings_suggestions (
+    user_id,
+    title,
+    description,
+    source,
+    priority,
     status
 ) VALUES (
     1,
-    'Reduzir gastos variáveis com delivery',
-    'Você poderia diminuir pedidos por aplicativo nesta semana para economizar mais.',
-    'Foram registradas despesas variáveis com lanche e iFood nos últimos dias.',
-    'alta',
-    'pendente'
+    'Reduce variable spending on delivery',
+    'You could reduce app-based food orders this week to save more.',
+    'Variable expenses were detected with snacks and delivery in recent days.',
+    'high',
+    'pending'
 );
 
 -- =========================
--- SUGESTÃO DE INVESTIMENTO
+-- INVESTMENT SUGGESTION
 -- =========================
-INSERT INTO sugestoes_investimento (
-    usuario_id,
-    noticia_id,
-    titulo,
-    descricao,
-    fonte,
-    risco,
+INSERT INTO investment_suggestions (
+    user_id,
+    news_id,
+    title,
+    description,
+    source,
+    risk_level,
     status
 ) VALUES (
     1,
     1,
-    'Avaliar pequeno aporte em Bitcoin',
-    'Com base no cenário recente, pode ser interessante considerar um aporte pequeno e controlado.',
-    'Sugestão baseada na notícia cadastrada e no interesse do usuário por investimentos.',
-    'alto',
-    'pendente'
+    'Consider small Bitcoin investment',
+    'Based on recent market conditions, it may be worth considering a small and controlled investment.',
+    'Suggestion based on registered news and user interest in investments.',
+    'high',
+    'pending'
 );

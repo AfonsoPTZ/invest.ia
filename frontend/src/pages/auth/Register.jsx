@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { validateRegisterForm } from "../../validators/authValidator";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
@@ -9,6 +10,23 @@ import "../../styles/forms.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
+/**
+ * Register Page
+ * 
+ * User registration form. Collects name, email, CPF, phone, and password.
+ * Frontend validation: required fields, format checks, password confirmation
+ * Backend validation: email uniqueness, CPF uniqueness, password strength
+ * 
+ * Flow:
+ * 1. User enters registration details
+ * 2. Frontend validates inputs (required, format, password match)
+ * 3. Calls /auth/register-with-otp endpoint
+ * 4. Backend sends OTP email and returns userId
+ * 5. Redirects to /verify-otp with userId and email
+ * 6. User verifies OTP on next page
+ * 
+ * @component
+ */
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -22,6 +40,9 @@ export default function Register() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Handle input change - update form state and clear errors
+   */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -31,23 +52,23 @@ export default function Register() {
     setError("");
   };
 
-  const validateForm = () => {
-    if (!formData.name.trim()) return "Nome é obrigatório";
-    if (!formData.email.trim()) return "Email é obrigatório";
-    if (!formData.cpf.trim()) return "CPF é obrigatório";
-    if (formData.cpf.replace(/\D/g, "").length !== 11) return "CPF deve ter 11 dígitos";
-    if (!formData.phone.trim()) return "Telefone é obrigatório";
-    if (!formData.password) return "Senha é obrigatória";
-    if (formData.password.length < 6) return "Senha deve ter no mínimo 6 caracteres";
-    if (formData.password !== formData.confirmPassword) return "Senhas não correspondem";
-    return null;
-  };
-
+  /**
+   * Handle form submission
+   * Validates locally, then sends registration request
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
-    const validationError = validateForm();
+    // Frontend validation - quick checks for better UX
+    const validationError = validateRegisterForm(
+      formData.name,
+      formData.email,
+      formData.cpf,
+      formData.phone,
+      formData.password,
+      formData.confirmPassword
+    );
     if (validationError) {
       setError(validationError);
       return;
@@ -73,7 +94,7 @@ export default function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Erro ao registrar");
+        throw new Error(data.message || "Error registering");
       }
 
       navigate("/verify-otp", {
@@ -84,7 +105,7 @@ export default function Register() {
       });
 
     } catch (err) {
-      setError(err.message || "Erro ao registrar. Tente novamente.");
+      setError(err.message || "Unexpected error. Please try again.");
     } finally {
       setIsLoading(false);
     }

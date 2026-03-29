@@ -2,203 +2,203 @@ CREATE DATABASE `invest_ia`;
 USE `invest_ia`;
 
 -- =========================
--- 1. USUÁRIOS
+-- 1. USERS
 -- =========================
-CREATE TABLE usuarios (
+CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
+    name VARCHAR(150) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     cpf CHAR(11) NOT NULL UNIQUE,
-    telefone VARCHAR(20) NOT NULL UNIQUE,
-    senha_hash VARCHAR(255) NOT NULL,
-    email_verificado BOOLEAN NOT NULL DEFAULT FALSE,
-    otp_codigo_hash VARCHAR(255) NULL,
-    otp_expira_em DATETIME NULL,
-    otp_tentativas INT NOT NULL DEFAULT 0,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    phone VARCHAR(20) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    otp_code_hash VARCHAR(255) NULL,
+    otp_expires_at DATETIME NULL,
+    otp_attempts INT NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- =========================
--- 2. PERFIL FINANCEIRO
+-- 2. FINANCIAL PROFILES
 -- =========================
-CREATE TABLE perfil_financeiro (
+CREATE TABLE financial_profiles (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL UNIQUE,
-    renda_mensal DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    saldo_inicial DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    possui_investimentos BOOLEAN NOT NULL DEFAULT FALSE,
-    possui_patrimonio BOOLEAN NOT NULL DEFAULT FALSE,
-    objetivo_financeiro VARCHAR(255) NOT NULL,
-    perfil_comportamento ENUM('conservador', 'moderado', 'agressivo') NOT NULL DEFAULT 'moderado',
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_financeiro_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL UNIQUE,
+    monthly_income DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    initial_balance DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    has_investments BOOLEAN NOT NULL DEFAULT FALSE,
+    has_assets BOOLEAN NOT NULL DEFAULT FALSE,
+    financial_goal VARCHAR(255) NOT NULL,
+    behavior_profile ENUM('conservative', 'moderate', 'aggressive') NOT NULL DEFAULT 'moderate',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_financial_profile_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
 
 -- =========================
--- 3. GANHOS
+-- 3. EARNINGS
 -- =========================
-CREATE TABLE ganhos (
+CREATE TABLE earnings (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    descricao VARCHAR(255) NOT NULL,
-    valor DECIMAL(12,2) NOT NULL,
-    data_ganho DATE NOT NULL,
-    fixo BOOLEAN NOT NULL DEFAULT FALSE,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_ganho_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    earned_date DATE NOT NULL,
+    is_fixed BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_earning_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
 
 -- =========================
--- 4. DESPESAS
+-- 4. EXPENSES
 -- =========================
-CREATE TABLE despesas (
+CREATE TABLE expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    descricao VARCHAR(255) NOT NULL,
-    valor DECIMAL(12,2) NOT NULL,
-    data_despesa DATE NOT NULL,
-    fixo BOOLEAN NOT NULL DEFAULT FALSE,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_despesa_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    expense_date DATE NOT NULL,
+    is_fixed BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_expense_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
 
 -- =========================
--- 5. INVESTIMENTOS
+-- 5. INVESTMENTS
 -- =========================
-CREATE TABLE investimentos (
+CREATE TABLE investments (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    tipo_investimento VARCHAR(100) NOT NULL,
-    nome_ativo VARCHAR(150) NOT NULL,
-    valor_aplicado DECIMAL(12,2) NOT NULL,
-    valor_atual DECIMAL(12,2),
-    risco ENUM('baixo', 'medio', 'alto') DEFAULT 'medio',
-    data_aplicacao DATE,
-    observacao TEXT,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_investimento_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    investment_type VARCHAR(100) NOT NULL,
+    asset_name VARCHAR(150) NOT NULL,
+    invested_amount DECIMAL(12,2) NOT NULL,
+    current_amount DECIMAL(12,2),
+    risk_level ENUM('low', 'medium', 'high') DEFAULT 'medium',
+    investment_date DATE,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_investment_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
 
 -- =========================
--- 6. PATRIMÔNIOS
+-- 6. ASSETS
 -- =========================
-CREATE TABLE patrimonios (
+CREATE TABLE assets (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    tipo_bem VARCHAR(100) NOT NULL,
-    descricao VARCHAR(255) NOT NULL,
-    valor_estimado DECIMAL(12,2) NOT NULL,
-    data_aquisicao DATE,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_patrimonio_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    asset_type VARCHAR(100) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    estimated_value DECIMAL(12,2) NOT NULL,
+    acquisition_date DATE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_asset_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
 
 -- =========================
--- 7. METAS FINANCEIRAS
+-- 7. FINANCIAL GOALS
 -- =========================
-CREATE TABLE metas_financeiras (
+CREATE TABLE financial_goals (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    titulo VARCHAR(150) NOT NULL,
-    descricao TEXT,
-    valor_meta DECIMAL(12,2) NOT NULL,
-    valor_atual DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    data_objetivo DATE,
-    status ENUM('em_andamento', 'concluida', 'cancelada') DEFAULT 'em_andamento',
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_meta_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    description TEXT,
+    target_amount DECIMAL(12,2) NOT NULL,
+    target_date DATE,
+    current_amount DECIMAL(12,2) DEFAULT 0.00,
+    status ENUM('not_started', 'in_progress', 'completed') DEFAULT 'not_started',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_goal_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
 
 -- =========================
--- 8. RESUMOS MENSAIS
+-- 8. MONTHLY SUMMARIES
 -- =========================
-CREATE TABLE resumos_mensais (
+CREATE TABLE monthly_summaries (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    ano YEAR NOT NULL,
-    mes TINYINT NOT NULL,
-    total_ganhos DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    total_despesas DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    saldo_inicial_mes DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    saldo_final_mes DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    economia_mes DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_resumo_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    year YEAR NOT NULL,
+    month TINYINT NOT NULL,
+    total_earnings DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    total_expenses DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    beginning_balance DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    ending_balance DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    savings_amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_summary_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE,
-    CONSTRAINT uq_resumo_usuario_mes UNIQUE (usuario_id, ano, mes),
-    CONSTRAINT ck_mes_valido CHECK (mes BETWEEN 1 AND 12)
+    CONSTRAINT uq_summary_user_month UNIQUE (user_id, year, month),
+    CONSTRAINT ck_month_valid CHECK (month BETWEEN 1 AND 12)
 );
 
 -- =========================
--- 9. NOTÍCIAS FINANCEIRAS
+-- 9. FINANCIAL NEWS
 -- =========================
-CREATE TABLE noticias_financeiras (
+CREATE TABLE financial_news (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(255) NOT NULL,
-    fonte VARCHAR(150) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    source VARCHAR(150) NOT NULL,
     url VARCHAR(500) NOT NULL UNIQUE,
-    resumo TEXT,
-    categoria VARCHAR(100),
-    data_publicacao DATETIME,
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+    summary TEXT,
+    category VARCHAR(100),
+    published_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =========================
--- 10. SUGESTÕES DE ECONOMIA
+-- 10. SAVINGS SUGGESTIONS
 -- =========================
-CREATE TABLE sugestoes_economia (
+CREATE TABLE savings_suggestions (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    titulo VARCHAR(150) NOT NULL,
-    descricao TEXT NOT NULL,
-    fonte TEXT NOT NULL,
-    prioridade ENUM('baixa', 'media', 'alta') NOT NULL,
-    status ENUM('pendente', 'aceita', 'recusada') DEFAULT 'pendente',
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    respondida_em DATETIME NULL,
-    CONSTRAINT fk_sugestao_economia_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+    source TEXT NOT NULL,
+    priority ENUM('low', 'medium', 'high') NOT NULL,
+    status ENUM('pending', 'accepted', 'declined') DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    responded_at DATETIME NULL,
+    CONSTRAINT fk_savings_suggestion_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
 
 -- =========================
--- 11. SUGESTÕES DE INVESTIMENTO
+-- 11. INVESTMENT SUGGESTIONS
 -- =========================
-CREATE TABLE sugestoes_investimento (
+CREATE TABLE investment_suggestions (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_id INT NOT NULL,
-    noticia_id INT NULL,
-    titulo VARCHAR(150) NOT NULL,
-    descricao TEXT NOT NULL,
-    fonte TEXT NOT NULL,
-    risco ENUM('baixo', 'medio', 'alto') NOT NULL,
-    status ENUM('pendente', 'aceita', 'recusada') DEFAULT 'pendente',
-    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    respondida_em DATETIME NULL,
-    CONSTRAINT fk_sugestao_investimento_usuario
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    user_id INT NOT NULL,
+    news_id INT NULL,
+    title VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+    source TEXT NOT NULL,
+    risk_level ENUM('low', 'medium', 'high') NOT NULL,
+    status ENUM('pending', 'accepted', 'declined') DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    responded_at DATETIME NULL,
+    CONSTRAINT fk_investment_suggestion_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE,
-    CONSTRAINT fk_sugestao_investimento_noticia
-        FOREIGN KEY (noticia_id) REFERENCES noticias_financeiras(id)
+    CONSTRAINT fk_investment_suggestion_news
+        FOREIGN KEY (news_id) REFERENCES financial_news(id)
         ON DELETE SET NULL
 );

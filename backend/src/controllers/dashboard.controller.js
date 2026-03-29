@@ -1,5 +1,5 @@
 // Dashboard Controller - Simple request/response handler for dashboard GET endpoints
-const dashboardService = require("../services/dashboardService");
+const dashboardService = require("../services/dashboard.service");
 const logger = require("../utils/logger");
 
 class DashboardController {

@@ -8,6 +8,21 @@ import Alert from "../../components/Alert";
 import Navbar from "../../components/Navbar";
 import "../../styles/app.css";
 
+/**
+ * Dashboard Page
+ * 
+ * Main application page after user authentication
+ * Displays user information and financial overview
+ * 
+ * Flow:
+ * 1. On mount, checks if user has JWT token in localStorage
+ * 2. If no token, redirects to login
+ * 3. Fetches user name and dashboard data (user + financial profile)
+ * 4. Displays welcome card and financial stats
+ * 5. Provides navigation to other features (expenses, investments, etc)
+ * 
+ * @component
+ */
 function Dashboard() {
   const [user, setUser] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
@@ -15,6 +30,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
+  /**
+   * Load user and dashboard data on component mount
+   * Verifies authentication token before fetching data
+   */
   useEffect(() => {
     async function loadUserData() {
       try {
@@ -25,7 +44,7 @@ function Dashboard() {
           return;
         }
 
-        // Get user name first
+        // Fetch user name
         const nameData = await getDashboardName();
         setUser(nameData);
 
@@ -44,12 +63,17 @@ function Dashboard() {
     loadUserData();
   }, [navigate]);
 
+  /**
+   * Handle logout action
+   * Clears local storage token and redirects to login
+   */
   const handleLogoutClick = () => {
     logout();
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  // Loading state
   if (isLoading) {
     return (
       <div className="loader-container">
@@ -84,21 +108,21 @@ function Dashboard() {
                 <Card className="stat-card">
                   <p className="stat-label">Total Balance</p>
                   <p className="stat-value">
-                    ${dashboardData?.financialProfile?.saldo_inicial?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
+                    ${dashboardData?.financialProfile?.initial_balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
                   </p>
                 </Card>
 
-                {/* Investments */}
+                {/* Monthly Income */}
                 <Card className="stat-card">
-                  <p className="stat-label">Investments</p>
+                  <p className="stat-label">Monthly Income</p>
                   <p className="stat-value">
-                    ${dashboardData?.financialProfile?.renda_mensal?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
+                    ${dashboardData?.financialProfile?.monthly_income?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
                   </p>
                 </Card>
 
                 {/* Monthly Expenses */}
                 <Card className="stat-card">
-                  <p className="stat-label">Expenses (Month)</p>
+                  <p className="stat-label">Monthly Expenses</p>
                   <p className="stat-value">$0.00</p>
                 </Card>
 

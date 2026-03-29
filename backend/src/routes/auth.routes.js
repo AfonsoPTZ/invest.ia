@@ -2,15 +2,17 @@
 const express = require("express");
 const router = express.Router();
 
-const authController = require("../controllers/authController");
-const authMiddleware = require("../middlewares/authMiddleware");
-const validatorMiddleware = require("../middlewares/validatorMiddleware");
-const userValidator = require("../validators/userValidator");
+const authController = require("../controllers/auth.controller");
+const authMiddleware = require("../middlewares/auth.middleware");
+const validatorMiddleware = require("../middlewares/validator.middleware");
+const userValidator = require("../validators/user.validator");
 const {
   registerValidationRules,
   loginValidationRules,
+  validateEmailVerificationRules,
+  validateResendOtpRules,
   handleValidationErrors
-} = require("../validators/authValidator");
+} = require("../validators/auth.validator");
 
 // Helper: wrap userValidator functions to accept data object
 const validateRegistrationWithOtp = (data) => {
@@ -47,11 +49,15 @@ router.post(
 
 router.post(
   "/verify-email",
+  validateEmailVerificationRules(),
+  handleValidationErrors,
   authController.verifyEmail.bind(authController)
 );
 
 router.post(
   "/resend-otp",
+  validateResendOtpRules(),
+  handleValidationErrors,
   authController.resendOtp.bind(authController)
 );
 

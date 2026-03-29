@@ -1,9 +1,9 @@
 // Verify Email Service - Confirmação de email com OTP
 const jwt = require("jsonwebtoken");
-const { verifyEmailWithOtp, resendVerificationCode } = require("./emailVerification.service");
+const { verifyEmailWithOtp, resendVerificationCode } = require("./email-verification.service");
 const { generateTempToken } = require("./token.service");
 const otpValidator = require("../../validators/otp.validator");
-const authRepository = require("../../repositories/userRepository");
+const authRepository = require("../../repositories/user.repository");
 const logger = require("../../utils/logger");
 
 /**

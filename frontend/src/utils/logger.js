@@ -1,12 +1,17 @@
 /**
  * Frontend Logger - Centralized logging with structured context
  * Same interface as backend logger, but uses console under the hood
+ * Integrates with logStore for real-time log viewing in frontend
  * 
  * Usage:
  *   logger.info({ userId, email }, "User logged in");
  *   logger.warn({ email }, "Email not found");
  *   logger.error({ error: err.message }, "Request failed");
+ * 
+ * @module logger
  */
+
+import { logStore } from "./logStore";
 
 const LOG_LEVELS = {
   debug: 0,
@@ -80,12 +85,14 @@ function getConsoleStyle(level) {
 
 /**
  * Core logging function
+ * Logs to console AND stores in log store for real-time viewing
  */
 function log(level, context, message) {
   if (LOG_LEVELS[level] < CURRENT_LEVEL) {
     return;
   }
 
+  const timestamp = getTimestamp();
   const formatted = formatLog(level, context, message);
   const consoleMethod = console[level] || console.log;
 
@@ -102,6 +109,18 @@ function log(level, context, message) {
   } catch (e) {
     // Fallback if browser console is not available
     consoleMethod(formatted);
+  }
+
+  // Store log in logStore for real-time viewing in frontend
+  try {
+    logStore.addLog({
+      level,
+      message,
+      context: typeof context === "object" ? context : null,
+      timestamp
+    });
+  } catch (e) {
+    // Silently fail if logStore has issues
   }
 }
 

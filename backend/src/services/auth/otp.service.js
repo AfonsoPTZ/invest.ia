@@ -1,7 +1,7 @@
 // OTP Service - Gerencia código OTP
 const bcrypt = require("bcryptjs");
-const authRepository = require("../../repositories/userRepository");
-const { generateOtp } = require("../../utils/generateOtp");
+const authRepository = require("../../repositories/user.repository");
+const { generateOtp } = require("../../utils/generate-otp");
 const logger = require("../../utils/logger");
 
 const OTP_EXPIRATION_MINUTES = 5;
@@ -53,8 +53,8 @@ async function verifyOtp(userId, otpCode) {
     }
 
     // Verificar se usuário está bloqueado
-    if (user.otp_tentativas >= OTP_MAX_ATTEMPTS) {
-      const timePassed = Date.now() - new Date(user.otp_expira_em).getTime();
+    if (user.otpAttempts >= OTP_MAX_ATTEMPTS) {
+      const timePassed = Date.now() - new Date(user.otpExpiresAt).getTime();
       const lockoutTime = OTP_LOCKOUT_MINUTES * 60000;
 
       if (timePassed < lockoutTime) {
@@ -68,21 +68,21 @@ async function verifyOtp(userId, otpCode) {
     }
 
     // Verificar expiração
-    if (new Date() > new Date(user.otp_expira_em)) {
+    if (new Date() > new Date(user.otpExpiresAt)) {
       logger.warn({ userId }, "OtpService: OTP expired");
       return { isValid: false, message: "Código OTP expirou" };
     }
 
     // Verificar código
-    const isOtpValid = await bcrypt.compare(otpCode, user.otp_codigo_hash);
+    const isOtpValid = await bcrypt.compare(otpCode, user.otpCodeHash);
 
     if (!isOtpValid) {
-      logger.warn({ userId, attempts: user.otp_tentativas + 1 }, "OtpService: Invalid OTP code");
+      logger.warn({ userId, attempts: user.otpAttempts + 1 }, "OtpService: Invalid OTP code");
 
       // Incrementar tentativas
       await authRepository.incrementOtpAttempts(userId);
 
-      const attemptsRemaining = OTP_MAX_ATTEMPTS - (user.otp_tentativas + 1);
+      const attemptsRemaining = OTP_MAX_ATTEMPTS - (user.otpAttempts + 1);
       return {
         isValid: false,
         message: `Código inválido. ${attemptsRemaining} tentativa(s) restante(s)`

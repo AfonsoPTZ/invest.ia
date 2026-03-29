@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { validateOTPCode } from "../../validators/authValidator";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
@@ -9,6 +10,23 @@ import "../../styles/forms.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
+/**
+ * Email OTP Verification Page
+ * 
+ * User enters 6-digit OTP code sent to their email during registration
+ * Frontend validation: code length (6 digits)
+ * Backend validation: OTP matches registered email, hasn't expired
+ * 
+ * Flow:
+ * 1. User receives OTP email after /auth/register-with-otp
+ * 2. User enters 6-digit code
+ * 3. Calls /auth/verify-email with userId and otpCode
+ * 4. Backend validates OTP and returns temporary token
+ * 5. Token stored in sessionStorage for next page
+ * 6. Redirects to /financial-profile to complete registration
+ * 
+ * @component
+ */
 export default function VerifyOtp() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,14 +42,19 @@ export default function VerifyOtp() {
   
   const inputRefs = useRef([]);
 
-  // Redirect if no userId/email
+  /**
+   * Redirect to register if no userId/email passed from previous page
+   */
   useEffect(() => {
     if (!userId || !email) {
       navigate("/register");
     }
   }, [userId, email, navigate]);
 
-  // Timer para reenvio
+  /**
+   * Countdown timer for resend button
+   * When timer reaches 0, enable resend button
+   */
   useEffect(() => {
     if (resendTimer === 0) {
       setCanResend(true);
@@ -45,7 +68,12 @@ export default function VerifyOtp() {
     return () => clearTimeout(timer);
   }, [resendTimer]);
 
+  /**
+   * Handle individual OTP digit input
+   * Only allows digits, auto-focus to next input
+   */
   const handleOtpChange = (index, value) => {
+    // Only allow digits
     if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
@@ -53,23 +81,34 @@ export default function VerifyOtp() {
     setOtp(newOtp);
     setError("");
 
+    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
+  /**
+   * Handle backspace to focus previous input
+   */
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && otp[index] === "" && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
+  /**
+   * Submit OTP code for verification
+   * Validates code locally, then sends to backend
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const otpCode = otp.join("");
-    if (otpCode.length !== 6) {
-      setError("Por favor, digite todos os 6 dígitos");
+
+    // Frontend validation - ensure all 6 digits entered
+    const validationError = validateOTPCode(otpCode);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -91,10 +130,10 @@ export default function VerifyOtp() {
 
       if (!response.ok) {
         logger.warn({ userId }, "VerifyOtp: Email verification failed");
-        throw new Error(data.message || "Código inválido");
+        throw new Error(data.message || "Invalid code");
       }
 
-      // Armazenar token temporário para completar perfil
+      // Store temporary token and userId for next page
       if (data.token) {
         sessionStorage.setItem("tempProfileToken", data.token);
         sessionStorage.setItem("userId", userId);
@@ -120,6 +159,10 @@ export default function VerifyOtp() {
     }
   };
 
+  /**
+   * Resend OTP code to registered email
+   * Implements 30-second cooldown
+   */
   const handleResendOtp = async () => {
     setIsLoading(true);
     setError("");
@@ -139,11 +182,12 @@ export default function VerifyOtp() {
 
       if (!response.ok) {
         logger.warn({ userId }, "VerifyOtp: Resend OTP failed");
-        throw new Error(data.message || "Erro ao reenviar");
+        throw new Error(data.message || "Error resending code");
       }
 
       logger.info({ userId }, "VerifyOtp: OTP resent successfully");
 
+      // Reset form and timer
       setOtp(["", "", "", "", "", ""]);
       setCanResend(false);
       setResendTimer(30);

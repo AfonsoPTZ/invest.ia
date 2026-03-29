@@ -10,7 +10,7 @@ class AuthRepository {
       logger.debug({ email }, "Searching user by email");
       
       const [rows] = await pool.query(
-        "SELECT * FROM usuarios WHERE email = ?",
+        "SELECT * FROM users WHERE email = ?",
         [email]
       );
       
@@ -35,7 +35,7 @@ class AuthRepository {
       logger.debug({ id }, "Searching user by ID");
       
       const [rows] = await pool.query(
-        "SELECT * FROM usuarios WHERE id = ?",
+        "SELECT * FROM users WHERE id = ?",
         [id]
       );
       
@@ -62,7 +62,7 @@ class AuthRepository {
       logger.info({ email, cpf }, "Creating new user");
       
       const [result] = await pool.query(
-        "INSERT INTO usuarios (nome, email, cpf, telefone, senha_hash) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO users (name, email, cpf, phone, password_hash) VALUES (?, ?, ?, ?, ?)",
         [name, email, cpf, phone, passwordHash]
       );
       
@@ -89,7 +89,7 @@ class AuthRepository {
       logger.debug({ email }, "Checking if email exists");
       
       const [rows] = await pool.query(
-        "SELECT id FROM usuarios WHERE email = ?",
+        "SELECT id FROM users WHERE email = ?",
         [email]
       );
       
@@ -111,7 +111,7 @@ class AuthRepository {
       logger.debug({ cpf }, "Checking if CPF exists");
       
       const [rows] = await pool.query(
-        "SELECT id FROM usuarios WHERE cpf = ?",
+        "SELECT id FROM users WHERE cpf = ?",
         [cpf]
       );
       
@@ -128,22 +128,22 @@ class AuthRepository {
   /**
    * Verifica se telefone já existe
    */
-  async phoneExists(telefone) {
+  async phoneExists(phone) {
     try {
-      logger.debug({ telefone }, "Checking if phone exists");
+      logger.debug({ phone }, "Checking if phone exists");
       
       const [rows] = await pool.query(
-        "SELECT id FROM usuarios WHERE telefone = ?",
-        [telefone]
+        "SELECT id FROM users WHERE phone = ?",
+        [phone]
       );
       
       const exists = rows.length > 0;
-      logger.debug({ telefone, exists }, "Phone existence check completed");
+      logger.debug({ phone, exists }, "Phone existence check completed");
       
       return exists;
     } catch (error) {
-      logger.error({ error: error.message, telefone }, "Error checking phone existence");
-      throw new Error(`Erro ao verificar telefone: ${error.message}`);
+      logger.error({ error: error.message, phone }, "Error checking phone existence");
+      throw new Error(`Error checking phone existence: ${error.message}`);
     }
   }
 
@@ -155,7 +155,7 @@ class AuthRepository {
       logger.info({ userId }, "Updating user password");
       
       const [result] = await pool.query(
-        "UPDATE usuarios SET senha_hash = ? WHERE id = ?",
+        "UPDATE users SET password_hash = ? WHERE id = ?",
         [senhaHash, userId]
       );
       
@@ -178,7 +178,7 @@ class AuthRepository {
       logger.debug({ userId }, "Updating OTP");
 
       const [result] = await pool.query(
-        "UPDATE usuarios SET otp_codigo_hash = ?, otp_expira_em = ?, otp_tentativas = ? WHERE id = ?",
+        "UPDATE users SET otp_code_hash = ?, otp_expires_at = ?, otp_attempts = ? WHERE id = ?",
         [otpCodeHash, otpExpiresAt, otpAttempts || 0, userId]
       );
 
@@ -199,7 +199,7 @@ class AuthRepository {
       logger.debug({ userId }, "Incrementing OTP attempts");
 
       const [result] = await pool.query(
-        "UPDATE usuarios SET otp_tentativas = otp_tentativas + 1 WHERE id = ?",
+        "UPDATE users SET otp_attempts = otp_attempts + 1 WHERE id = ?",
         [userId]
       );
 
@@ -220,7 +220,7 @@ class AuthRepository {
       logger.info({ userId, verified }, "Updating email verification status");
 
       const [result] = await pool.query(
-        "UPDATE usuarios SET email_verificado = ? WHERE id = ?",
+        "UPDATE users SET email_verified = ? WHERE id = ?",
         [verified ? 1 : 0, userId]
       );
 
@@ -240,17 +240,17 @@ class AuthRepository {
     if (!row) return null;
     return {
       id: row.id,
-      name: row.nome,
+      name: row.name,
       email: row.email,
       cpf: row.cpf,
-      phone: row.telefone,
-      passwordHash: row.senha_hash,
-      emailVerificado: row.email_verificado,
-      otp_codigo_hash: row.otp_codigo_hash,
-      otp_expira_em: row.otp_expira_em,
-      otp_tentativas: row.otp_tentativas,
-      createdAt: row.criado_em,
-      updatedAt: row.atualizado_em
+      phone: row.phone,
+      passwordHash: row.password_hash,
+      emailVerified: row.email_verified,
+      otpCodeHash: row.otp_code_hash,
+      otpExpiresAt: row.otp_expires_at,
+      otpAttempts: row.otp_attempts,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
     };
   }
 }

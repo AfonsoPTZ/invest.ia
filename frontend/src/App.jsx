@@ -10,6 +10,7 @@ import FinancialProfile from "./pages/auth/FinancialProfile";
 
 // App Pages
 import Dashboard from "./pages/app/Dashboard";
+import Logs from "./pages/app/Logs";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         
         {/* Application Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/logs" element={<Logs />} />
         
         {/* Default Route */}
         <Route path="/" element={<Navigate to="/login" replace />} />

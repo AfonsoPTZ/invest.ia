@@ -6,10 +6,15 @@ const logger = require("../../utils/logger");
  * Configuração do transporter de email
  * Usar variáveis de ambiente para produção
  */
+// Validar credenciais SMTP obrigatórias
+if (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+  throw new Error("Email configuration incomplete: EMAIL_HOST, EMAIL_PORT, EMAIL_USER, and EMAIL_PASSWORD are required in .env");
+}
+
 const emailTransporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.gmail.com",
-  port: process.env.EMAIL_PORT || 587,
-  secure: process.env.EMAIL_SECURE === "true", // true para 465, false para outras
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT, 10),
+  secure: process.env.EMAIL_SECURE === "true",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD
@@ -27,7 +32,7 @@ async function sendOtpEmail(email, otp) {
     logger.info({ email }, "EmailService: Sending OTP email");
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || "noreply@invest_ia.com",
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Verificação de Email - Invest_IA",
       html: `
@@ -77,7 +82,7 @@ async function sendVerificationSuccessEmail(email, userName) {
     logger.info({ email }, "EmailService: Sending verification success email");
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || "noreply@invest_ia.com",
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Email Verificado - Invest_IA",
       html: `

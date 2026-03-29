@@ -1,11 +1,11 @@
 // Financial Profile Service - Doorkeeper pattern
 // Orchestrates: Validators → Repositories
-const perfilFinanceiroRepository = require("../repositories/perfilFinanceiroRepository");
-const authRepository = require("../repositories/userRepository");
-const perfilFinanceiroValidator = require("../validators/perfilFinanceiroValidator");
+const financialProfileRepository = require("../repositories/financial-profile.repository");
+const userRepository = require("../repositories/user.repository");
+const financialProfileValidator = require("../validators/financial-profile.validator");
 const logger = require("../utils/logger");
 
-class PerfilFinanceiroService {
+class FinancialProfileService {
   // Create user financial profile
   async createProfile(userId, profileData) {
     try {
@@ -18,7 +18,7 @@ class PerfilFinanceiroService {
       }
 
       // Step 2: Validate all profile data via validator
-      const validation = perfilFinanceiroValidator.validateFinancialProfileRegistration(
+      const validation = financialProfileValidator.validateFinancialProfileRegistration(
         profileData.monthly_income,
         profileData.initial_balance,
         profileData.has_investments,
@@ -34,44 +34,16 @@ class PerfilFinanceiroService {
 
       const cleanedData = validation.cleanedData;
 
-      // Step 2.5: Map English names to Portuguese column names
-      const mappedData = {
-        renda_mensal: cleanedData.monthly_income || 0,
-        saldo_inicial: cleanedData.initial_balance || 0,
-        possui_investimentos: cleanedData.has_investments || false,
-        possui_patrimonio: cleanedData.has_assets || false,
-        objetivo_financeiro: cleanedData.financial_goal,
-        perfil_comportamento: cleanedData.behavior_profile
-      };
-
       // Step 3: Verify user exists in repository
-      const user = await authRepository.findById(userId);
+      const user = await userRepository.findById(userId);
       if (!user) {
         logger.warn({ userId }, "Service: User not found for profile creation");
         throw new Error("User not found");
       }
 
-      // Step 4: Check if profile already exists
-      const existingProfile = await perfilFinanceiroRepository.findByUsuarioId(userId);
-      if (existingProfile) {
-        logger.info({ userId }, "Service: Profile exists, updating");
-        // Update if exists
-        const updated = await perfilFinanceiroRepository.update(userId, mappedData);
-        if (!updated) {
-          logger.error({ userId }, "Service: Error updating financial profile");
-          throw new Error("Error updating financial profile");
-        }
-        logger.info({ userId, profileId: existingProfile.id }, "Service: Financial profile updated");
-        return {
-          id: existingProfile.id,
-          user_id: userId,
-          ...mappedData
-        };
-      }
-
-      // Step 5: Create new profile via repository
-      const profile = await perfilFinanceiroRepository.create(userId, mappedData);
-      logger.info({ userId, profileId: profile.id }, "Service: Financial profile created successfully");
+      // Step 4: Create or update profile via repository
+      const profile = await financialProfileRepository.createOrUpdate(userId, cleanedData);
+      logger.info({ userId, profileId: profile.id }, "Service: Financial profile saved successfully");
       return profile;
 
     } catch (error) {
@@ -92,7 +64,7 @@ class PerfilFinanceiroService {
       }
 
       // Step 2: Fetch profile from repository
-      const profile = await perfilFinanceiroRepository.findByUsuarioId(userId);
+      const profile = await financialProfileRepository.findByUserId(userId);
       if (!profile) {
         logger.warn({ userId }, "Service: Financial profile not found");
         throw new Error("Financial profile not found");
@@ -107,8 +79,6 @@ class PerfilFinanceiroService {
       throw new Error(error.message);
     }
   }
-    }
-  
+}
 
-
-module.exports = new PerfilFinanceiroService();
+module.exports = new FinancialProfileService();

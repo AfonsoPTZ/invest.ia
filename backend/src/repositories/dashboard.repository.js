@@ -10,7 +10,7 @@ class DashboardRepository {
       logger.debug({ userId }, "Repository: Searching user by ID for dashboard");
 
       const [rows] = await pool.query(
-        "SELECT id, nome as name, email, cpf, telefone as phone FROM usuarios WHERE id = ?",
+        "SELECT id, name, email, cpf, phone FROM users WHERE id = ?",
         [userId]
       );
 
@@ -23,7 +23,7 @@ class DashboardRepository {
       return rows[0];
     } catch (error) {
       logger.error({ error: error.message, userId }, "Repository: Error searching user");
-      throw new Error(`Erro ao buscar usuário: ${error.message}`);
+      throw new Error(`Error searching user: ${error.message}`);
     }
   }
 
@@ -35,7 +35,7 @@ class DashboardRepository {
       logger.debug({ userId }, "Repository: Searching financial profile for dashboard");
 
       const [rows] = await pool.query(
-        "SELECT * FROM perfil_financeiro WHERE usuario_id = ?",
+        "SELECT * FROM financial_profiles WHERE user_id = ?",
         [userId]
       );
 
@@ -48,7 +48,7 @@ class DashboardRepository {
       return rows[0];
     } catch (error) {
       logger.error({ error: error.message, userId }, "Repository: Error searching financial profile");
-      throw new Error(`Erro ao buscar perfil financeiro: ${error.message}`);
+      throw new Error(`Error searching financial profile: ${error.message}`);
     }
   }
 
@@ -61,7 +61,7 @@ class DashboardRepository {
 
       // Query usuário
       const [userRows] = await pool.query(
-        "SELECT id, nome as name, email, cpf, telefone as phone FROM usuarios WHERE id = ?",
+        "SELECT id, name, email, cpf, phone FROM users WHERE id = ?",
         [userId]
       );
 
@@ -72,7 +72,7 @@ class DashboardRepository {
 
       // Query perfil financeiro
       const [profileRows] = await pool.query(
-        "SELECT * FROM perfil_financeiro WHERE usuario_id = ?",
+        "SELECT * FROM financial_profiles WHERE user_id = ?",
         [userId]
       );
 
@@ -84,7 +84,7 @@ class DashboardRepository {
       };
     } catch (error) {
       logger.error({ error: error.message, userId }, "Repository: Error fetching dashboard data");
-      throw new Error(`Erro ao buscar dados da dashboard: ${error.message}`);
+      throw new Error(`Error fetching dashboard data: ${error.message}`);
     }
   }
 }

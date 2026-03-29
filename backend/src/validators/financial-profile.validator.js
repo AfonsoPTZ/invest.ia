@@ -173,9 +173,9 @@ function validateBehaviorProfile(behaviorProfile) {
   }
 
   const validProfiles = [
-    "conservador",
-    "moderado",
-    "agressivo"
+    "conservative",
+    "moderate",
+    "aggressive"
   ];
 
   const profile = behaviorProfile.toLowerCase().trim();

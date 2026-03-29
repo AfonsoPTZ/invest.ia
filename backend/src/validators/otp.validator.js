@@ -10,7 +10,10 @@ function validateOtpFormat(otp) {
       };
     }
 
-    if (!/^\d{6}$/.test(otp)) {
+    // Remove any non-digit characters (spaces, dashes, etc)
+    const cleanedOtp = String(otp).replace(/\D/g, "");
+
+    if (cleanedOtp.length !== 6) {
       return {
         isValid: false,
         error: "OTP deve conter 6 dígitos"
@@ -19,7 +22,7 @@ function validateOtpFormat(otp) {
 
     return {
       isValid: true,
-      cleanedOtp: otp
+      cleanedOtp
     };
   } catch (error) {
     return {

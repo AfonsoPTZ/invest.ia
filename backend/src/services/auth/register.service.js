@@ -1,9 +1,9 @@
 // Register Service - Cadastro de usuário
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const authRepository = require("../../repositories/userRepository");
-const userValidator = require("../../validators/userValidator");
-const { sendVerificationCode } = require("./emailVerification.service");
+const authRepository = require("../../repositories/user.repository");
+const userValidator = require("../../validators/user.validator");
+const { sendVerificationCode } = require("./email-verification.service");
 const logger = require("../../utils/logger");
 
 const HASH_ROUNDS = 10;

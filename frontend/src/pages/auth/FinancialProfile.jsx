@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { validateFinancialProfileForm } from "../../validators/authValidator";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
@@ -10,6 +11,30 @@ import "../../styles/forms.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
+/**
+ * Financial Profile Setup Page
+ * 
+ * Final step of registration. User completes their financial profile:
+ * - Monthly income (optional)
+ * - Initial balance/patrimony (optional)
+ * - Investment experience indicators
+ * - Financial goals
+ * - Behavior profile (investment risk level)
+ * 
+ * Frontend validation: required fields, positive numbers
+ * Backend validation: business rules, data persistence
+ * 
+ * Flow:
+ * 1. User accesses this page after OTP verification
+ * 2. Temporary token from previous page is in sessionStorage
+ * 3. User fills financial details
+ * 4. Frontend validates inputs
+ * 5. Calls /financial-profile endpoint with Bearer token
+ * 6. Backend creates financial profile
+ * 7. Clears session storage and redirects to login
+ * 
+ * @component
+ */
 export default function FinancialProfile() {
   const navigate = useNavigate();
   const [token, setToken] = useState("");
@@ -25,16 +50,19 @@ export default function FinancialProfile() {
     has_investments: false,
     has_assets: false,
     financial_goal: "",
-    behavior_profile: "moderado"
+    behavior_profile: "moderate"
   });
 
-  // Validar token ao carregar página
+  /**
+   * Validate temporary token on page load
+   * Token is stored in sessionStorage after OTP verification
+   */
   useEffect(() => {
     const tempToken = sessionStorage.getItem("tempProfileToken");
 
     if (!tempToken) {
       logger.warn({}, "FinancialProfile: Temporary token not found");
-      setError("Token expirado ou não encontrado. Por favor, faça o registro novamente.");
+      setError("Token expired. Please register again.");
       setTimeout(() => navigate("/register"), 3000);
       return;
     }
@@ -43,6 +71,9 @@ export default function FinancialProfile() {
     setToken(tempToken);
   }, [navigate]);
 
+  /**
+   * Handle form input changes - update state based on input type
+   */
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
     setFormData({
@@ -52,38 +83,33 @@ export default function FinancialProfile() {
     setError("");
   };
 
+  /**
+   * Submit financial profile
+   * Validates locally, then sends to backend
+   */
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setSuccess("");
+
+    // Frontend validation - quick checks for better UX
+    const validationError = validateFinancialProfileForm(formData);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       if (!token) {
         logger.warn({}, "FinancialProfile: Token not found for submission");
-        throw new Error("Token não encontrado. Por favor, faça o registro novamente.");
+        throw new Error("Token not found. Please register again.");
       }
 
       logger.info({}, "FinancialProfile: Attempting to create financial profile");
 
-      // Validar campos obrigatórios
-      if (!formData.financial_goal) {
-        throw new Error("Por favor, selecione um objetivo financeiro");
-      }
-
-      // Se marcou "tem renda mensal", validar renda
-      if (formData.has_monthly_income && !formData.monthly_income) {
-        throw new Error("Por favor, informe a renda mensal");
-      }
-
-      // Se marcou "tem patrimônio", validar saldo inicial
-      if (formData.has_initial_balance && !formData.initial_balance) {
-        throw new Error("Por favor, informe o saldo inicial");
-      }
-
-      logger.info({}, "FinancialProfile: Validation passed. Sending data...");
-
-      const response = await fetch(`${API_URL}/perfil-financeiro`, {
+      const response = await fetch(`${API_URL}/financial-profile`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,14 +129,14 @@ export default function FinancialProfile() {
 
       if (!response.ok) {
         logger.warn({}, `FinancialProfile: Failed to save profile - ${data.message}`);
-        throw new Error(data.message || "Erro ao salvar perfil financeiro");
+        throw new Error(data.message || "Error saving financial profile");
       }
 
       logger.info({}, "FinancialProfile: Profile saved successfully. Redirecting to login");
 
-      setSuccess("Perfil financeiro salvo com sucesso! Redirecionando para login...");
+      setSuccess("Profile saved successfully! Redirecting to login...");
 
-      // Limpar sessionStorage
+      // Clear temporary session data
       sessionStorage.removeItem("tempProfileToken");
       sessionStorage.removeItem("userId");
 
@@ -129,10 +155,10 @@ export default function FinancialProfile() {
   return (
     <div className="auth-container">
       <Card className="auth-card">
-        <h2 className="auth-title">Perfil Financeiro</h2>
+        <h2 className="auth-title">Financial Profile</h2>
         
         <p className="auth-subtitle mb-6">
-          Quase pronto! Complete seu perfil financeiro para começar a investir.
+          Almost there! Complete your financial profile to get started.
         </p>
 
         {error && (
@@ -144,7 +170,7 @@ export default function FinancialProfile() {
         )}
 
         <form onSubmit={handleFormSubmit} className="auth-form">
-          {/* Renda Mensal */}
+          {/* Monthly Income */}
           <div className="form-group">
             <label className="checkbox-label">
               <input
@@ -154,7 +180,7 @@ export default function FinancialProfile() {
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
-              Tenho renda mensal
+              I have monthly income
             </label>
             {formData.has_monthly_income && (
               <Input
@@ -169,7 +195,7 @@ export default function FinancialProfile() {
             )}
           </div>
 
-          {/* Patrimônio / Saldo Inicial */}
+          {/* Initial Balance / Savings */}
           <div className="form-group">
             <label className="checkbox-label">
               <input
@@ -179,7 +205,7 @@ export default function FinancialProfile() {
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
-              Tenho patrimônio/saldo inicial
+              I have initial balance/savings
             </label>
             {formData.has_initial_balance && (
               <Input
@@ -194,7 +220,7 @@ export default function FinancialProfile() {
             )}
           </div>
 
-          {/* Tenho Investimentos */}
+          {/* Have Investments */}
           <div className="form-group">
             <label className="checkbox-label">
               <input
@@ -204,11 +230,11 @@ export default function FinancialProfile() {
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
-              Tenho investimentos
+              I have investments
             </label>
           </div>
 
-          {/* Tenho Patrimônio/Bens */}
+          {/* Have Assets */}
           <div className="form-group">
             <label className="checkbox-label">
               <input
@@ -218,13 +244,13 @@ export default function FinancialProfile() {
                 onChange={handleInputChange}
                 disabled={isLoading}
               />
-              Tenho patrimônio/bens (imoveleia, veícula, etc)
+              I have assets (real estate, vehicles, etc)
             </label>
           </div>
 
           {/* Objetivo Financeiro */}
           <div className="form-group">
-            <label htmlFor="financial_goal">Qual é seu objetivo financeiro? *</label>
+            <label htmlFor="financial_goal">What is your financial goal? *</label>
             <select
               id="financial_goal"
               name="financial_goal"
@@ -234,23 +260,23 @@ export default function FinancialProfile() {
               required
               className="form-select"
             >
-              <option value="">Selecione um objetivo</option>
-              <option value="accumulate_wealth">Acumular riqueza</option>
-              <option value="retirement_planning">Planejamento de aposentadoria</option>
-              <option value="education_funding">Financiar educação</option>
-              <option value="home_purchase">Comprar casa</option>
-              <option value="emergency_fund">Fundo de emergência</option>
-              <option value="debt_reduction">Reduzir dívidas</option>
-              <option value="short_term_savings">Poupança de curto prazo</option>
-              <option value="wealth_transfer">Transferência de riqueza</option>
-              <option value="business_expansion">Expansão do negócio</option>
-              <option value="other">Outro</option>
+              <option value="">Select a goal</option>
+              <option value="accumulate_wealth">Accumulate wealth</option>
+              <option value="retirement_planning">Retirement planning</option>
+              <option value="education_funding">Fund education</option>
+              <option value="home_purchase">Buy a home</option>
+              <option value="emergency_fund">Emergency fund</option>
+              <option value="debt_reduction">Reduce debt</option>
+              <option value="short_term_savings">Short-term savings</option>
+              <option value="wealth_transfer">Wealth transfer</option>
+              <option value="business_expansion">Business expansion</option>
+              <option value="other">Other</option>
             </select>
           </div>
 
           {/* Perfil de Comportamento */}
           <div className="form-group">
-            <label htmlFor="behavior_profile">Qual é seu perfil de investidor? *</label>
+            <label htmlFor="behavior_profile">What is your investor profile? *</label>
             <select
               id="behavior_profile"
               name="behavior_profile"
@@ -260,9 +286,9 @@ export default function FinancialProfile() {
               required
               className="form-select"
             >
-              <option value="conservador">Conservador (poucos riscos)</option>
-              <option value="moderado">Moderado (risco médio)</option>
-              <option value="agressivo">Agressivo (alto risco, alto retorno)</option>
+              <option value="conservative">Conservative (low risk)</option>
+              <option value="moderate">Moderate (medium risk)</option>
+              <option value="aggressive">Aggressive (high risk, high return)</option>
             </select>
           </div>
 
@@ -271,12 +297,12 @@ export default function FinancialProfile() {
             className="btn-full"
             disabled={isLoading}
           >
-            {isLoading ? "Salvando..." : "Completar Cadastro"}
+            {isLoading ? "Saving..." : "Complete Registration"}
           </Button>
         </form>
 
         <p className="auth-footer">
-          <a href="/register">Voltar ao cadastro</a>
+          <a href="/register">Back to registration</a>
         </p>
       </Card>
     </div>

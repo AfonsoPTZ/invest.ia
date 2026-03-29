@@ -1,11 +1,11 @@
 // Dashboard Service - Doorkeeper pattern
 // Orchestrates: Repository calls for dashboard data
-const dashboardRepository = require("../repositories/dashboardRepository");
+const dashboardRepository = require("../repositories/dashboard.repository");
 const logger = require("../utils/logger");
 
 class DashboardService {
   /**
-   * Busca dados completos da dashboard: usuário + perfil financeiro
+   * Fetches complete dashboard data: user + financial profile
    * @param {number} userId - User ID (já validado pelo middleware)
    */
   async getDashboardData(userId) {
@@ -34,7 +34,7 @@ class DashboardService {
   }
 
   /**
-   * Busca apenas nome do usuário
+   * Fetches only user name
    * @param {number} userId - User ID (já validado pelo middleware)
    */
   async getUserName(userId) {
@@ -63,21 +63,21 @@ class DashboardService {
   }
 
   /**
-   * Busca apenas dados de investimentos (perfil financeiro)
+   * Fetches only investment data (financial profile)
    * @param {number} userId - User ID (já validado pelo middleware)
    */
   async getInvestmentData(userId) {
     try {
       logger.info({ userId }, "Service: Fetching investment data");
 
-      // Verificar que usuário existe
+      // Verify user exists
       const user = await dashboardRepository.getUserById(userId);
       if (!user) {
         logger.warn({ userId }, "Service: User not found");
         throw new Error("User not found");
       }
 
-      // Buscar perfil financeiro
+      // Fetch financial profile
       const financialProfile = await dashboardRepository.getFinancialProfileByUserId(userId);
       if (!financialProfile) {
         logger.warn({ userId }, "Service: Financial profile not found");

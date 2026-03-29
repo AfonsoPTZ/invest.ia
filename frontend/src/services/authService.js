@@ -1,9 +1,39 @@
-// Authentication Service
+/**
+ * Authentication Service
+ * 
+ * Centralized HTTP client for all authentication operations
+ * Handles login, registration, logout, token management
+ * Utilizes frontend logger for debugging
+ * 
+ * Layer Responsibility:
+ * - HTTP communication only (fetch, headers, response handling)
+ * - Token lifecycle management (storing, retrieving)
+ * - Error transformation to/from API format
+ * 
+ * DO NOT:
+ * - Business logic (validation, role checking)
+ * - UI state management
+ * - Page redirects
+ * 
+ * @module authService
+ */
+
 import logger from "../utils/logger";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
-// User login with email and password
+/**
+ * User login with email and password
+ * 
+ * Sends credentials to backend, receives JWT token
+ * Stores token in localStorage for authenticated requests
+ * 
+ * @async
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @returns {Promise<Object>} User data object { id, name, email }
+ * @throws {Error} Login error from API or network
+ */
 export async function login(email, password) {
   try {
     logger.info({ email }, "AuthService: Attempting user login");
@@ -23,7 +53,7 @@ export async function login(email, password) {
       throw new Error(data.message || "Login error");
     }
 
-    // Store JWT token
+    // Store JWT token for authenticated requests
     localStorage.setItem("token", data.token);
 
     logger.info({ email }, "AuthService: User logged in successfully");
@@ -35,7 +65,23 @@ export async function login(email, password) {
   }
 }
 
-// Register new user
+/**
+ * Register new user with OTP email verification
+ * 
+ * Sends registration data, backend sends OTP email
+ * Returns userId for next OTP verification step
+ * 
+ * NOTE: User is NOT authenticated yet - needs OTP verification
+ * 
+ * @async
+ * @param {string} name - User full name
+ * @param {string} email - User email
+ * @param {string} cpf - User CPF (only digits will be sent)
+ * @param {string} phone - User phone (only digits will be sent)
+ * @param {string} password - User password (backend validates strength)
+ * @returns {Promise<Object>} { userId, email } for next step
+ * @throws {Error} Registration error from API or network
+ */
 export async function register(name, email, cpf, phone, password) {
   try {
     logger.info({ email }, "AuthService: Attempting user registration");
@@ -64,13 +110,22 @@ export async function register(name, email, cpf, phone, password) {
   }
 }
 
-// User logout
+/**
+ * User logout
+ * 
+ * Notifies backend of logout (optional), removes token from localStorage
+ * Safe to call even if token is invalid or expired
+ * 
+ * @async
+ * @returns {Promise<void>}
+ */
 export async function logout() {
   const token = localStorage.getItem("token");
 
   try {
     logger.info({}, "AuthService: User attempting logout");
 
+    // Notify backend (best effort)
     await fetch(`${API_URL}/auth/logout`, {
       method: "POST",
       headers: {
@@ -81,13 +136,23 @@ export async function logout() {
     logger.info({}, "AuthService: User logged out successfully");
   } catch (error) {
     logger.error({ error: error.message }, "AuthService: Error on logout");
+    // Don't throw - logout should complete even if backend call fails
   }
 
-  // Remove JWT token
+  // Always remove token locally
   localStorage.removeItem("token");
 }
 
-// Get authenticated user data
+/**
+ * Get authenticated user data
+ * 
+ * Requires valid JWT token in localStorage
+ * Fetches current user profile information
+ * 
+ * @async
+ * @returns {Promise<Object>} User data { id, name, email, ... }
+ * @throws {Error} If not authenticated or API error
+ */
 export async function getMe() {
   const token = localStorage.getItem("token");
 
@@ -121,7 +186,15 @@ export async function getMe() {
   }
 }
 
-// Check if user is authenticated
+/**
+ * Check if user is authenticated
+ * 
+ * Queries backend to verify token validity
+ * Lighter than getMe() for simple auth checks
+ * 
+ * @async
+ * @returns {Promise<boolean>} True if authenticated, false otherwise
+ */
 export async function checkAuth() {
   const token = localStorage.getItem("token");
 

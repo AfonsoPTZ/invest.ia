@@ -1,5 +1,5 @@
 // Financial Profile Controller - Simple request/response handler
-const perfilFinanceiroService = require("../services/perfilFinanceiroService");
+const financialProfileService = require("../services/financial-profile.service");
 const logger = require("../utils/logger");
 
 class PerfilFinanceiroController {
@@ -9,23 +9,17 @@ class PerfilFinanceiroController {
       const userId = request.user?.id;
 
       if (!userId) {
-        logger.warn({}, "PerfilFinanceiroController: User ID not found in token");
+        logger.warn({}, "FinancialProfileController: User ID not found in token");
         return response.status(400).json({
           status: "error",
           message: "User identification failed"
         });
       }
 
-      logger.info({ userId }, "Attempting to create financial profile");
+      logger.info({ userId }, "Creating financial profile");
 
-      // Add userId to body for service processing
-      const profileData = {
-        ...request.body,
-        user_id: userId
-      };
-
-      // Service handles all validation
-      const profile = await perfilFinanceiroService.createProfile(userId, profileData);
+      // Service handles validation and persistence
+      const profile = await financialProfileService.createProfile(userId, request.body);
 
       logger.info({ userId, profileId: profile.id }, "Financial profile created successfully");
 
@@ -56,7 +50,7 @@ class PerfilFinanceiroController {
       logger.info({ userId }, "Fetching financial profile");
 
       // Service handles all validation
-      const profile = await perfilFinanceiroService.getProfile(userId);
+      const profile = await financialProfileService.getProfile(userId);
 
       logger.info({ userId }, "Financial profile fetched successfully");
 

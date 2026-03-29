@@ -74,8 +74,37 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+// Validation rules for email verification with OTP
+const validateEmailVerificationRules = () => {
+  return [
+    body("userId")
+      .notEmpty().withMessage("User ID is required")
+      .isInt({ min: 1 }).withMessage("User ID must be a positive integer"),
+
+    body("otpCode")
+      .notEmpty().withMessage("OTP code is required")
+      .trim()
+      .customSanitizer((value) => {
+        // Remove all non-digit characters (spaces, dashes, etc)
+        return String(value).replace(/\D/g, "");
+      })
+      .matches(/^\d{6}$/).withMessage("OTP code must be 6 digits"),
+  ];
+};
+
+// Validation rules for resend OTP
+const validateResendOtpRules = () => {
+  return [
+    body("userId")
+      .notEmpty().withMessage("User ID is required")
+      .isInt({ min: 1 }).withMessage("User ID must be a positive integer"),
+  ];
+};
+
 module.exports = {
   registerValidationRules,
   loginValidationRules,
+  validateEmailVerificationRules,
+  validateResendOtpRules,
   handleValidationErrors,
 };

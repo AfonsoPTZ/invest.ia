@@ -1,12 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
+import { validateLoginForm } from "../../validators/authValidator";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
 import Card from "../../components/Card";
 import "../../styles/auth.css";
 
+/**
+ * Login Page
+ * 
+ * User authentication form. Collects email and password.
+ * Frontend validation: basic email and required field checks
+ * Backend validation: password strength, account existence, credentials match
+ * 
+ * Flow:
+ * 1. User enters email and password
+ * 2. Frontend validates inputs (empty, email format)
+ * 3. Calls authService.login(email, password)
+ * 4. Backend validates credentials and returns JWT token
+ * 5. Token stored in localStorage
+ * 6. Redirects to /dashboard
+ * 
+ * @component
+ */
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,9 +32,21 @@ function Login() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Handle form submission
+   * Validates inputs locally, then calls login service
+   */
   async function handleFormSubmit(event) {
     event.preventDefault();
     setError("");
+
+    // Frontend validation - quick checks for better UX
+    const validationError = validateLoginForm(email, password);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setIsLoading(true);
 
     try {

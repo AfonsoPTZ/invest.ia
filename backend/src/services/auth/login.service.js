@@ -1,7 +1,7 @@
 // Login Service - Autenticação de usuário
 const bcrypt = require("bcryptjs");
 const tokenService = require("./token.service");
-const authRepository = require("../../repositories/userRepository");
+const authRepository = require("../../repositories/user.repository");
 const logger = require("../../utils/logger");
 
 // Validar que tokenService tem a função generateToken
@@ -34,9 +34,9 @@ async function loginUser(email, password) {
     }
 
     // Verificar se email foi verificado
-    if (!user.emailVerificado) {
+    if (!user.emailVerified) {
       logger.warn({ email }, "LoginService: Email not verified");
-      throw new Error("Por favor, verifique seu email antes de fazer login");
+      throw new Error("Please verify your email before logging in");
     }
 
     logger.info({ userId: user.id, userEmail: user.email, userObj: user }, "LoginService: User object before token generation");
