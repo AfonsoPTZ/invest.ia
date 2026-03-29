@@ -70,3 +70,90 @@
   cursor: not-allowed;
   opacity: 0.5;
 }
+
+/* OTP Input Group */
+.otp-input-group {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.otp-input {
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: #eff6ff;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.otp-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #f3f4f6;
+}
+
+.otp-input[value]:not([value=""]) {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+/* OTP Footer */
+.otp-footer {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.otp-footer p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.btn-link:hover:not(:disabled) {
+  color: #5a65d8;
+}
+
+.btn-link:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .otp-input {
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
+  }
+
+  .otp-input-group {
+    gap: 0.5rem;
+  }
+}

@@ -8,10 +8,10 @@ const authMiddleware = require("../middlewares/authMiddleware");
  * Rotas de perfil financeiro
  */
 
-// Rotas públicas (durante o cadastro)
-router.post("/", perfilFinanceiroController.create);
+// POST - Criar perfil (autenticado: durante o cadastro ou atualização)
+router.post("/", authMiddleware, perfilFinanceiroController.create);
 
-// Rotas protegidas
+// GET - Obter perfil (autenticado)
 router.get("/:usuarioId", authMiddleware, perfilFinanceiroController.get);
 
 module.exports = router;

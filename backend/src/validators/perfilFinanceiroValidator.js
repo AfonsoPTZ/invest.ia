@@ -1,6 +1,6 @@
 // Financial Profile Validator - Real validations for financial data
 
-// Validate monthly income
+// Validate monthly income (can be 0 if unchecked)
 function validateMonthlyIncome(monthlyIncome) {
   if (monthlyIncome === null || monthlyIncome === undefined) {
     return {
@@ -38,7 +38,7 @@ function validateMonthlyIncome(monthlyIncome) {
   };
 }
 
-// Validate initial balance
+// Validate initial balance (can be 0 if unchecked)
 function validateInitialBalance(initialBalance) {
   if (initialBalance === null || initialBalance === undefined) {
     return {
@@ -173,9 +173,9 @@ function validateBehaviorProfile(behaviorProfile) {
   }
 
   const validProfiles = [
-    "conservative",
-    "moderate",
-    "aggressive"
+    "conservador",
+    "moderado",
+    "agressivo"
   ];
 
   const profile = behaviorProfile.toLowerCase().trim();

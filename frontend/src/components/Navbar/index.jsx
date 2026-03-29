@@ -10,7 +10,7 @@ export default function Navbar({ userEmail, onLogout, className = '', ...props }
     <nav className={`navbar ${className}`} {...props}>
       <div className="navbar-content">
         <div className="navbar-brand">
-          <h1>Invest.IA</h1>
+          <h1>Invest_IA</h1>
         </div>
         
         <div className="navbar-menu">

@@ -35,7 +35,7 @@ class AuthRepository {
       logger.debug({ id }, "Searching user by ID");
       
       const [rows] = await pool.query(
-        "SELECT id, nome, email, cpf, telefone, criado_em FROM usuarios WHERE id = ?",
+        "SELECT * FROM usuarios WHERE id = ?",
         [id]
       );
       
@@ -169,6 +169,71 @@ class AuthRepository {
   }
 
   /**
+   * Atualizar OTP do usuário
+   */
+  async updateOtp(userId, otpData) {
+    try {
+      const { otpCodeHash, otpExpiresAt, otpAttempts } = otpData;
+
+      logger.debug({ userId }, "Updating OTP");
+
+      const [result] = await pool.query(
+        "UPDATE usuarios SET otp_codigo_hash = ?, otp_expira_em = ?, otp_tentativas = ? WHERE id = ?",
+        [otpCodeHash, otpExpiresAt, otpAttempts || 0, userId]
+      );
+
+      logger.debug({ userId, updated: result.affectedRows > 0 }, "OTP updated");
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      logger.error({ error: error.message, userId }, "Error updating OTP");
+      throw new Error(`Erro ao atualizar OTP: ${error.message}`);
+    }
+  }
+
+  /**
+   * Incrementar tentativas de OTP
+   */
+  async incrementOtpAttempts(userId) {
+    try {
+      logger.debug({ userId }, "Incrementing OTP attempts");
+
+      const [result] = await pool.query(
+        "UPDATE usuarios SET otp_tentativas = otp_tentativas + 1 WHERE id = ?",
+        [userId]
+      );
+
+      logger.debug({ userId, incremented: result.affectedRows > 0 }, "OTP attempts incremented");
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      logger.error({ error: error.message, userId }, "Error incrementing OTP attempts");
+      throw new Error(`Erro ao incrementar tentativas: ${error.message}`);
+    }
+  }
+
+  /**
+   * Marcar email como verificado
+   */
+  async updateEmailVerification(userId, verified) {
+    try {
+      logger.info({ userId, verified }, "Updating email verification status");
+
+      const [result] = await pool.query(
+        "UPDATE usuarios SET email_verificado = ? WHERE id = ?",
+        [verified ? 1 : 0, userId]
+      );
+
+      logger.info({ userId, verified, updated: result.affectedRows > 0 }, "Email verification status updated");
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      logger.error({ error: error.message, userId }, "Error updating email verification");
+      throw new Error(`Erro ao atualizar verificação: ${error.message}`);
+    }
+  }
+
+  /**
    * Mapeia colunas do banco (snake_case) para o padrão JS (camelCase)
    */
   _mapColumns(row) {
@@ -180,6 +245,10 @@ class AuthRepository {
       cpf: row.cpf,
       phone: row.telefone,
       passwordHash: row.senha_hash,
+      emailVerificado: row.email_verificado,
+      otp_codigo_hash: row.otp_codigo_hash,
+      otp_expira_em: row.otp_expira_em,
+      otp_tentativas: row.otp_tentativas,
       createdAt: row.criado_em,
       updatedAt: row.atualizado_em
     };

@@ -6,14 +6,28 @@ class PerfilFinanceiroController {
   // Create financial profile
   async create(request, response) {
     try {
-      const { user_id } = request.body;
+      const userId = request.user?.id;
 
-      logger.info({ user_id }, "Attempting to create financial profile");
+      if (!userId) {
+        logger.warn({}, "PerfilFinanceiroController: User ID not found in token");
+        return response.status(400).json({
+          status: "error",
+          message: "User identification failed"
+        });
+      }
+
+      logger.info({ userId }, "Attempting to create financial profile");
+
+      // Add userId to body for service processing
+      const profileData = {
+        ...request.body,
+        user_id: userId
+      };
 
       // Service handles all validation
-      const profile = await perfilFinanceiroService.createProfile(user_id, request.body);
+      const profile = await perfilFinanceiroService.createProfile(userId, profileData);
 
-      logger.info({ userId: user_id, profileId: profile.id }, "Financial profile created successfully");
+      logger.info({ userId, profileId: profile.id }, "Financial profile created successfully");
 
       return response.status(201).json({
         status: "success",
@@ -22,7 +36,11 @@ class PerfilFinanceiroController {
       });
 
     } catch (error) {
-      logger.error({ error: error.message, user_id: request.body.user_id }, "Error creating financial profile");
+      logger.error({ 
+        error: error.message, 
+        userId: request.user?.id 
+      }, "Error creating financial profile");
+      
       return response.status(400).json({
         status: "error",
         message: error.message

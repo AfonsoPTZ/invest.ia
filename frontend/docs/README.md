@@ -10,11 +10,13 @@
 ```
 src/
 ├── components/       (Button, Input, Card, Alert, Navbar)
-├── pages/           (Login, Register, FinancialProfile, Dashboard)
+├── pages/
+│   ├── auth/        (Login, Register, VerifyOtp, FinancialProfile)
+│   └── app/         (Dashboard)
 ├── services/        (authService, investmentService, expenseService)
 ├── App.jsx          (Router)
 ├── main.jsx         (Entry point)
-└── style/           (Tailwind CSS)
+└── styles/          (globals, auth, forms, app, globals)
 ```
 
 ## Quick Pattern

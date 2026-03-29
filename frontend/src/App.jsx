@@ -5,6 +5,7 @@ import "./styles/globals.css";
 // Auth Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import VerifyOtp from "./pages/auth/VerifyOtp";
 import FinancialProfile from "./pages/auth/FinancialProfile";
 
 // App Pages
@@ -17,6 +18,7 @@ function App() {
         {/* Authentication Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/financial-profile" element={<FinancialProfile />} />
         
         {/* Application Routes */}

@@ -1,5 +1,5 @@
-CREATE DATABASE investia;
-USE investia;
+CREATE DATABASE `invest_ia`;
+USE `invest_ia`;
 
 -- =========================
 -- 1. USUÁRIOS
@@ -11,6 +11,10 @@ CREATE TABLE usuarios (
     cpf CHAR(11) NOT NULL UNIQUE,
     telefone VARCHAR(20) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
+    email_verificado BOOLEAN NOT NULL DEFAULT FALSE,
+    otp_codigo_hash VARCHAR(255) NULL,
+    otp_expira_em DATETIME NULL,
+    otp_tentativas INT NOT NULL DEFAULT 0,
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -25,8 +29,8 @@ CREATE TABLE perfil_financeiro (
     saldo_inicial DECIMAL(12,2) NOT NULL DEFAULT 0.00,
     possui_investimentos BOOLEAN NOT NULL DEFAULT FALSE,
     possui_patrimonio BOOLEAN NOT NULL DEFAULT FALSE,
-    objetivo_financeiro VARCHAR(255),
-    perfil_comportamento ENUM('conservador', 'moderado', 'gastador') DEFAULT 'moderado',
+    objetivo_financeiro VARCHAR(255) NOT NULL,
+    perfil_comportamento ENUM('conservador', 'moderado', 'agressivo') NOT NULL DEFAULT 'moderado',
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_financeiro_usuario

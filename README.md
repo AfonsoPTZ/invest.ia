@@ -1,4 +1,4 @@
-# 💸 Invest.IA
+# 💸 Invest_IA
 
 Sistema de Gestão Financeira com Inteligência Artificial.
 
@@ -6,7 +6,7 @@ Sistema de Gestão Financeira com Inteligência Artificial.
 
 ## 🎯 Sobre o Projeto
 
-O **Invest.IA** é uma aplicação web que permite ao usuário:
+O **Invest_IA** é uma aplicação web que permite ao usuário:
 
 * Registrar ganhos e despesas
 * Acompanhar saldo financeiro em tempo real
@@ -35,7 +35,7 @@ Ela analisa o comportamento financeiro do usuário para gerar sugestões como:
 ## 📦 Estrutura do Projeto
 
 ```
-invest.ia/
+invest_ia/
 ├─ frontend/              # React + Vite
 │  ├─ src/
 │  │  ├─ components/      # Componentes React
@@ -97,8 +97,8 @@ invest.ia/
 ### 1. Clonar Repositório
 
 ```bash
-git clone https://github.com/SEU-USUARIO/invest.ia.git
-cd invest.ia
+git clone https://github.com/SEU-USUARIO/invest_ia.git
+cd invest_ia
 ```
 
 ---

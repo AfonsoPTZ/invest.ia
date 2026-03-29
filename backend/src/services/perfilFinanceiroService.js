@@ -1,7 +1,7 @@
 // Financial Profile Service - Doorkeeper pattern
 // Orchestrates: Validators → Repositories
 const perfilFinanceiroRepository = require("../repositories/perfilFinanceiroRepository");
-const authRepository = require("../repositories/authRepository");
+const authRepository = require("../repositories/userRepository");
 const perfilFinanceiroValidator = require("../validators/perfilFinanceiroValidator");
 const logger = require("../utils/logger");
 
@@ -34,6 +34,16 @@ class PerfilFinanceiroService {
 
       const cleanedData = validation.cleanedData;
 
+      // Step 2.5: Map English names to Portuguese column names
+      const mappedData = {
+        renda_mensal: cleanedData.monthly_income || 0,
+        saldo_inicial: cleanedData.initial_balance || 0,
+        possui_investimentos: cleanedData.has_investments || false,
+        possui_patrimonio: cleanedData.has_assets || false,
+        objetivo_financeiro: cleanedData.financial_goal,
+        perfil_comportamento: cleanedData.behavior_profile
+      };
+
       // Step 3: Verify user exists in repository
       const user = await authRepository.findById(userId);
       if (!user) {
@@ -46,7 +56,7 @@ class PerfilFinanceiroService {
       if (existingProfile) {
         logger.info({ userId }, "Service: Profile exists, updating");
         // Update if exists
-        const updated = await perfilFinanceiroRepository.update(userId, cleanedData);
+        const updated = await perfilFinanceiroRepository.update(userId, mappedData);
         if (!updated) {
           logger.error({ userId }, "Service: Error updating financial profile");
           throw new Error("Error updating financial profile");
@@ -55,12 +65,12 @@ class PerfilFinanceiroService {
         return {
           id: existingProfile.id,
           user_id: userId,
-          ...cleanedData
+          ...mappedData
         };
       }
 
       // Step 5: Create new profile via repository
-      const profile = await perfilFinanceiroRepository.create(userId, cleanedData);
+      const profile = await perfilFinanceiroRepository.create(userId, mappedData);
       logger.info({ userId, profileId: profile.id }, "Service: Financial profile created successfully");
       return profile;
 

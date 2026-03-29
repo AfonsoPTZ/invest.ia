@@ -1,4 +1,4 @@
-USE investia;
+USE `invest_ia`;
 
 -- =========================
 -- USUÁRIO

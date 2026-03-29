@@ -33,7 +33,7 @@ function Login() {
     <div className="auth-container">
       <Card className="auth-card">
         <div className="auth-header">
-          <h1 className="auth-title">Invest.IA</h1>
+          <h1 className="auth-title">Invest_IA</h1>
           <p className="auth-subtitle">Manage your investments</p>
         </div>
 
