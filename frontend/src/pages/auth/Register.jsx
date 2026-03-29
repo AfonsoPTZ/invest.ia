@@ -101,86 +101,122 @@ export default function Register() {
   return (
     <div className="auth-container">
       <Card className="auth-card">
-        <h2 className="auth-title">Criar Conta</h2>
+        {/* Step Indicator */}
+        <div className="form-steps">
+          <div className="step-item active">
+            <div className="step-number">1</div>
+            <div className="step-label">Register</div>
+          </div>
+          <div className="step-connector"></div>
+          <div className="step-item">
+            <div className="step-number">2</div>
+            <div className="step-label">Verify</div>
+          </div>
+          <div className="step-connector"></div>
+          <div className="step-item">
+            <div className="step-number">3</div>
+            <div className="step-label">Profile</div>
+          </div>
+        </div>
+
+        <div className="auth-header">
+          <h1 className="auth-title">Create Your Account</h1>
+          <p className="auth-subtitle">Join us and start managing your investments</p>
+        </div>
         
         {error && (
           <Alert type="error">{error}</Alert>
         )}
 
         <form onSubmit={handleSubmit} className="auth-form">
-          <Input
-            label="Name"
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            value={formData.name}
-            onChange={handleInputChange}
-            disabled={isLoading}
-          />
+          {/* Personal Information Section */}
+          <div className="form-section">
+            <h3 className="form-section-title">Personal Information</h3>
+            
+            <Input
+              label="Full Name"
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={handleInputChange}
+              disabled={isLoading}
+            />
 
-          <Input
-            label="Email"
-            type="email"
-            name="email"
-            placeholder="your@email.com"
-            value={formData.email}
-            onChange={handleInputChange}
-            disabled={isLoading}
-          />
+            <Input
+              label="Email Address"
+              type="email"
+              name="email"
+              placeholder="your@email.com"
+              value={formData.email}
+              onChange={handleInputChange}
+              disabled={isLoading}
+            />
+          </div>
 
-          <Input
-            label="CPF"
-            type="text"
-            name="cpf"
-            placeholder="CPF (11 digits)"
-            value={formData.cpf}
-            onChange={handleInputChange}
-            disabled={isLoading}
-            maxLength="14"
-          />
+          {/* Contact Information Section */}
+          <div className="form-section">
+            <h3 className="form-section-title">Contact Information</h3>
+            
+            <Input
+              label="CPF"
+              type="text"
+              name="cpf"
+              placeholder="CPF (11 digits)"
+              value={formData.cpf}
+              onChange={handleInputChange}
+              disabled={isLoading}
+              maxLength="14"
+            />
 
-          <Input
-            label="Phone"
-            type="tel"
-            name="phone"
-            placeholder="Phone (11 digits)"
-            value={formData.phone}
-            onChange={handleInputChange}
-            disabled={isLoading}
-            maxLength="15"
-          />
+            <Input
+              label="Phone Number"
+              type="tel"
+              name="phone"
+              placeholder="Phone (11 digits)"
+              value={formData.phone}
+              onChange={handleInputChange}
+              disabled={isLoading}
+              maxLength="15"
+            />
+          </div>
 
-          <Input
-            label="Password"
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleInputChange}
-            disabled={isLoading}
-          />
+          {/* Security Section */}
+          <div className="form-section">
+            <h3 className="form-section-title">Security</h3>
+            
+            <Input
+              label="Password"
+              type="password"
+              name="password"
+              placeholder="Create a strong password"
+              value={formData.password}
+              onChange={handleInputChange}
+              disabled={isLoading}
+            />
 
-          <Input
-            label="Confirm Password"
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            disabled={isLoading}
-          />
+            <Input
+              label="Confirm Password"
+              type="password"
+              name="confirmPassword"
+              placeholder="Re-enter your password"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              disabled={isLoading}
+            />
+          </div>
 
           <Button
-            type="submit"
+            type="primary"
             className="btn-full"
             disabled={isLoading}
           >
-            {isLoading ? "Cadastrando..." : "Cadastrar"}
+            {isLoading ? "Creating Account..." : "Continue to Verification"}
           </Button>
         </form>
 
         <p className="auth-footer">
-          Já tem conta? <a href="/login">Faça login</a>
+          Already have an account? <a href="/login" className="auth-link">Sign in instead</a>
         </p>
       </Card>
     </div>

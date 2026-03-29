@@ -1,37 +1,57 @@
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
 .input-group label {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
+  font-weight: 500;
+  color: #334155;
+  letter-spacing: 0.3px;
 }
 
 .input {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  padding: 11px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 1rem;
   font-family: inherit;
   transition: all 0.2s ease;
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.input::placeholder {
+  color: #b0b9c3;
+  font-weight: 400;
 }
 
 .input:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #f0f9ff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), inset 0 0 0 1px rgba(59, 130, 246, 0.05);
 }
 
 .input:disabled {
-  background-color: #f3f4f6;
+  background-color: #f1f5f9;
+  color: #a0aec0;
   cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.input:invalid {
+  border-color: #fca5a5;
+  background-color: #fff7f7;
 }
 
 .error {
   font-size: 0.875rem;
   color: #dc2626;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }

@@ -63,16 +63,19 @@ function Login() {
     <div className="auth-container">
       <Card className="auth-card">
         <div className="auth-header">
+          <div className="auth-logo">
+            <div className="logo-icon">📊</div>
+          </div>
           <h1 className="auth-title">Invest_IA</h1>
-          <p className="auth-subtitle">Manage your investments</p>
+          <p className="auth-subtitle">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleFormSubmit} className="auth-form">
           <Input
             id="email"
-            label="Email"
+            label="Email Address"
             type="email"
-            placeholder="your@email.com"
+            placeholder="name@company.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             autoComplete="email"
@@ -83,7 +86,7 @@ function Login() {
             id="password"
             label="Password"
             type="password"
-            placeholder="••••••••"
+            placeholder="Enter your password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             autoComplete="current-password"
@@ -97,11 +100,10 @@ function Login() {
           </Button>
         </form>
 
+        <div className="auth-divider"></div>
+
         <p className="auth-footer">
-          Don't have an account?{" "}
-          <a href="/register" className="auth-link">
-            Sign Up
-          </a>
+          New here? <a href="/register" className="auth-link">Create an account</a>
         </p>
       </Card>
     </div>

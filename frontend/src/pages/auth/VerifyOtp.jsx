@@ -177,57 +177,80 @@ export default function VerifyOtp() {
   return (
     <div className="auth-container">
       <Card className="auth-card">
-        <h2 className="auth-title">Verificar Email</h2>
-        
-        <p className="auth-subtitle mb-6">
-          Enviamos um código para <strong>{email}</strong>
-        </p>
+        {/* Step Indicator */}
+        <div className="form-steps">
+          <div className="step-item completed">
+            <div className="step-number">✓</div>
+            <div className="step-label">Register</div>
+          </div>
+          <div className="step-connector completed"></div>
+          <div className="step-item active">
+            <div className="step-number">2</div>
+            <div className="step-label">Verify</div>
+          </div>
+          <div className="step-connector"></div>
+          <div className="step-item">
+            <div className="step-number">3</div>
+            <div className="step-label">Profile</div>
+          </div>
+        </div>
+
+        <div className="auth-header">
+          <h1 className="auth-title">Verify Your Email</h1>
+          <p className="auth-subtitle">
+            We've sent a verification code to <strong>{email}</strong>
+          </p>
+        </div>
 
         {error && (
           <Alert type="error">{error}</Alert>
         )}
 
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="otp-input-group">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => inputRefs.current[index] = el}
-                type="text"
-                maxLength="1"
-                value={digit}
-                onChange={(e) => handleOtpChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                disabled={isLoading}
-                className="otp-input"
-                autoFocus={index === 0}
-              />
-            ))}
+          <div className="otp-section">
+            <label className="form-label">Enter Verification Code</label>
+            <div className="otp-input-group">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  ref={(el) => inputRefs.current[index] = el}
+                  type="text"
+                  maxLength="1"
+                  value={digit}
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  disabled={isLoading}
+                  className="otp-input"
+                  autoFocus={index === 0}
+                />
+              ))}
+            </div>
+            <p className="otp-help-text">Enter the 6-digit code from your email</p>
           </div>
 
           <Button
-            type="submit"
+            type="primary"
             className="btn-full"
             disabled={isLoading || otp.join("").length !== 6}
           >
-            {isLoading ? "Verificando..." : "Verificar Código"}
+            {isLoading ? "Verifying..." : "Verify Code"}
           </Button>
         </form>
 
         <div className="otp-footer">
-          <p>Não recebeu o código?</p>
+          <p>Didn't receive the code?</p>
           <Button
             type="button"
             className="btn-link"
             disabled={!canResend || isLoading}
             onClick={handleResendOtp}
           >
-            {canResend ? "Reenviar Código" : `Reenviar em ${resendTimer}s`}
+            {canResend ? "Resend Code" : `Resend in ${resendTimer}s`}
           </Button>
         </div>
 
         <p className="auth-footer">
-          <a href="/register">Voltar ao cadastro</a>
+          <a href="/register" className="auth-link">Back to Registration</a>
         </p>
       </Card>
     </div>

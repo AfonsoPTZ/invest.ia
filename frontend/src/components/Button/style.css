@@ -1,12 +1,19 @@
 .btn {
-  padding: 10px 20px;
+  padding: 11px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn:disabled {
@@ -14,29 +21,73 @@
   cursor: not-allowed;
 }
 
+.btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Primary Button */
 .btn-primary {
-  background-color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
 }
 
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Secondary Button */
 .btn-secondary {
-  background-color: #6b7280;
+  background-color: #64748b;
   color: white;
+  box-shadow: 0 2px 6px rgba(100, 116, 139, 0.12);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #4b5563;
+  background-color: #475569;
+  box-shadow: 0 6px 16px rgba(71, 85, 105, 0.18);
+  transform: translateY(-2px);
 }
 
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(71, 85, 105, 0.1);
+}
+
+.btn-secondary:focus {
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+}
+
+/* Danger Button */
 .btn-danger {
   background-color: #ef4444;
   color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .btn-danger:hover:not(:disabled) {
   background-color: #dc2626;
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+}
+
+.btn-danger:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }

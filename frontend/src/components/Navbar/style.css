@@ -1,16 +1,17 @@
 .navbar {
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-bottom: 1px solid rgba(248, 250, 252, 0.1);
+  box-shadow: 0 6px 20px rgba(30, 60, 114, 0.16), 0 2px 8px rgba(42, 82, 152, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: all 0.3s ease;
 }
 
 .navbar-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,18 +20,48 @@
 
 .navbar-brand h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  color: #1f2937;
+  background: linear-gradient(90deg, #f8fafc 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  transition: all 0.3s ease;
 }
 
 .navbar-menu {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .navbar-email {
   font-size: 14px;
-  color: #6b7280;
+  color: #cbd5e1;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.navbar-logout {
+  padding: 10px 20px;
+  background: rgba(248, 250, 252, 0.95);
+  color: #1e3c72;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(248, 250, 252, 0.2);
+}
+
+.navbar-logout:hover {
+  background: white;
+  box-shadow: 0 6px 16px rgba(248, 250, 252, 0.3);
+  transform: translateY(-1px);
+}
+
+.navbar-logout:active {
+  transform: translateY(0);
 }

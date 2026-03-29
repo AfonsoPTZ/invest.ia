@@ -92,72 +92,106 @@ function Dashboard() {
             <Alert type="error">{error}</Alert>
           ) : (
             <>
-              {/* Welcome Card */}
-              <Card className="mb-8">
-                <h1 className="dashboard-title">
-                  Welcome, {user?.name}! 👋
-                </h1>
-                <p className="dashboard-subtitle">
-                  Track your investments and finances in one place.
-                </p>
-              </Card>
-
-              {/* Quick Stats Grid */}
-              <div className="stats-grid">
-                {/* Total Balance */}
-                <Card className="stat-card">
-                  <p className="stat-label">Total Balance</p>
-                  <p className="stat-value">
-                    ${dashboardData?.financialProfile?.initial_balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
+              {/* Hero Section */}
+              <div className="dashboard-hero">
+                <div className="hero-content">
+                  <h1 className="hero-title">Welcome back, {user?.name}! 👋</h1>
+                  <p className="hero-subtitle">
+                    Here's an overview of your financial profile and investment opportunities.
                   </p>
-                </Card>
-
-                {/* Monthly Income */}
-                <Card className="stat-card">
-                  <p className="stat-label">Monthly Income</p>
-                  <p className="stat-value">
-                    ${dashboardData?.financialProfile?.monthly_income?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
-                  </p>
-                </Card>
-
-                {/* Monthly Expenses */}
-                <Card className="stat-card">
-                  <p className="stat-label">Monthly Expenses</p>
-                  <p className="stat-value">$0.00</p>
-                </Card>
-
-                {/* Assets */}
-                <Card className="stat-card">
-                  <p className="stat-label">Assets</p>
-                  <p className="stat-value">$0.00</p>
-                </Card>
+                </div>
               </div>
 
-              {/* Navigation Cards */}
-              <div className="nav-cards">
-                <Card className="nav-card">
-                  <h3 className="nav-card-title">Expenses</h3>
-                  <p className="nav-card-text">Manage your expenses</p>
-                  <Button type="primary">Access</Button>
-                </Card>
+              {/* Stats Overview Section */}
+              <div className="stats-section">
+                <div className="section-header">
+                  <h2 className="section-title">Financial Overview</h2>
+                  <p className="section-description">Your current financial snapshot</p>
+                </div>
 
-                <Card className="nav-card">
-                  <h3 className="nav-card-title">Investments</h3>
-                  <p className="nav-card-text">Track your investments</p>
-                  <Button type="primary">Access</Button>
-                </Card>
+                <div className="stats-grid">
+                  {/* Total Balance */}
+                  <div className="stat-card-wrapper">
+                    <Card className="stat-card">
+                      <div className="stat-icon balance">💰</div>
+                      <p className="stat-label">Total Balance</p>
+                      <p className="stat-value">
+                        ${dashboardData?.financialProfile?.initial_balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
+                      </p>
+                      <p className="stat-meta">Your total savings</p>
+                    </Card>
+                  </div>
 
-                <Card className="nav-card">
-                  <h3 className="nav-card-title">Assets</h3>
-                  <p className="nav-card-text">View your assets</p>
-                  <Button type="primary">Access</Button>
-                </Card>
+                  {/* Monthly Income */}
+                  <div className="stat-card-wrapper">
+                    <Card className="stat-card">
+                      <div className="stat-icon income">📈</div>
+                      <p className="stat-label">Monthly Income</p>
+                      <p className="stat-value">
+                        ${dashboardData?.financialProfile?.monthly_income?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
+                      </p>
+                      <p className="stat-meta">Income per month</p>
+                    </Card>
+                  </div>
 
-                <Card className="nav-card">
-                  <h3 className="nav-card-title">Income</h3>
-                  <p className="nav-card-text">Control your income</p>
-                  <Button type="primary">Access</Button>
-                </Card>
+                  {/* Monthly Expenses */}
+                  <div className="stat-card-wrapper">
+                    <Card className="stat-card">
+                      <div className="stat-icon expenses">💳</div>
+                      <p className="stat-label">Monthly Expenses</p>
+                      <p className="stat-value">$0.00</p>
+                      <p className="stat-meta">Tracked spending</p>
+                    </Card>
+                  </div>
+
+                  {/* Assets */}
+                  <div className="stat-card-wrapper">
+                    <Card className="stat-card">
+                      <div className="stat-icon assets">🏠</div>
+                      <p className="stat-label">Assets</p>
+                      <p className="stat-value">$0.00</p>
+                      <p className="stat-meta">Real estate & items</p>
+                    </Card>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Actions Section */}
+              <div className="actions-section">
+                <div className="section-header">
+                  <h2 className="section-title">Quick Actions</h2>
+                  <p className="section-description">Access your financial management tools</p>
+                </div>
+
+                <div className="nav-cards">
+                  <Card className="nav-card">
+                    <div className="nav-card-icon">💸</div>
+                    <h3 className="nav-card-title">Expenses</h3>
+                    <p className="nav-card-text">Track and manage your spending</p>
+                    <Button type="primary" className="nav-card-btn">View Expenses</Button>
+                  </Card>
+
+                  <Card className="nav-card">
+                    <div className="nav-card-icon">📊</div>
+                    <h3 className="nav-card-title">Investments</h3>
+                    <p className="nav-card-text">Monitor your investment portfolio</p>
+                    <Button type="primary" className="nav-card-btn">View Investments</Button>
+                  </Card>
+
+                  <Card className="nav-card">
+                    <div className="nav-card-icon">🏦</div>
+                    <h3 className="nav-card-title">Assets</h3>
+                    <p className="nav-card-text">Manage your valuable assets</p>
+                    <Button type="primary" className="nav-card-btn">View Assets</Button>
+                  </Card>
+
+                  <Card className="nav-card">
+                    <div className="nav-card-icon">💹</div>
+                    <h3 className="nav-card-title">Income</h3>
+                    <p className="nav-card-text">Control your income streams</p>
+                    <Button type="primary" className="nav-card-btn">View Income</Button>
+                  </Card>
+                </div>
               </div>
             </>
           )}
