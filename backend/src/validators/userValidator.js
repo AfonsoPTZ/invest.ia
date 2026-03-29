@@ -1,9 +1,9 @@
 // User Validator - Using professional libraries
-// - express-validator (email, fields)
+// - validator (email, utilities)
 // - cpf-cnpj-validator (CPF algorithm)
 // - libphonenumber-js (Brazilian phone with DDD)
 
-const { isEmail } = require("express-validator");
+const { isEmail } = require("validator");
 const { cpf: validateCPFLib } = require("cpf-cnpj-validator");
 const { parsePhoneNumber, isValidPhoneNumber } = require("libphonenumber-js");
 

@@ -10,7 +10,8 @@ class AuthRepository {
         "SELECT * FROM usuarios WHERE email = ?",
         [email]
       );
-      return rows[0] || null;
+      if (!rows[0]) return null;
+      return this._mapColumns(rows[0]);
     } catch (error) {
       throw new Error(`Erro ao buscar usuário por email: ${error.message}`);
     }
@@ -25,7 +26,8 @@ class AuthRepository {
         "SELECT id, nome, email, cpf, telefone, criado_em FROM usuarios WHERE id = ?",
         [id]
       );
-      return rows[0] || null;
+      if (!rows[0]) return null;
+      return this._mapColumns(rows[0]);
     } catch (error) {
       throw new Error(`Erro ao buscar usuário por ID: ${error.message}`);
     }
@@ -36,17 +38,17 @@ class AuthRepository {
    */
   async create(userData) {
     try {
-      const { nome, email, cpf, telefone, senhaHash } = userData;
+      const { name, email, cpf, phone, passwordHash } = userData;
       const [result] = await pool.query(
         "INSERT INTO usuarios (nome, email, cpf, telefone, senha_hash) VALUES (?, ?, ?, ?, ?)",
-        [nome, email, cpf, telefone, senhaHash]
+        [name, email, cpf, phone, passwordHash]
       );
       return {
         id: result.insertId,
-        nome,
+        name,
         email,
         cpf,
-        telefone
+        phone
       };
     } catch (error) {
       throw new Error(`Erro ao criar usuário: ${error.message}`);
@@ -111,6 +113,23 @@ class AuthRepository {
     } catch (error) {
       throw new Error(`Erro ao atualizar senha: ${error.message}`);
     }
+  }
+
+  /**
+   * Mapeia colunas do banco (snake_case) para o padrão JS (camelCase)
+   */
+  _mapColumns(row) {
+    if (!row) return null;
+    return {
+      id: row.id,
+      name: row.nome,
+      email: row.email,
+      cpf: row.cpf,
+      phone: row.telefone,
+      passwordHash: row.senha_hash,
+      createdAt: row.criado_em,
+      updatedAt: row.atualizado_em
+    };
   }
 }
 
