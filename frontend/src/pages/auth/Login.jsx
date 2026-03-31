@@ -33,6 +33,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -77,6 +78,7 @@ function Login() {
   async function handleFormSubmit(event) {
     event.preventDefault();
     setError("");
+    setSuccess("");
     setFieldErrors({});
 
     // Frontend validation - quick checks for better UX
@@ -97,10 +99,14 @@ function Login() {
 
     try {
       const user = await login(email, password);
-      setTimeout(() => navigate("/dashboard"), 500);
+      setSuccess("Login successful! Redirecting to dashboard...");
+      setError("");
+      
+      setTimeout(() => navigate("/dashboard"), 1500);
     } catch (catchError) {
       const errorMsg = catchError.message;
       setError(errorMsg);
+      setSuccess("");
     } finally {
       setIsLoading(false);
     }
@@ -190,6 +196,8 @@ function Login() {
             </motion.div>
 
             {error && <Alert type="error">{error}</Alert>}
+
+            {success && <Alert type="success">{success}</Alert>}
 
             <motion.div
               whileHover={{ scale: 1.02 }}

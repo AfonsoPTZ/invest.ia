@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FaWallet, FaBuilding, FaGem, FaShieldAlt, FaGift } from "react-icons/fa";
 import { motion } from "motion/react";
 import { logout } from "../../services/authService";
+import { useAuthUser } from "../../utils/useAuthUser";
 import Button from "../../components/Button";
 import AnimatedCard from "../../components/AnimatedCard";
 import Navbar from "../../components/Navbar";
@@ -19,6 +20,7 @@ import "../../styles/app.css";
  */
 function Assets() {
   const navigate = useNavigate();
+  const { user } = useAuthUser();
 
   const handleLogoutClick = () => {
     logout();
@@ -29,7 +31,7 @@ function Assets() {
   return (
     <PageTransition>
       <div className="app-layout">
-        <Navbar userEmail="user@example.com" onLogout={handleLogoutClick} />
+        <Navbar userEmail={user?.email} onLogout={handleLogoutClick} />
         
         <main className="app-content">
           <div className="app-container">

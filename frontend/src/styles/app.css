@@ -25,7 +25,7 @@
 
 .app-content {
   flex: 1;
-  padding: 32px 24px;
+  padding: var(--spacing-2xl) 1.5rem;
   padding-top: 104px;
   position: relative;
   z-index: 1;
@@ -59,7 +59,7 @@
 
 .loader-text {
   font-size: 16px;
-  color: #d4d4d4;
+  color: var(--color-text-muted);
   font-weight: 500;
   animation: pulse 1.5s ease-in-out infinite;
 }
@@ -89,7 +89,7 @@
 .hero-title {
   font-size: 40px;
   font-weight: 800;
-  background: linear-gradient(135deg, #f5f5f5 0%, #dc2626 100%);
+  background: linear-gradient(135deg, var(--color-text-light) 0%, var(--color-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -104,7 +104,7 @@
 }
 
 .user-name {
-  background: linear-gradient(135deg, #f5f5f5 0%, #dc2626 100%);
+  background: linear-gradient(135deg, var(--color-text-light) 0%, var(--color-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -112,7 +112,7 @@
 }
 
 .hero-icon {
-  color: #dc2626;
+  color: var(--color-primary);
   font-size: 36px;
   animation: float 3s ease-in-out infinite;
 }
@@ -131,7 +131,7 @@
 
 .hero-subtitle {
   font-size: 16px;
-  color: #d4d4d4;
+  color: var(--color-text-muted);
   margin: 0;
   font-weight: 400;
   line-height: 1.6;
@@ -145,7 +145,7 @@
 .section-title {
   font-size: 24px;
   font-weight: 700;
-  background: linear-gradient(135deg, #f5f5f5 0%, #dc2626 100%);
+  background: linear-gradient(135deg, var(--color-text-light) 0%, var(--color-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -167,7 +167,7 @@
 
 .section-description {
   font-size: 14px;
-  color: #d4d4d4;
+  color: var(--color-text-muted);
   margin: 0;
   font-weight: 400;
 }

@@ -24,7 +24,7 @@ export default function Footer() {
         {/* Brand/Logo */}
         <div className="footer-brand">
           <img 
-            src="/src/assets/icons/panda-icon-navbar.png"
+            src="/assets/icons/panda-icon-navbar.png"
             alt="Invest Panda Logo"
             className="footer-brand-icon"
             onError={(e) => e.target.style.display = 'none'}

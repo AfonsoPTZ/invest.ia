@@ -2,6 +2,34 @@
 /* Subtle entrance, fade-in, and interactive animations */
 
 /* ============================================
+   Shared Animations (Reusable)
+   ============================================ */
+
+/* Label glow effect on focus */
+@keyframes labelGlow {
+  0%, 100% {
+    color: var(--color-text-light);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    color: var(--color-text-lighter);
+    text-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* Slide in down entrance */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
    Page Load & Entrance Animations
    ============================================ */
 

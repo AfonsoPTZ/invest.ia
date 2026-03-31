@@ -7,24 +7,12 @@
   width: 100%;
 }
 
-/* Glow animation for labels on focus */
-@keyframes labelGlow {
-  0%, 100% {
-    color: #f5f5f5;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-  }
-  50% {
-    color: #ffffff;
-    text-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
-  }
-}
-
 .input-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--color-text-lighter);
   letter-spacing: 0.3px;
-  transition: color 0.2s ease;
+  transition: var(--timing-fast) var(--timing-easing);
 }
 
 .input-label:has(+ .input-wrapper .input:focus) {
@@ -42,12 +30,12 @@
 .input {
   padding: 11px 14px;
   border: 1.5px solid rgba(125, 30, 30, 0.3);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 1rem;
   font-family: inherit;
-  transition: all 0.2s ease;
-  background-color: rgba(26, 26, 26, 0.6);
-  color: #f5f5f5;
+  transition: var(--timing-fast) var(--timing-easing);
+  background-color: var(--color-bg-card);
+  color: var(--color-text-light);
   pointer-events: auto;
   cursor: text;
   position: relative;
@@ -62,21 +50,21 @@
 
 .input:hover {
   border-color: rgba(229, 231, 235, 0.4);
-  background-color: rgba(26, 26, 26, 0.7);
+  background-color: var(--color-bg-card-hover);
 }
 
 .input:focus {
   outline: none;
   border-color: #b0b0b0;
-  background-color: rgba(26, 26, 26, 0.8);
+  background-color: var(--color-bg-card-focus);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
 /* Error state - input becomes white with red border */
 .input.has-error {
   background-color: rgba(245, 245, 245, 0.9) !important;
-  color: #0f0f0f !important;
-  border-color: #ef4444 !important;
+  color: var(--color-text-dark) !important;
+  border-color: var(--color-error) !important;
 }
 
 .input.has-error:hover {
@@ -120,21 +108,10 @@
 .input-error,
 .error {
   font-size: 0.875rem;
-  color: #dc2626;
+  color: var(--color-primary);
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 4px;
   animation: slideInDown 0.2s ease-out;
-}
-
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }

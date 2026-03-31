@@ -134,8 +134,9 @@ export function validateFinancialProfileForm(formData) {
  */
 function validateCPFDigits(cpf) {
   if (!validateNotEmpty(cpf)) return false;
-  const digitsOnly = cpf.replace(/\D/g, '');
-  return digitsOnly.length === 11;
+  // Reject if contains any non-numeric characters
+  if (!/^\d+$/.test(cpf)) return false;
+  return cpf.length === 11;
 }
 
 /**
@@ -145,8 +146,9 @@ function validateCPFDigits(cpf) {
  */
 function validatePhoneDigits(phone) {
   if (!validateNotEmpty(phone)) return false;
-  const digitsOnly = phone.replace(/\D/g, '');
-  return digitsOnly.length === 11;
+  // Reject if contains any non-numeric characters
+  if (!/^\d+$/.test(phone)) return false;
+  return phone.length === 11;
 }
 
 /**

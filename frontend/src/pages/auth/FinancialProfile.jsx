@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 import { motion } from "motion/react";
@@ -44,6 +44,9 @@ export default function FinancialProfile() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Ref for scrolling to alert when success/error message appears
+  const alertRef = useRef(null);
 
   // Apply scale in animation to card
   const cardRef = useAnimateOnMount('animate-scale-in', 100);
@@ -73,6 +76,18 @@ export default function FinancialProfile() {
       setTimeout(() => navigate("/register"), 2000);
     }
   }, [navigate]);
+
+  /**
+   * Scroll to alert when success or error message appears
+   */
+  useEffect(() => {
+    if ((success || error) && alertRef.current) {
+      // Scroll to alert with smooth behavior after a small delay
+      setTimeout(() => {
+        alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [success, error]);
 
   /**
    * Map error message to field names
@@ -244,11 +259,15 @@ export default function FinancialProfile() {
           </motion.div>
 
           {error && (
-            <Alert type="error">{error}</Alert>
+            <div ref={alertRef}>
+              <Alert type="error">{error}</Alert>
+            </div>
           )}
 
           {success && (
-            <Alert type="success">{success}</Alert>
+            <div ref={alertRef}>
+              <Alert type="success">{success}</Alert>
+            </div>
           )}
 
           <motion.form 

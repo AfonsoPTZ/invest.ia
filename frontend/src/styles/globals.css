@@ -1,5 +1,73 @@
 /* Global Styles */
 
+/* ============================================
+   CSS Custom Properties (Design System)
+   ============================================ */
+
+:root {
+  /* Colors - Brand (Red) */
+  --color-primary: #dc2626;
+  --color-primary-dark: #b91c1c;
+  --color-primary-darker: #991b1b;
+  --color-primary-light: #ef4444;
+  --color-primary-lighter: #fecaca;
+
+  /* Colors - Backgrounds */
+  --color-bg-dark: #0f0f0f;
+  --color-bg-darker: #1a1a1a;
+  --color-bg-darkest: #2d1a1a;
+  --color-bg-card: rgba(26, 26, 26, 0.6);
+  --color-bg-card-hover: rgba(26, 26, 26, 0.7);
+  --color-bg-card-focus: rgba(26, 26, 26, 0.8);
+
+  /* Colors - Text */
+  --color-text-light: #f5f5f5;
+  --color-text-lighter: #ffffff;
+  --color-text-muted: #d4d4d4;
+  --color-text-dark: #0f0f0f;
+
+  /* Colors - Accents */
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #fb923c;
+  --color-info: #3bb6f6;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  --gradient-text: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+  --gradient-text-primary: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+
+  /* Z-Index Scale */
+  --z-index-backdrop: 10;
+  --z-index-footer: 10;
+  --z-index-navbar: 100;
+  --z-index-modal: 1000;
+  --z-index-tooltip: 1001;
+  --z-index-dropdown: 999;
+
+  /* Transitions & Timing */
+  --timing-fast: 0.2s;
+  --timing-normal: 0.3s;
+  --timing-slow: 0.5s;
+  --timing-easing: ease;
+  --timing-easing-ease-out: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-default: all var(--timing-normal) var(--timing-easing);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -113,4 +181,34 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+/* Global smooth transitions */
+.transition {
+  transition: var(--transition-default);
+}
+
+.transition-fast {
+  transition: all var(--timing-fast) var(--timing-easing);
+}
+
+.transition-slow {
+  transition: all var(--timing-slow) var(--timing-easing);
+}
+
+/* Z-index utilities */
+.z-navbar {
+  z-index: var(--z-index-navbar);
+}
+
+.z-footer {
+  z-index: var(--z-index-footer);
+}
+
+.z-modal {
+  z-index: var(--z-index-modal);
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { toast } from "sonner";
@@ -11,6 +11,7 @@ import Alert from "../../components/Alert";
 import Card from "../../components/Card";
 import PageTransition from "../../components/PageTransition";
 import "../../styles/auth.css";
+import "../../styles/forms.css";
 
 /**
  * Register Page
@@ -43,9 +44,24 @@ export default function Register() {
   const [success, setSuccess] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Ref for scrolling to alert when success/error message appears
+  const alertRef = useRef(null);
 
   // Apply scale in animation to card
   const cardRef = useAnimateOnMount('animate-scale-in', 100);
+
+  /**
+   * Scroll to alert when success or error message appears
+   */
+  useEffect(() => {
+    if ((success || error) && alertRef.current) {
+      // Scroll to alert with smooth behavior after a small delay
+      setTimeout(() => {
+        alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [success, error]);
 
   /**
    * Map error message to field names
@@ -66,16 +82,55 @@ export default function Register() {
   };
 
   /**
+   * Format phone to (DDD) XXXXX-XXXX
+   */
+  const formatPhone = (value) => {
+    const digitsOnly = (value || '').replace(/\D/g, '').slice(0, 11);
+    if (digitsOnly.length === 0) return '';
+    if (digitsOnly.length <= 2) return `(${digitsOnly}`;
+    if (digitsOnly.length <= 7) return `(${digitsOnly.slice(0, 2)}) ${digitsOnly.slice(2)}`;
+    return `(${digitsOnly.slice(0, 2)}) ${digitsOnly.slice(2, 7)}-${digitsOnly.slice(7)}`;
+  };
+
+  /**
+   * Format CPF to XXX.XXX.XXX-XX
+   */
+  const formatCPF = (value) => {
+    const digitsOnly = (value || '').replace(/\D/g, '').slice(0, 11);
+    if (digitsOnly.length === 0) return '';
+    if (digitsOnly.length <= 3) return digitsOnly;
+    if (digitsOnly.length <= 6) return `${digitsOnly.slice(0, 3)}.${digitsOnly.slice(3)}`;
+    if (digitsOnly.length <= 9) return `${digitsOnly.slice(0, 3)}.${digitsOnly.slice(3, 6)}.${digitsOnly.slice(6)}`;
+    return `${digitsOnly.slice(0, 3)}.${digitsOnly.slice(3, 6)}.${digitsOnly.slice(6, 9)}-${digitsOnly.slice(9)}`;
+  };
+
+  /**
    * Handle input change - update form state and clear field errors
    */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    let displayValue = value;
+    
+    // For phone and CPF: only accept digits and apply real-time formatting
+    if (name === 'phone' || name === 'cpf') {
+      // Extract only digits from input
+      const digitsOnly = value.replace(/\D/g, '');
+      
+      // Apply formatting for display
+      if (name === 'phone') {
+        displayValue = formatPhone(digitsOnly);
+      } else if (name === 'cpf') {
+        displayValue = formatCPF(digitsOnly);
+      }
+    }
+    
     setFormData({
       ...formData,
-      [name]: value
+      [name]: displayValue
     });
+    
     setError("");
-    // Clear error for this specific field when user starts typing
+    // Clear error for this field when user starts typing
     setFieldErrors(prev => ({
       ...prev,
       [name]: ""
@@ -90,12 +145,16 @@ export default function Register() {
     event.preventDefault();
     setError("");
 
+    // Extract digits for validation (CPF and phone are stored formatted)
+    const cpfDigits = formData.cpf.replace(/\D/g, "");
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+
     // Frontend validation - quick checks for better UX
     const validationError = validateRegisterForm(
       formData.name,
       formData.email,
-      formData.cpf,
-      formData.phone,
+      cpfDigits,
+      phoneDigits,
       formData.password,
       formData.confirmPassword
     );
@@ -117,8 +176,8 @@ export default function Register() {
       const data = await register(
         formData.name,
         formData.email,
-        formData.cpf.replace(/\D/g, ""),
-        formData.phone.replace(/\D/g, ""),
+        cpfDigits,
+        phoneDigits,
         formData.password
       );
 
@@ -216,11 +275,15 @@ export default function Register() {
           </motion.div>
           
           {error && (
-            <Alert type="error">{error}</Alert>
+            <div ref={alertRef}>
+              <Alert type="error">{error}</Alert>
+            </div>
           )}
 
           {success && (
-            <Alert type="success">{success}</Alert>
+            <div ref={alertRef}>
+              <Alert type="success">{success}</Alert>
+            </div>
           )}
 
           <motion.form 
@@ -263,7 +326,7 @@ export default function Register() {
                 label="CPF"
                 type="text"
                 name="cpf"
-                placeholder="CPF (11 digits)"
+                placeholder="XXX.XXX.XXX-XX"
                 value={formData.cpf}
                 onChange={handleInputChange}
                 error={fieldErrors.cpf}
@@ -278,12 +341,12 @@ export default function Register() {
                 label="Phone Number"
                 type="tel"
                 name="phone"
-                placeholder="Phone (11 digits)"
+                placeholder="(DDD) XXXXX-XXXX"
                 value={formData.phone}
                 onChange={handleInputChange}
                 error={fieldErrors.phone}
                 disabled={isLoading}
-                maxLength="15"
+                maxLength="14"
                 required
               />
             </motion.div>
