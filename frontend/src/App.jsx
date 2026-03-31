@@ -1,5 +1,6 @@
 // Frontend App Router
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "sonner";
 import "./styles/globals.css";
 import "./styles/animations.css";
 
@@ -20,6 +21,12 @@ import Expense from "./pages/app/Expense";
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        theme="dark"
+      />
       <Routes>
         {/* Authentication Routes */}
         <Route path="/login" element={<Login />} />

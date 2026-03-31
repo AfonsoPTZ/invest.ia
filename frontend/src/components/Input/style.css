@@ -3,13 +3,40 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
+  pointer-events: auto;
+  width: 100%;
 }
 
-.input-group label {
+/* Glow animation for labels on focus */
+@keyframes labelGlow {
+  0%, 100% {
+    color: #f5f5f5;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    color: #ffffff;
+    text-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
+  }
+}
+
+.input-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #d4d4d4;
+  color: #ffffff;
   letter-spacing: 0.3px;
+  transition: color 0.2s ease;
+}
+
+.input-label:has(+ .input-wrapper .input:focus) {
+  animation: labelGlow 1.5s ease-in-out infinite;
+}
+
+/* Input wrapper - for icon positioning */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .input {
@@ -21,6 +48,11 @@
   transition: all 0.2s ease;
   background-color: rgba(26, 26, 26, 0.6);
   color: #f5f5f5;
+  pointer-events: auto;
+  cursor: text;
+  position: relative;
+  z-index: 10;
+  width: 100%;
 }
 
 .input::placeholder {
@@ -28,11 +60,49 @@
   font-weight: 400;
 }
 
+.input:hover {
+  border-color: rgba(229, 231, 235, 0.4);
+  background-color: rgba(26, 26, 26, 0.7);
+}
+
 .input:focus {
   outline: none;
-  border-color: #dc2626;
+  border-color: #b0b0b0;
   background-color: rgba(26, 26, 26, 0.8);
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12), inset 0 0 0 1px rgba(220, 38, 38, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Error state - input becomes white with red border */
+.input.has-error {
+  background-color: rgba(245, 245, 245, 0.9) !important;
+  color: #0f0f0f !important;
+  border-color: #ef4444 !important;
+}
+
+.input.has-error:hover {
+  background-color: rgba(245, 245, 245, 0.95) !important;
+  border-color: #f87171 !important;
+}
+
+.input.has-error:focus {
+  background-color: rgba(245, 245, 245, 0.9) !important;
+  color: #0f0f0f !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15), inset 0 0 0 1px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Error icon */
+.input-error-icon {
+  position: absolute;
+  right: 12px;
+  font-size: 20px;
+  color: #fbbf24;
+  margin-left: -30px;
+  flex-shrink: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .input:disabled {
@@ -47,6 +117,7 @@
   background-color: rgba(26, 26, 26, 0.7);
 }
 
+.input-error,
 .error {
   font-size: 0.875rem;
   color: #dc2626;
@@ -54,4 +125,16 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  animation: slideInDown 0.2s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

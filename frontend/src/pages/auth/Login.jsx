@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChartLine, FaFire } from "react-icons/fa";
+import { motion } from "motion/react";
 import { login } from "../../services/authService";
 import { validateLoginForm } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
@@ -8,6 +9,7 @@ import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
 import Card from "../../components/Card";
+import PageTransition from "../../components/PageTransition";
 import "../../styles/auth.css";
 
 /**
@@ -31,11 +33,42 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   
   // Apply fade in animation to card
   const cardRef = useAnimateOnMount('animate-scale-in', 100);
+
+  /**
+   * Map error message to field names
+   */
+  const mapErrorToFields = (errorMessage) => {
+    const errorMap = {
+      'Email is required': 'email',
+      'Please enter a valid email': 'email',
+      'Password is required': 'password'
+    };
+    return errorMap[errorMessage] || null;
+  };
+
+  /**
+   * Handle email change - update state and clear field error
+   */
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+    setError("");
+    setFieldErrors(prev => ({ ...prev, email: "" }));
+  };
+
+  /**
+   * Handle password change - update state and clear field error
+   */
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+    setError("");
+    setFieldErrors(prev => ({ ...prev, password: "" }));
+  };
 
   /**
    * Handle form submission
@@ -44,11 +77,19 @@ function Login() {
   async function handleFormSubmit(event) {
     event.preventDefault();
     setError("");
+    setFieldErrors({});
 
     // Frontend validation - quick checks for better UX
     const validationError = validateLoginForm(email, password);
     if (validationError) {
       setError(validationError);
+      const fieldName = mapErrorToFields(validationError);
+      if (fieldName) {
+        setFieldErrors(prev => ({
+          ...prev,
+          [fieldName]: validationError
+        }));
+      }
       return;
     }
 
@@ -56,75 +97,123 @@ function Login() {
 
     try {
       const user = await login(email, password);
-      navigate("/dashboard");
+      setTimeout(() => navigate("/dashboard"), 500);
     } catch (catchError) {
-      setError(catchError.message);
+      const errorMsg = catchError.message;
+      setError(errorMsg);
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <div className="auth-container">
-      {/* Panda Mascot - Add panda-login-top.png to public folder */}
-      <div className="auth-panda-wrapper">
-        <img 
-          src="/panda-login-top.png" 
-          alt="Invest_IA Mascot"
-          className="auth-panda-image"
-          onError={(e) => e.target.style.display = 'none'}
-        />
+    <PageTransition>
+      <div className="auth-container">
+        {/* Panda Mascot - Add panda-login-top.png to public folder */}
+        <motion.div 
+          className="auth-panda-wrapper"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
+          <img 
+            src="/panda-login-top.png" 
+            alt="Invest_IA Mascot"
+            className="auth-panda-image"
+            onError={(e) => e.target.style.display = 'none'}
+          />
+        </motion.div>
+
+        <Card className="auth-card" ref={cardRef}>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
+          >
+            <div className="auth-header">
+              <motion.div
+                className="auth-logo"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                <div className="logo-icon"><FaChartLine /></div>
+              </motion.div>
+              <h1 className="auth-title">
+                <span className="invest-text">Invest</span>
+                <span className="panda-ia-text">PandaIA</span>
+              </h1>
+              <p className="auth-subtitle">Sign in to your account</p>
+            </div>
+          </motion.div>
+
+          <motion.form 
+            onSubmit={handleFormSubmit} 
+            className="auth-form"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.3 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Input
+                id="email"
+                label="Email Address"
+                type="email"
+                placeholder="name@company.com"
+                value={email}
+                onChange={handleEmailChange}
+                error={fieldErrors.email}
+                autoComplete="email"
+                required
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.55 }}
+            >
+              <Input
+                id="password"
+                label="Password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={handlePasswordChange}
+                error={fieldErrors.password}
+                autoComplete="current-password"
+                required
+              />
+            </motion.div>
+
+            {error && <Alert type="error">{error}</Alert>}
+
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button type="primary" className="btn-full" disabled={isLoading} isLoading={isLoading}>
+                {isLoading ? "Signing in..." : "Sign In"}
+              </Button>
+            </motion.div>
+          </motion.form>
+
+          <div className="auth-divider"></div>
+
+          <motion.p 
+            className="auth-footer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            New here? <a href="/register" className="auth-link">Create an account</a>
+          </motion.p>
+        </Card>
       </div>
-
-      <Card className="auth-card" ref={cardRef}>
-        <div className="auth-header">
-          <div className="auth-logo">
-            <div className="logo-icon"><FaChartLine /></div>
-          </div>
-          <h1 className="auth-title">
-            <span className="invest-text">Invest</span>
-            <span className="panda-ia-text">PandaIA</span>
-          </h1>
-          <p className="auth-subtitle">Sign in to your account</p>
-        </div>
-
-        <form onSubmit={handleFormSubmit} className="auth-form">
-          <Input
-            id="email"
-            label="Email Address"
-            type="email"
-            placeholder="name@company.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            autoComplete="email"
-            required
-          />
-
-          <Input
-            id="password"
-            label="Password"
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            autoComplete="current-password"
-            required
-          />
-
-          {error && <Alert type="error">{error}</Alert>}
-
-          <Button type="primary" className="btn-full" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign In"}
-          </Button>
-        </form>
-
-        <div className="auth-divider"></div>
-
-        <p className="auth-footer">
-          New here? <a href="/register" className="auth-link">Create an account</a>
-        </p>
-      </Card>
-    </div>
+    </PageTransition>
   );
 }
 

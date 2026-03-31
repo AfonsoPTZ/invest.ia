@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaWallet, FaChartLine, FaCreditCard, FaHome, FaFire } from "react-icons/fa";
+import { motion } from "motion/react";
 import { logout } from "../../services/authService";
 import { getDashboardName, getDashboardData } from "../../services/dashboardService";
 import { useIntersectionAnimation } from "../../utils/useAnimations";
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
+import AnimatedCard from "../../components/AnimatedCard";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import PageTransition from "../../components/PageTransition";
 import "../../styles/app.css";
 
 /**
@@ -83,103 +86,128 @@ function Dashboard() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="loader-container">
-        <div className="loader-text">Loading...</div>
-      </div>
+      <PageTransition>
+        <div className="loader-container">
+          <motion.div 
+            className="loader-text"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            Loading...
+          </motion.div>
+        </div>
+      </PageTransition>
     );
   }
 
   return (
-    <div className="app-layout">
-      <Navbar userEmail={user?.email} onLogout={handleLogoutClick} />
-      
-      <main className="app-content">
-        <div className="app-container">
-          {error ? (
-            <Alert type="error">{error}</Alert>
-          ) : (
-            <>
-              {/* Hero Section */}
-              <div className="dashboard-hero">
-                <div className="hero-content">
-                  <h1 className="hero-title">Welcome back, <span className="user-name">{user?.name}</span>! <FaFire className="hero-icon" /></h1>
-                  <p className="hero-subtitle">
-                    Here's an overview of your financial profile and investment opportunities.
-                  </p>
-                </div>
-              </div>
+    <PageTransition>
+      <div className="app-layout">
+        <Navbar userEmail={user?.email} onLogout={handleLogoutClick} />
+        
+        <main className="app-content">
+          <div className="app-container">
+            {error ? (
+              <Alert type="error">{error}</Alert>
+            ) : (
+              <>
+                {/* Hero Section */}
+                <motion.div 
+                  className="dashboard-hero"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="hero-content">
+                    <h1 className="hero-title">
+                      Welcome back, <span className="user-name">{user?.name}</span>! 
+                      <motion.span
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
+                        style={{ display: 'inline-block', marginLeft: '8px' }}
+                      >
+                        <FaFire className="hero-icon" />
+                      </motion.span>
+                    </h1>
+                    <p className="hero-subtitle">
+                      Here's an overview of your financial profile and investment opportunities.
+                    </p>
+                  </div>
+                </motion.div>
 
-              {/* Stats Overview Section */}
-              <div className="stats-section">
-                <div className="section-header">
-                  <h2 className="section-title">Financial Overview</h2>
-                  <p className="section-description">Your current financial snapshot</p>
-                </div>
+                {/* Stats Overview Section */}
+                <motion.div 
+                  className="stats-section"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                >
+                  <div className="section-header">
+                    <h2 className="section-title">Financial Overview</h2>
+                    <p className="section-description">Your current financial snapshot</p>
+                  </div>
 
-                <div className="stats-grid">
-                  {/* Current Balance */}
-                  <div className="stat-card-wrapper">
-                    <Card className="stat-card">
+                  <div className="stats-grid">
+                    {/* Current Balance - Card 0 */}
+                    <AnimatedCard delay={0} className="stat-card">
                       <div className="stat-icon"><FaWallet /></div>
                       <p className="stat-label">Current Balance</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.initial_balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
                       </p>
                       <p className="stat-meta">Available funds</p>
-                    </Card>
-                  </div>
+                    </AnimatedCard>
 
-                  {/* Monthly Income */}
-                  <div className="stat-card-wrapper">
-                    <Card className="stat-card">
+                    {/* Monthly Income - Card 1 */}
+                    <AnimatedCard delay={0.1} className="stat-card">
                       <div className="stat-icon"><FaChartLine /></div>
                       <p className="stat-label">Monthly Income</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.monthly_income?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
                       </p>
                       <p className="stat-meta">Fixed monthly income</p>
-                    </Card>
-                  </div>
+                    </AnimatedCard>
 
-                  {/* Total Expenses */}
-                  <div className="stat-card-wrapper">
-                    <Card className="stat-card">
+                    {/* Total Expenses - Card 2 */}
+                    <AnimatedCard delay={0.2} className="stat-card">
                       <div className="stat-icon"><FaCreditCard /></div>
                       <p className="stat-label">Total Expenses</p>
                       <p className="stat-value">$0.00</p>
                       <p className="stat-meta">Tracked spending</p>
-                    </Card>
-                  </div>
+                    </AnimatedCard>
 
-                  {/* Total Assets */}
-                  <div className="stat-card-wrapper">
-                    <Card className="stat-card">
+                    {/* Total Assets - Card 3 */}
+                    <AnimatedCard delay={0.3} className="stat-card">
                       <div className="stat-icon"><FaHome /></div>
                       <p className="stat-label">Total Assets</p>
                       <p className="stat-value">$0.00</p>
                       <p className="stat-meta">Property and valuables</p>
-                    </Card>
+                    </AnimatedCard>
                   </div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </main>
+                </motion.div>
+              </>
+            )}
+          </div>
+        </main>
 
-      <Footer />
+        <Footer />
 
-      {/* Panda Mascot - Dashboard background accent */}
-      {/* Add panda-investments-bottom.png to public folder */}
-      <div className="dashboard-panda-wrapper">
-        <img 
-          src="/panda-investments-bottom.png" 
-          alt="Invest_IA Mascot"
-          className="dashboard-panda-image"
-          onError={(e) => e.target.style.display = 'none'}
-        />
+        {/* Panda Mascot - Dashboard background accent */}
+        <motion.div 
+          className="dashboard-panda-wrapper"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <img 
+            src="/panda-investments-bottom.png" 
+            alt="Invest_IA Mascot"
+            className="dashboard-panda-image"
+            onError={(e) => e.target.style.display = 'none'}
+          />
+        </motion.div>
       </div>
-    </div>
+    </PageTransition>
   );
 }
 

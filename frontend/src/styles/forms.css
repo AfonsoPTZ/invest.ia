@@ -114,7 +114,7 @@
 .form-section-title {
   font-size: 16px;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   margin: 0 0 20px 0;
   letter-spacing: -0.3px;
 }
@@ -124,8 +124,10 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding: 0;
+  width: 100%;
 }
 
 .form-group:last-child {
@@ -273,6 +275,34 @@
   border-color: #dc2626;
   background: #ffffff;
   color: #0f0f0f;
+}
+
+/* OTP Input Error State - Shows white with red border when validation error */
+.otp-input.has-error {
+  background-color: rgba(245, 245, 245, 0.9) !important;
+  color: #0f0f0f !important;
+  border-color: #ef4444 !important;
+}
+
+.otp-input.has-error:focus {
+  background-color: rgba(245, 245, 245, 0.9) !important;
+  color: #0f0f0f !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* OTP Input Group Error State - All inputs get error styling when group has error */
+.otp-input-group.has-error .otp-input {
+  background-color: rgba(245, 245, 245, 0.9) !important;
+  color: #0f0f0f !important;
+  border-color: #ef4444 !important;
+}
+
+.otp-input-group.has-error .otp-input:focus {
+  background-color: rgba(245, 245, 245, 0.9) !important;
+  color: #0f0f0f !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 .otp-help-text {
