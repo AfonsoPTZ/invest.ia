@@ -1,24 +1,15 @@
-// MySQL Connection Pool
-const mysql = require("mysql2/promise");
+// Prisma Client Configuration - Simple Local MySQL Setup
+const { PrismaClient } = require("@prisma/client");
 require("dotenv").config();
 
-const connectionPool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// Simplest possible initialization
+const prisma = new PrismaClient();
 
 // Test database connection on startup
 async function testDatabaseConnection() {
   try {
-    const connection = await connectionPool.getConnection();
+    await prisma.$connect();
     console.log("✅ Database connected successfully");
-    connection.release();
   } catch (error) {
     console.error("❌ Error connecting to database:", error.message);
   }
@@ -26,4 +17,10 @@ async function testDatabaseConnection() {
 
 testDatabaseConnection();
 
-module.exports = connectionPool;
+// Handle application shutdown
+process.on("SIGINT", async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+module.exports = prisma;

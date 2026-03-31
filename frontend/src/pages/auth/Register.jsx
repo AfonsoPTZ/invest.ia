@@ -346,7 +346,7 @@ export default function Register() {
                 onChange={handleInputChange}
                 error={fieldErrors.phone}
                 disabled={isLoading}
-                maxLength="14"
+                maxLength="15"
                 required
               />
             </motion.div>

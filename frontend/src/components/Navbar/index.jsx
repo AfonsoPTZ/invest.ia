@@ -20,7 +20,7 @@ export default function Navbar({ userEmail, onLogout, className = '', ...props }
             className="navbar-logo-image"
             onError={(e) => e.target.style.display = 'none'}
           />
-          <h1>Invest Panda I</h1>
+          <h1>InvestPandaIA</h1>
         </div>
 
         {/* Navigation Links */}

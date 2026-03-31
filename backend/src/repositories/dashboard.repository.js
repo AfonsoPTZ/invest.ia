@@ -1,91 +1,102 @@
-const pool = require("../config/db");
+const prisma = require("../config/db");
 const logger = require("../utils/logger");
 
 class DashboardRepository {
-  /**
-   * Busca usuário por ID (para dashboard)
-   */
   async getUserById(userId) {
     try {
-      logger.debug({ userId }, "Repository: Searching user by ID for dashboard");
+      logger.debug({ userId }, "Searching user by ID");
 
-      const [rows] = await pool.query(
-        "SELECT id, name, email, cpf, phone FROM users WHERE id = ?",
-        [userId]
-      );
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          cpf: true,
+          phone: true
+        }
+      });
 
-      if (!rows[0]) {
-        logger.debug({ userId }, "Repository: User not found");
+      if (!user) {
+        logger.debug({ userId }, "User not found");
         return null;
       }
 
-      logger.debug({ userId }, "Repository: User found");
-      return rows[0];
+      logger.debug({ userId }, "User found");
+      return user;
     } catch (error) {
-      logger.error({ error: error.message, userId }, "Repository: Error searching user");
+      logger.error({ error: error.message, userId }, "Error searching user");
       throw new Error(`Error searching user: ${error.message}`);
     }
   }
 
-  /**
-   * Busca perfil financeiro por usuário ID (para dashboard)
-   */
   async getFinancialProfileByUserId(userId) {
     try {
-      logger.debug({ userId }, "Repository: Searching financial profile for dashboard");
+      logger.debug({ userId }, "Searching financial profile");
 
-      const [rows] = await pool.query(
-        "SELECT * FROM financial_profiles WHERE user_id = ?",
-        [userId]
-      );
+      const profile = await prisma.financialProfile.findUnique({ where: { userId } });
 
-      if (!rows[0]) {
-        logger.debug({ userId }, "Repository: Financial profile not found");
+      if (!profile) {
+        logger.debug({ userId }, "Financial profile not found");
         return null;
       }
 
-      logger.debug({ userId }, "Repository: Financial profile found");
-      return rows[0];
+      logger.debug({ userId }, "Financial profile found");
+      return this._toApiFormat(profile);
     } catch (error) {
-      logger.error({ error: error.message, userId }, "Repository: Error searching financial profile");
+      logger.error({ error: error.message, userId }, "Error searching financial profile");
       throw new Error(`Error searching financial profile: ${error.message}`);
     }
   }
 
-  /**
-   * Busca dados completos da dashboard (usuário + investimentos)
-   */
   async getDashboardData(userId) {
     try {
-      logger.debug({ userId }, "Repository: Fetching complete dashboard data");
+      logger.debug({ userId }, "Fetching dashboard data");
 
-      // Query usuário
-      const [userRows] = await pool.query(
-        "SELECT id, name, email, cpf, phone FROM users WHERE id = ?",
-        [userId]
-      );
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          cpf: true,
+          phone: true
+        }
+      });
 
-      if (!userRows[0]) {
-        logger.debug({ userId }, "Repository: User not found");
+      if (!user) {
+        logger.debug({ userId }, "User not found");
         return null;
       }
 
-      // Query perfil financeiro
-      const [profileRows] = await pool.query(
-        "SELECT * FROM financial_profiles WHERE user_id = ?",
-        [userId]
-      );
+      const profile = await prisma.financialProfile.findUnique({ where: { userId } });
 
-      logger.debug({ userId }, "Repository: Dashboard data fetched");
+      logger.debug({ userId }, "Dashboard data fetched");
 
       return {
-        user: userRows[0],
-        financialProfile: profileRows[0] || null
+        user,
+        financialProfile: profile ? this._toApiFormat(profile) : null
       };
     } catch (error) {
-      logger.error({ error: error.message, userId }, "Repository: Error fetching dashboard data");
+      logger.error({ error: error.message, userId }, "Error fetching dashboard data");
       throw new Error(`Error fetching dashboard data: ${error.message}`);
     }
+  }
+
+  // Helper to convert Prisma data to API format
+  _toApiFormat(profile) {
+    return {
+      id: profile.id,
+      user_id: profile.userId,
+      monthly_income: profile.monthlyIncome,
+      initial_balance: profile.initialBalance,
+      has_investments: profile.hasInvestments,
+      has_assets: profile.hasAssets,
+      financial_goal: profile.financialGoal,
+      behavior_profile: profile.behaviorProfile,
+      created_at: profile.createdAt,
+      updated_at: profile.updatedAt
+    };
   }
 }
 

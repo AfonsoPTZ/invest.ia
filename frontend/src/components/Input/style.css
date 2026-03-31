@@ -1,7 +1,7 @@
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 16px;
   pointer-events: auto;
   width: 100%;
@@ -13,6 +13,8 @@
   color: var(--color-text-lighter);
   letter-spacing: 0.3px;
   transition: var(--timing-fast) var(--timing-easing);
+  user-select: none;
+  cursor: default;
 }
 
 .input-label:has(+ .input-wrapper .input:focus) {
@@ -41,6 +43,12 @@
   position: relative;
   z-index: 10;
   width: 100%;
+}
+
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .input::placeholder {
@@ -114,4 +122,6 @@
   align-items: center;
   gap: 4px;
   animation: slideInDown 0.2s ease-out;
+  user-select: none;
+  cursor: default;
 }

@@ -117,6 +117,7 @@
   position: relative;
   z-index: 10;
   backdrop-filter: blur(10px);
+  transition: box-shadow 0.3s ease;
 }
 
 .auth-card::before {
@@ -141,11 +142,11 @@
 
 .auth-header {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
 .auth-logo {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .logo-icon {
@@ -156,6 +157,8 @@
   justify-content: center;
   animation: float 4s ease-in-out infinite;
   color: #dc2626;
+  user-select: none;
+  cursor: default;
 }
 
 @keyframes float {
@@ -178,8 +181,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   line-height: 1.2;
+  user-select: none;
+  cursor: default;
+  transition: all 0.3s ease;
 }
 
 .invest-text {
@@ -188,6 +194,8 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   transition: all 0.3s ease;
+  user-select: none;
+  cursor: default;
 }
 
 .panda-ia-text {
@@ -198,32 +206,38 @@
   text-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
   font-weight: 800;
   transition: all 0.3s ease;
+  user-select: none;
+  cursor: default;
 }
 
+.auth-title:hover .invest-text,
 .auth-title:hover .panda-ia-text {
   text-shadow: 0 0 30px rgba(220, 38, 38, 0.6);
-  transform: scale(1.05);
+  filter: brightness(1.1);
 }
 
 .auth-subtitle {
+  user-select: none;
+  cursor: default;
   font-size: 15px;
   color: #d4d4d4;
   margin: 0;
   font-weight: 400;
   line-height: 1.5;
+  margin-top: 2px;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   margin-bottom: 28px;
 }
 
 .auth-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(125, 30, 30, 0.3), transparent);
-  margin: 28px 0;
+  margin: 24px 0;
 }
 
 .auth-footer {
@@ -232,6 +246,8 @@
   color: #a3a3a3;
   margin: 0;
   font-weight: 400;
+  user-select: none;
+  cursor: default;
 }
 
 .auth-link {
@@ -239,6 +255,8 @@
   text-decoration: none;
   font-weight: 600;
   transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: text;
 }
 
 .auth-link:hover {
@@ -283,22 +301,13 @@
 }
 
 /* Form Elements */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.form-group:last-child {
-  margin-bottom: 0;
-}
-
 .form-label {
   font-size: 14px;
   font-weight: 500;
   color: #f5f5f5;
   letter-spacing: 0.3px;
+  user-select: none;
+  cursor: default;
 }
 
 .form-select {
@@ -360,6 +369,8 @@
   display: block;
   margin-bottom: 8px;
   transition: color 0.2s ease;
+  user-select: none;
+  cursor: default;
 }
 
 .auth-form .form-label:has(+ .form-select:focus) {
@@ -559,6 +570,8 @@
   margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(125, 30, 30, 0.15);
+  user-select: none;
+  cursor: default;
 }
 
 .auth-form .form-group:last-of-type {
@@ -598,6 +611,8 @@
   color: #a3a3a3;
   margin: 0;
   font-weight: 400;
+  user-select: none;
+  cursor: default;
 }
 
 /* Step Indicators - Dark Theme Compatibility */

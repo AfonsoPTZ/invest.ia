@@ -21,24 +21,43 @@
   height: 72px;
 }
 
+.navbar-brand {
+  user-select: none;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .navbar-brand h1 {
   margin: 0;
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  background: var(--gradient-text);
+  background: linear-gradient(90deg, #ff7f7f, #ff6b6b, #ff7f7f);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   transition: var(--transition-default);
-  display: flex;
-  align-items: center;
-  gap: 2px;
+  display: inline;
+  animation: brandGlow 3s ease-in-out infinite;
+  user-select: none;
+  cursor: default;
+}
+
+@keyframes brandGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 9px rgba(239, 68, 68, 0.45));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(220, 38, 38, 0.8));
+  }
 }
 
 .navbar-brand:hover h1 {
   letter-spacing: -0.3px;
-  transform: scale(1.02);
+  filter: brightness(1.1);
 }
 
 .navbar-logo-image {
