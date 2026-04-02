@@ -14,7 +14,8 @@ import {
   validateEmail,
   validatePassword,
   validatePasswordMatch,
-  validateOTP
+  validateOTP,
+  validateCPF
 } from './sharedValidator';
 
 /**
@@ -70,8 +71,9 @@ export function validateRegisterForm(name, email, cpf, phone, password, confirmP
     return 'CPF is required';
   }
 
-  if (!validateCPFDigits(cpf)) {
-    return 'CPF must have 11 digits';
+  // Use new CPF validation with algorithm check
+  if (!validateCPF(cpf)) {
+    return 'CPF format is invalid';
   }
 
   if (!validateNotEmpty(phone)) {
@@ -125,18 +127,6 @@ export function validateFinancialProfileForm(formData) {
   }
 
   return null;
-}
-
-/**
- * Helper: Validate CPF digit count only
- * @param {string} cpf - CPF string
- * @returns {boolean}
- */
-function validateCPFDigits(cpf) {
-  if (!validateNotEmpty(cpf)) return false;
-  // Reject if contains any non-numeric characters
-  if (!/^\d+$/.test(cpf)) return false;
-  return cpf.length === 11;
 }
 
 /**

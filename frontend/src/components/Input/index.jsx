@@ -1,5 +1,5 @@
 import { cn } from '../../lib/utils';
-import { FaExclamationTriangle } from 'react-icons/fa';
+import { TriangleAlert } from 'lucide-react';
 import './style.css';
 
 /**
@@ -59,7 +59,7 @@ export default function Input({
         />
         {error && (
           <span className="input-error-icon" title={error}>
-            <FaExclamationTriangle />
+            <TriangleAlert size={16} />
           </span>
         )}
       </div>

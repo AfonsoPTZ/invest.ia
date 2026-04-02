@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaBriefcase, FaChartLine, FaBullseye, FaBalanceScale, FaArrowUp } from "react-icons/fa";
+import { Briefcase, TrendingUp, Target, Scale, ArrowUp } from "lucide-react";
 import { motion } from "motion/react";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
@@ -50,7 +50,7 @@ function Investments() {
                     transition={{ duration: 2, repeat: Infinity }}
                     style={{ display: 'inline-block', marginLeft: '8px' }}
                   >
-                    <FaArrowUp className="hero-icon" />
+                    <ArrowUp size={24} className="hero-icon" />
                   </motion.span>
                 </h1>
                 <p className="hero-subtitle">
@@ -73,28 +73,28 @@ function Investments() {
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><FaBriefcase /></div>
+                  <div className="stat-icon"><Briefcase size={20} /></div>
                   <p className="stat-label">Portfolio Value</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Total invested amount</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><FaChartLine /></div>
+                  <div className="stat-icon"><TrendingUp size={20} /></div>
                   <p className="stat-label">ROI Performance</p>
                   <p className="stat-value">0%</p>
                   <p className="stat-meta">Return on investment</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><FaBullseye /></div>
+                  <div className="stat-icon"><Target size={20} /></div>
                   <p className="stat-label">Active Positions</p>
                   <p className="stat-value">0</p>
                   <p className="stat-meta">Currently investing in</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><FaBalanceScale /></div>
+                  <div className="stat-icon"><Scale size={20} /></div>
                   <p className="stat-label">Risk Profile</p>
                   <p className="stat-value">—</p>
                   <p className="stat-meta">Portfolio risk level</p>

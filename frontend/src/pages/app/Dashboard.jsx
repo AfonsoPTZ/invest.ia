@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaWallet, FaChartLine, FaCreditCard, FaHome, FaFire } from "react-icons/fa";
+import { Wallet, TrendingUp, CreditCard, Home, Flame } from "lucide-react";
 import { motion } from "motion/react";
 import { logout } from "../../services/authService";
 import { getDashboardName, getDashboardData } from "../../services/dashboardService";
@@ -126,7 +126,7 @@ function Dashboard() {
                         transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
                         style={{ display: 'inline-block', marginLeft: '8px' }}
                       >
-                        <FaFire className="hero-icon" />
+                        <Flame size={24} className="hero-icon" />
                       </motion.span>
                     </h1>
                     <p className="hero-subtitle">
@@ -150,7 +150,7 @@ function Dashboard() {
                   <div className="stats-grid">
                     {/* Current Balance - Card 0 */}
                     <AnimatedCard delay={0} className="stat-card">
-                      <div className="stat-icon"><FaWallet /></div>
+                      <div className="stat-icon"><Wallet size={20} /></div>
                       <p className="stat-label">Current Balance</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.initial_balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
@@ -160,7 +160,7 @@ function Dashboard() {
 
                     {/* Monthly Income - Card 1 */}
                     <AnimatedCard delay={0.1} className="stat-card">
-                      <div className="stat-icon"><FaChartLine /></div>
+                      <div className="stat-icon"><TrendingUp size={20} /></div>
                       <p className="stat-label">Monthly Income</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.monthly_income?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
@@ -170,7 +170,7 @@ function Dashboard() {
 
                     {/* Total Expenses - Card 2 */}
                     <AnimatedCard delay={0.2} className="stat-card">
-                      <div className="stat-icon"><FaCreditCard /></div>
+                      <div className="stat-icon"><CreditCard size={20} /></div>
                       <p className="stat-label">Total Expenses</p>
                       <p className="stat-value">$0.00</p>
                       <p className="stat-meta">Tracked spending</p>
@@ -178,7 +178,7 @@ function Dashboard() {
 
                     {/* Total Assets - Card 3 */}
                     <AnimatedCard delay={0.3} className="stat-card">
-                      <div className="stat-icon"><FaHome /></div>
+                      <div className="stat-icon"><Home size={20} /></div>
                       <p className="stat-label">Total Assets</p>
                       <p className="stat-value">$0.00</p>
                       <p className="stat-meta">Property and valuables</p>

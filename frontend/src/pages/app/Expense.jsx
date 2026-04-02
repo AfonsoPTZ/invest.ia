@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaCar, FaUtensils, FaMoneyBillWave, FaBullseye } from "react-icons/fa";
+import { ShoppingCart, Car, UtensilsCrossed, Banknote, Target } from "lucide-react";
 import { motion } from "motion/react";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
@@ -43,7 +43,7 @@ function Expense() {
               transition={{ duration: 0.5 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Smart Spending <FaBullseye className="hero-icon" /></h1>
+                <h1 className="hero-title">Smart Spending <Target size={24} className="hero-icon" /></h1>
                 <p className="hero-subtitle">
                   Monitor your spending and optimize your budget for better financial health
                 </p>
@@ -64,28 +64,28 @@ function Expense() {
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><FaShoppingCart /></div>
+                  <div className="stat-icon"><ShoppingCart size={20} /></div>
                   <p className="stat-label">Retail</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Shopping expenses</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><FaCar /></div>
+                  <div className="stat-icon"><Car size={20} /></div>
                   <p className="stat-label">Transportation</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Travel expenses</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><FaUtensils /></div>
+                  <div className="stat-icon"><UtensilsCrossed size={20} /></div>
                   <p className="stat-label">Dining & Food</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Food & restaurants</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><FaMoneyBillWave /></div>
+                  <div className="stat-icon"><Banknote size={20} /></div>
                   <p className="stat-label">Total Monthly</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">All expenses combined</p>

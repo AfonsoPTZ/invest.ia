@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaTools } from "react-icons/fa";
+import { Wrench } from "lucide-react";
 import { motion } from "motion/react";
 import LogViewer from "../../components/LogViewer";
 import Navbar from "../../components/Navbar";
@@ -42,7 +42,7 @@ export default function Logs() {
               transition={{ duration: 0.5 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">System Diagnostics <FaTools className="hero-icon" /></h1>
+                <h1 className="hero-title">System Diagnostics <Wrench size={24} className="hero-icon" /></h1>
                 <p className="hero-subtitle">
                   Real-time debugging: Monitor application performance and troubleshoot issues
                 </p>

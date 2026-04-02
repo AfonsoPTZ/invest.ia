@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaWallet, FaBuilding, FaGem, FaShieldAlt, FaGift } from "react-icons/fa";
+import { Wallet, Building2, Gem, Shield, Gift } from "lucide-react";
 import { motion } from "motion/react";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
@@ -43,7 +43,7 @@ function Assets() {
               transition={{ duration: 0.5 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Your Wealth <FaGift className="hero-icon" /></h1>
+                <h1 className="hero-title">Your Wealth <Gift size={24} className="hero-icon" /></h1>
                 <p className="hero-subtitle">
                   Organize and protect your valuable assets with confidence
                 </p>
@@ -64,28 +64,28 @@ function Assets() {
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><FaWallet /></div>
+                  <div className="stat-icon"><Wallet size={20} /></div>
                   <p className="stat-label">Net Worth</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Total asset value</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><FaBuilding /></div>
+                  <div className="stat-icon"><Building2 size={20} /></div>
                   <p className="stat-label">Real Estate</p>
                   <p className="stat-value">0</p>
                   <p className="stat-meta">Properties owned</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><FaGem /></div>
+                  <div className="stat-icon"><Gem size={20} /></div>
                   <p className="stat-label">Collections</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Collectibles value</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><FaShieldAlt /></div>
+                  <div className="stat-icon"><Shield size={20} /></div>
                   <p className="stat-label">Protection</p>
                   <p className="stat-value">—</p>
                   <p className="stat-meta">Insurance status</p>

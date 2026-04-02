@@ -2,7 +2,7 @@
 const financialProfileService = require("../services/financial-profile.service");
 const logger = require("../utils/logger");
 
-class PerfilFinanceiroController {
+class FinancialProfileController {
   // Create financial profile
   async create(request, response) {
     try {
@@ -69,4 +69,4 @@ class PerfilFinanceiroController {
   }
 }
 
-module.exports = new PerfilFinanceiroController();
+module.exports = new FinancialProfileController();

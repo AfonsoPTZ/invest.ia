@@ -60,26 +60,28 @@ export function validateNumber(value) {
 }
 
 /**
- * Check if CPF has correct digit count (simple check, no algorithm validation)
+ * Check if CPF format is valid
+ * Detects invalid CPFs like: all same digits (111.111.111-11), wrong digit count
+ * Note: Full CPF algorithm validation is done by backend
  * @param {string} cpf - CPF to validate
- * @returns {boolean} True if CPF has 11 digits
+ * @returns {boolean} True if CPF format is valid
  */
 export function validateCPF(cpf) {
   if (!validateNotEmpty(cpf)) return false;
+  
   const digitsOnly = cpf.replace(/\D/g, '');
-  return digitsOnly.length === 11;
+  
+  // Must have exactly 11 digits
+  if (digitsOnly.length !== 11) return false;
+  
+  // Reject if all digits are the same (111.111.111-11, 222.222.222-22, etc)
+  // These are known invalid CPF patterns
+  if (/^(\d)\1{10}$/.test(digitsOnly)) return false;
+  
+  return true;
 }
 
-/**
- * Check if phone has correct digit count (simple check, assumes 11 digits)
- * @param {string} phone - Phone to validate
- * @returns {boolean} True if phone has 11 digits
- */
-export function validatePhone(phone) {
-  if (!validateNotEmpty(phone)) return false;
-  const digitsOnly = phone.replace(/\D/g, '');
-  return digitsOnly.length === 11;
-}
+
 
 /**
  * Check if OTP code has correct length (6 digits)
@@ -92,15 +94,4 @@ export function validateOTP(otp) {
   return digitsOnly.length === 6;
 }
 
-/**
- * Generic field validation with error message
- * @param {string} value - Value to validate
- * @param {string} fieldName - Field name for error message
- * @returns {string|null} Error message or null if valid
- */
-export function validateRequired(value, fieldName) {
-  if (!validateNotEmpty(value)) {
-    return `${fieldName} is required`;
-  }
-  return null;
-}
+

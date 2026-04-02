@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaCheck } from "react-icons/fa";
+import { CheckCircle2 } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { verifyEmail, resendOtp } from "../../services/authService";
@@ -235,7 +235,7 @@ export default function VerifyOtp() {
             transition={{ delay: 0.2 }}
           >
             <div className="step-item completed">
-              <div className="step-number"><FaCheck /></div>
+              <div className="step-number"><CheckCircle2 size={16} /></div>
               <div className="step-label">Register</div>
             </div>
             <div className="step-connector completed"></div>

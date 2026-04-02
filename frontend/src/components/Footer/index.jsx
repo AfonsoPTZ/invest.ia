@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { FaInstagram, FaWhatsapp, FaEnvelope } from 'react-icons/fa';
+import { Share2, MessageCircle, Mail } from 'lucide-react';
 import './style.css';
 
 /**
  * Footer Component
  * 
  * Displays footer with branding, navigation links, and social icons
- * Elegant design with react-icons integration for social media
+ * Elegant design with lucide-react icons for social media
  * 
  * Features:
  * - Navigation links (Home, Investments, Logs, Dashboard)
@@ -56,7 +56,7 @@ export default function Footer() {
               title="Instagram"
               aria-label="Follow us on Instagram"
             >
-              <FaInstagram />
+              <Share2 size={20} />
             </a>
             <a 
               href="https://wa.me/1234567890" 
@@ -66,7 +66,7 @@ export default function Footer() {
               title="WhatsApp"
               aria-label="Chat with us on WhatsApp"
             >
-              <FaWhatsapp />
+              <MessageCircle size={20} />
             </a>
             <a 
               href="mailto:contact@invest-ia.com" 
@@ -74,7 +74,7 @@ export default function Footer() {
               title="Email"
               aria-label="Send us an email"
             >
-              <FaEnvelope />
+              <Mail size={20} />
             </a>
           </div>
         </div>

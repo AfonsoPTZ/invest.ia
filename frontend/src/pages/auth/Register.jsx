@@ -72,7 +72,7 @@ export default function Register() {
       'Email is required': 'email',
       'Please enter a valid email': 'email',
       'CPF is required': 'cpf',
-      'CPF must have 11 digits': 'cpf',
+      'CPF format is invalid': 'cpf',
       'Phone is required': 'phone',
       'Phone must have 11 digits': 'phone',
       'Password must be at least 6 characters': 'password',

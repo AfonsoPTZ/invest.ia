@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaCheck } from "react-icons/fa";
+import { CheckCircle2 } from "lucide-react";
 import { motion } from "motion/react";
 import { createFinancialProfile } from "../../services/financialProfileService";
 import { validateFinancialProfileForm } from "../../validators/authValidator";
@@ -231,12 +231,12 @@ export default function FinancialProfile() {
             transition={{ delay: 0.2 }}
           >
             <div className="step-item completed">
-              <div className="step-number"><FaCheck /></div>
+              <div className="step-number"><CheckCircle2 size={16} /></div>
               <div className="step-label">Register</div>
             </div>
             <div className="step-connector completed"></div>
             <div className="step-item completed">
-              <div className="step-number"><FaCheck /></div>
+              <div className="step-number"><CheckCircle2 size={16} /></div>
               <div className="step-label">Verify</div>
             </div>
             <div className="step-connector"></div>

@@ -6,12 +6,6 @@ const authController = require("../controllers/auth.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 const validatorMiddleware = require("../middlewares/validator.middleware");
 const userValidator = require("../validators/user.validator");
-const {
-  registerValidationRules,
-  loginValidationRules,
-  validateEmailVerificationRules,
-  validateResendOtpRules
-} = require("../validators/auth.validator");
 
 // Helper: wrap userValidator functions to accept data object
 const validateRegistrationWithOtp = (data) => {

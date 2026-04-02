@@ -1,5 +1,5 @@
 import { cn } from '../../lib/utils';
-import { FaCheck } from 'react-icons/fa';
+import { CheckCircle2, CircleAlert, Info, TriangleAlert } from 'lucide-react';
 import './style.css';
 
 /**
@@ -25,10 +25,10 @@ export default function Alert({
   ...props 
 }) {
   const icons = {
-    error: '⚠️',
-    success: <FaCheck />,
-    info: 'ℹ️',
-    warning: '⚡'
+    error: <CircleAlert size={20} />,
+    success: <CheckCircle2 size={20} />,
+    info: <Info size={20} />,
+    warning: <TriangleAlert size={20} />
   };
 
   return (
