@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Briefcase, TrendingUp, Target, Scale, ArrowUp } from "lucide-react";
 import { motion } from "motion/react";
+import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
 import Button from "../../components/Button";
@@ -40,7 +41,7 @@ function Investments() {
               className="dashboard-hero"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
                 <h1 className="hero-title">
@@ -50,7 +51,7 @@ function Investments() {
                     transition={{ duration: 2, repeat: Infinity }}
                     style={{ display: 'inline-block', marginLeft: '8px' }}
                   >
-                    <ArrowUp size={24} className="hero-icon" />
+                    <ArrowUp size={ICON_SIZES.lg} className="hero-icon" />
                   </motion.span>
                 </h1>
                 <p className="hero-subtitle">
@@ -64,7 +65,7 @@ function Investments() {
               className="stats-section"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.25 }}
             >
               <div className="section-header">
                 <h2 className="section-title">Portfolio Analysis 📊</h2>
@@ -73,28 +74,28 @@ function Investments() {
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><Briefcase size={20} /></div>
+                  <div className="stat-icon"><Briefcase size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Portfolio Value</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Total invested amount</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><TrendingUp size={20} /></div>
+                  <div className="stat-icon"><TrendingUp size={ICON_SIZES.md} /></div>
                   <p className="stat-label">ROI Performance</p>
                   <p className="stat-value">0%</p>
                   <p className="stat-meta">Return on investment</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><Target size={20} /></div>
+                  <div className="stat-icon"><Target size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Active Positions</p>
                   <p className="stat-value">0</p>
                   <p className="stat-meta">Currently investing in</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><Scale size={20} /></div>
+                  <div className="stat-icon"><Scale size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Risk Profile</p>
                   <p className="stat-value">—</p>
                   <p className="stat-meta">Portfolio risk level</p>

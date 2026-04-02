@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Wallet, TrendingUp, CreditCard, Home, Flame } from "lucide-react";
 import { motion } from "motion/react";
+import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { getDashboardName, getDashboardData } from "../../services/dashboardService";
 import { useIntersectionAnimation } from "../../utils/useAnimations";
@@ -116,7 +117,7 @@ function Dashboard() {
                   className="dashboard-hero"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.25 }}
                 >
                   <div className="hero-content">
                     <h1 className="hero-title">
@@ -126,7 +127,7 @@ function Dashboard() {
                         transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
                         style={{ display: 'inline-block', marginLeft: '8px' }}
                       >
-                        <Flame size={24} className="hero-icon" />
+                        <Flame size={ICON_SIZES.lg} className="hero-icon" />
                       </motion.span>
                     </h1>
                     <p className="hero-subtitle">
@@ -140,7 +141,7 @@ function Dashboard() {
                   className="stats-section"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
+                  transition={{ delay: 0.2, duration: 0.25 }}
                 >
                   <div className="section-header">
                     <h2 className="section-title">Financial Overview</h2>
@@ -150,7 +151,7 @@ function Dashboard() {
                   <div className="stats-grid">
                     {/* Current Balance - Card 0 */}
                     <AnimatedCard delay={0} className="stat-card">
-                      <div className="stat-icon"><Wallet size={20} /></div>
+                      <div className="stat-icon"><Wallet size={ICON_SIZES.md} /></div>
                       <p className="stat-label">Current Balance</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.initial_balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
@@ -160,7 +161,7 @@ function Dashboard() {
 
                     {/* Monthly Income - Card 1 */}
                     <AnimatedCard delay={0.1} className="stat-card">
-                      <div className="stat-icon"><TrendingUp size={20} /></div>
+                      <div className="stat-icon"><TrendingUp size={ICON_SIZES.md} /></div>
                       <p className="stat-label">Monthly Income</p>
                       <p className="stat-value">
                         ${dashboardData?.financialProfile?.monthly_income?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
@@ -170,7 +171,7 @@ function Dashboard() {
 
                     {/* Total Expenses - Card 2 */}
                     <AnimatedCard delay={0.2} className="stat-card">
-                      <div className="stat-icon"><CreditCard size={20} /></div>
+                      <div className="stat-icon"><CreditCard size={ICON_SIZES.md} /></div>
                       <p className="stat-label">Total Expenses</p>
                       <p className="stat-value">$0.00</p>
                       <p className="stat-meta">Tracked spending</p>
@@ -178,7 +179,7 @@ function Dashboard() {
 
                     {/* Total Assets - Card 3 */}
                     <AnimatedCard delay={0.3} className="stat-card">
-                      <div className="stat-icon"><Home size={20} /></div>
+                      <div className="stat-icon"><Home size={ICON_SIZES.md} /></div>
                       <p className="stat-label">Total Assets</p>
                       <p className="stat-value">$0.00</p>
                       <p className="stat-meta">Property and valuables</p>

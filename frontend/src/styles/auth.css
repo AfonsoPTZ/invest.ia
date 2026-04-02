@@ -63,14 +63,14 @@
 /* Auth Layout Styles */
 
 .auth-container {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 40%, #2d1a1a 100%);
   padding: 20px;
   position: relative;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .auth-container::before {
@@ -230,8 +230,8 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  margin-bottom: 28px;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .auth-divider {

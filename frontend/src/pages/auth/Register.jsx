@@ -53,12 +53,17 @@ export default function Register() {
 
   /**
    * Scroll to alert when success or error message appears
+   * Only scrolls if alert is not already visible in viewport
    */
   useEffect(() => {
     if ((success || error) && alertRef.current) {
-      // Scroll to alert with smooth behavior after a small delay
       setTimeout(() => {
-        alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Check if alert is already visible in viewport
+        const rect = alertRef.current?.getBoundingClientRect();
+        if (rect && (rect.top < 0 || rect.top > window.innerHeight)) {
+          // Alert is outside viewport, scroll to it using 'nearest' to minimize movement
+          alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       }, 100);
     }
   }, [success, error]);
@@ -218,7 +223,7 @@ export default function Register() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.3 },
+      transition: { duration: 0.25 },
     },
   };
 
@@ -230,7 +235,7 @@ export default function Register() {
           className="auth-panda-wrapper"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
+          transition={{ delay: 0.2, duration: 0.25 }}
         >
           <img 
             src="/panda-login-top.png" 

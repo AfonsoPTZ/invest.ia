@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { createFinancialProfile } from "../../services/financialProfileService";
 import { validateFinancialProfileForm } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
@@ -79,13 +79,18 @@ export default function FinancialProfile() {
 
   /**
    * Scroll to alert when success or error message appears
+   * Only scrolls if the alert is not already visible in viewport
    */
   useEffect(() => {
     if ((success || error) && alertRef.current) {
-      // Scroll to alert with smooth behavior after a small delay
       setTimeout(() => {
-        alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+        // Check if alert is already visible in viewport
+        const rect = alertRef.current?.getBoundingClientRect();
+        if (rect && (rect.top < 0 || rect.top > window.innerHeight)) {
+          // Alert is outside viewport, scroll to it
+          alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 200);
     }
   }, [success, error]);
 
@@ -200,7 +205,7 @@ export default function FinancialProfile() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.3 },
+      transition: { duration: 0.25 },
     },
   };
 
@@ -212,7 +217,7 @@ export default function FinancialProfile() {
           className="auth-panda-wrapper"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
+          transition={{ delay: 0.2, duration: 0.25 }}
         >
           <img 
             src="/panda-login-top.png" 
@@ -231,12 +236,12 @@ export default function FinancialProfile() {
             transition={{ delay: 0.2 }}
           >
             <div className="step-item completed">
-              <div className="step-number"><CheckCircle2 size={16} /></div>
+              <div className="step-number"><CheckCircle2 size={20} /></div>
               <div className="step-label">Register</div>
             </div>
             <div className="step-connector completed"></div>
             <div className="step-item completed">
-              <div className="step-number"><CheckCircle2 size={16} /></div>
+              <div className="step-number"><CheckCircle2 size={20} /></div>
               <div className="step-label">Verify</div>
             </div>
             <div className="step-connector"></div>
@@ -277,6 +282,7 @@ export default function FinancialProfile() {
             initial="hidden"
             animate="visible"
           >
+            <AnimatePresence mode="wait">
             <motion.div className="form-group" variants={itemVariants}>
               <label className="checkbox-label">
                 <input
@@ -291,7 +297,13 @@ export default function FinancialProfile() {
             </motion.div>
 
             {formData.has_monthly_income && (
-              <motion.div className="form-group" variants={itemVariants}>
+              <motion.div 
+                className="form-group"
+                initial={{ opacity: 0, y: 10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
                 <Input
                   label="Monthly Income Amount (Currency)"
                   type="number"
@@ -321,7 +333,13 @@ export default function FinancialProfile() {
             </motion.div>
 
             {formData.has_initial_balance && (
-              <motion.div className="form-group" variants={itemVariants}>
+              <motion.div 
+                className="form-group"
+                initial={{ opacity: 0, y: 10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
                 <Input
                   label="Initial Balance Amount (Currency)"
                   type="number"
@@ -419,6 +437,7 @@ export default function FinancialProfile() {
                 {isLoading ? "Completing Setup..." : "Complete Registration"}
               </Button>
             </motion.div>
+            </AnimatePresence>
           </motion.form>
 
           <motion.p 

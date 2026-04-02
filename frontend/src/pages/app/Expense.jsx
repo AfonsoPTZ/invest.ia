@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Car, UtensilsCrossed, Banknote, Target } from "lucide-react";
 import { motion } from "motion/react";
+import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
 import Button from "../../components/Button";
@@ -40,10 +41,10 @@ function Expense() {
               className="dashboard-hero"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Smart Spending <Target size={24} className="hero-icon" /></h1>
+                <h1 className="hero-title">Smart Spending <Target size={ICON_SIZES.lg} className="hero-icon" /></h1>
                 <p className="hero-subtitle">
                   Monitor your spending and optimize your budget for better financial health
                 </p>
@@ -55,7 +56,7 @@ function Expense() {
               className="stats-section"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.25 }}
             >
             <div className="section-header">
               <h2 className="section-title">Expense Breakdown 📉</h2>
@@ -64,28 +65,28 @@ function Expense() {
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><ShoppingCart size={20} /></div>
+                  <div className="stat-icon"><ShoppingCart size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Retail</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Shopping expenses</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><Car size={20} /></div>
+                  <div className="stat-icon"><Car size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Transportation</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Travel expenses</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><UtensilsCrossed size={20} /></div>
+                  <div className="stat-icon"><UtensilsCrossed size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Dining & Food</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Food & restaurants</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><Banknote size={20} /></div>
+                  <div className="stat-icon"><Banknote size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Total Monthly</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">All expenses combined</p>

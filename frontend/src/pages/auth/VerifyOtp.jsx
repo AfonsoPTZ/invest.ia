@@ -216,7 +216,7 @@ export default function VerifyOtp() {
           className="auth-panda-wrapper"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
+          transition={{ delay: 0.2, duration: 0.25 }}
         >
           <img 
             src="/panda-login-top.png" 
@@ -235,7 +235,7 @@ export default function VerifyOtp() {
             transition={{ delay: 0.2 }}
           >
             <div className="step-item completed">
-              <div className="step-number"><CheckCircle2 size={16} /></div>
+              <div className="step-number"><CheckCircle2 size={20} /></div>
               <div className="step-label">Register</div>
             </div>
             <div className="step-connector completed"></div>

@@ -31,6 +31,7 @@
   transition: var(--timing-easing-ease-out);
   border: 2px solid #e8eaf0;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  line-height: 1;
 }
 
 .step-item.active .step-number {
@@ -124,8 +125,8 @@
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 20px;
   padding: 0;
   width: 100%;
 }
@@ -144,34 +145,40 @@
 .form-textarea,
 .form-select {
   padding: 11px 14px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1.5px solid rgba(125, 30, 30, 0.3);
+  border-radius: var(--radius-md);
   font-size: 14px;
   font-family: inherit;
   transition: all 0.2s ease;
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: var(--color-bg-card);
+  color: var(--color-text-light);
 }
 
 .form-textarea::placeholder,
 .form-select::placeholder {
-  color: #94a3b8;
+  color: #737373;
+}
+
+.form-textarea:hover,
+.form-select:hover {
+  border-color: rgba(229, 231, 235, 0.4);
+  background-color: var(--color-bg-card-hover);
 }
 
 .form-textarea:focus,
 .form-select:focus {
   outline: none;
-  border-color: #dc2626;
-  background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1), inset 0 0 0 1px rgba(220, 38, 38, 0.05);
+  border-color: #b0b0b0;
+  background-color: var(--color-bg-card-focus);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
 .form-textarea:disabled,
 .form-select:disabled {
-  background-color: #f1f5f9;
-  color: #94a3b8;
+  background-color: rgba(64, 64, 64, 0.5);
+  color: #a3a3a3;
   cursor: not-allowed;
-  border-color: #e2e8f0;
+  border-color: rgba(125, 30, 30, 0.1);
 }
 
 .form-textarea {
@@ -189,30 +196,58 @@
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-size: 14px;
-  color: #334155;
+  color: #f5f5f5;
   cursor: pointer;
   user-select: none;
   font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 4px 0;
 }
 
 .checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
   cursor: pointer;
   accent-color: #dc2626;
   border-radius: 4px;
+  border: 2px solid rgba(125, 30, 30, 0.4);
+  background-color: rgba(26, 26, 26, 0.6);
   transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 .checkbox-label input[type="checkbox"]:hover {
+  border-color: rgba(220, 38, 38, 0.6);
+  background-color: rgba(26, 26, 26, 0.7);
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px;
+}
+
+.checkbox-label input[type="checkbox"]:focus {
+  outline: none;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
 }
 
 .checkbox-label input[type="checkbox"]:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+  background-color: rgba(64, 64, 64, 0.3);
+  border-color: rgba(125, 30, 30, 0.2);
 }
 
 /* OTP Input Group */

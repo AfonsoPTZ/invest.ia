@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Wrench } from "lucide-react";
 import { motion } from "motion/react";
+import ICON_SIZES from "../../constants/iconSizes";
 import LogViewer from "../../components/LogViewer";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -39,10 +40,10 @@ export default function Logs() {
               className="dashboard-hero"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">System Diagnostics <Wrench size={24} className="hero-icon" /></h1>
+                <h1 className="hero-title">System Diagnostics <Wrench size={ICON_SIZES.lg} className="hero-icon" /></h1>
                 <p className="hero-subtitle">
                   Real-time debugging: Monitor application performance and troubleshoot issues
                 </p>
@@ -53,7 +54,7 @@ export default function Logs() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.25 }}
               style={{ background: '#ffffff', borderRadius: '12px', padding: 0, border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)' }}
             >
               <LogViewer maxHeight="600px" autoScroll={true} />

@@ -120,7 +120,7 @@ function Login() {
           className="auth-panda-wrapper"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
+          transition={{ delay: 0.2, duration: 0.25 }}
         >
           <img 
             src="/panda-login-top.png" 
@@ -134,7 +134,7 @@ function Login() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.3 }}
+            transition={{ delay: 0.3, duration: 0.25 }}
           >
             <div className="auth-header">
               <motion.div
@@ -142,7 +142,7 @@ function Login() {
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                <div className="logo-icon"><TrendingUp size={20} /></div>
+                <div className="logo-icon"><TrendingUp size={32} /></div>
               </motion.div>
               <h1 className="auth-title">
                 <span className="invest-text">Invest</span>
@@ -157,7 +157,7 @@ function Login() {
             className="auth-form"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.3 }}
+            transition={{ delay: 0.4, duration: 0.25 }}
           >
             <motion.div
               initial={{ opacity: 0, x: -10 }}

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Briefcase, Gift, BarChart3, TrendingUp, Rocket } from "lucide-react";
 import { motion } from "motion/react";
+import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
 import Button from "../../components/Button";
@@ -40,10 +41,10 @@ function Income() {
               className="dashboard-hero"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Your Earnings <Rocket size={24} className="hero-icon" /></h1>
+                <h1 className="hero-title">Your Earnings <Rocket size={ICON_SIZES.lg} className="hero-icon" /></h1>
                 <p className="hero-subtitle">
                   Track all your income streams and maximize your earning potential
                 </p>
@@ -55,7 +56,7 @@ function Income() {
               className="stats-section"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.25 }}
             >
             <div className="section-header">
               <h2 className="section-title">Income Streams 📊</h2>
@@ -64,28 +65,28 @@ function Income() {
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><Briefcase size={20} /></div>
+                  <div className="stat-icon"><Briefcase size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Primary Income</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Main job salary</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><Gift size={20} /></div>
+                  <div className="stat-icon"><Gift size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Bonuses & Rewards</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Extra earnings</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><BarChart3 size={20} /></div>
+                  <div className="stat-icon"><BarChart3 size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Side Income</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Secondary sources</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><TrendingUp size={20} /></div>
+                  <div className="stat-icon"><TrendingUp size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Total Monthly</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">All income combined</p>

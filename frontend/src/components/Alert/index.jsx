@@ -1,5 +1,6 @@
 import { cn } from '../../lib/utils';
 import { CheckCircle2, CircleAlert, Info, TriangleAlert } from 'lucide-react';
+import ICON_SIZES from '../../constants/iconSizes';
 import './style.css';
 
 /**
@@ -25,10 +26,10 @@ export default function Alert({
   ...props 
 }) {
   const icons = {
-    error: <CircleAlert size={20} />,
-    success: <CheckCircle2 size={20} />,
-    info: <Info size={20} />,
-    warning: <TriangleAlert size={20} />
+    error: <CircleAlert size={ICON_SIZES.md} />,
+    success: <CheckCircle2 size={ICON_SIZES.md} />,
+    info: <Info size={ICON_SIZES.md} />,
+    warning: <TriangleAlert size={ICON_SIZES.md} />
   };
 
   return (

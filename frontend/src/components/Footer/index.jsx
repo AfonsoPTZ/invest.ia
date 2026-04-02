@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Share2, MessageCircle, Mail } from 'lucide-react';
+import { Heart, MessageCircle, Mail } from 'lucide-react';
+import ICON_SIZES from '../../constants/iconSizes';
 import './style.css';
 
 /**
@@ -52,21 +53,21 @@ export default function Footer() {
               href="https://instagram.com" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="social-icon" 
+              className="social-icon social-icon-instagram" 
               title="Instagram"
               aria-label="Follow us on Instagram"
             >
-              <Share2 size={20} />
+              <Heart size={ICON_SIZES.md} />
             </a>
             <a 
               href="https://wa.me/1234567890" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="social-icon" 
+              className="social-icon social-icon-whatsapp" 
               title="WhatsApp"
               aria-label="Chat with us on WhatsApp"
             >
-              <MessageCircle size={20} />
+              <MessageCircle size={ICON_SIZES.md} />
             </a>
             <a 
               href="mailto:contact@invest-ia.com" 
@@ -74,7 +75,7 @@ export default function Footer() {
               title="Email"
               aria-label="Send us an email"
             >
-              <Mail size={20} />
+              <Mail size={ICON_SIZES.md} />
             </a>
           </div>
         </div>

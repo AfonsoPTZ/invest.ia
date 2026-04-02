@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Wallet, Building2, Gem, Shield, Gift } from "lucide-react";
 import { motion } from "motion/react";
+import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
 import Button from "../../components/Button";
@@ -40,10 +41,10 @@ function Assets() {
               className="dashboard-hero"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Your Wealth <Gift size={24} className="hero-icon" /></h1>
+                <h1 className="hero-title">Your Wealth <Gift size={ICON_SIZES.lg} className="hero-icon" /></h1>
                 <p className="hero-subtitle">
                   Organize and protect your valuable assets with confidence
                 </p>
@@ -55,7 +56,7 @@ function Assets() {
               className="stats-section"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.25 }}
             >
             <div className="section-header">
               <h2 className="section-title">Asset Portfolio 💎</h2>
@@ -64,28 +65,28 @@ function Assets() {
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><Wallet size={20} /></div>
+                  <div className="stat-icon"><Wallet size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Net Worth</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Total asset value</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><Building2 size={20} /></div>
+                  <div className="stat-icon"><Building2 size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Real Estate</p>
                   <p className="stat-value">0</p>
                   <p className="stat-meta">Properties owned</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><Gem size={20} /></div>
+                  <div className="stat-icon"><Gem size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Collections</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Collectibles value</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><Shield size={20} /></div>
+                  <div className="stat-icon"><Shield size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Protection</p>
                   <p className="stat-value">—</p>
                   <p className="stat-meta">Insurance status</p>

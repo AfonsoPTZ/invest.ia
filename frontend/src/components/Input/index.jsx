@@ -1,5 +1,6 @@
 import { cn } from '../../lib/utils';
 import { TriangleAlert } from 'lucide-react';
+import ICON_SIZES from '../../constants/iconSizes';
 import './style.css';
 
 /**
@@ -59,7 +60,7 @@ export default function Input({
         />
         {error && (
           <span className="input-error-icon" title={error}>
-            <TriangleAlert size={16} />
+            <TriangleAlert size={ICON_SIZES.sm} />
           </span>
         )}
       </div>
