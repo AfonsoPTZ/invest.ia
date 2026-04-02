@@ -63,7 +63,6 @@
 /* Auth Layout Styles */
 
 .auth-container {
-  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,6 +70,8 @@
   padding: 20px;
   position: relative;
   flex-shrink: 0;
+  min-height: 100dvh;
+  width: 100%;
 }
 
 .auth-container::before {
@@ -391,6 +392,16 @@
   display: flex !important;
   pointer-events: auto;
   z-index: 10;
+}
+
+/* Remove internal gap for checkbox-only groups */
+.auth-form .form-group:has(.checkbox-label:only-child) {
+  gap: 0;
+}
+
+/* Reduce spacing for checkbox groups */
+.auth-form .form-group:has(.checkbox-label) {
+  margin-bottom: 8px;
 }
 
 .auth-form .form-group:has(.input:focus),

@@ -1,5 +1,5 @@
 import { cn } from '../../lib/utils';
-import { TriangleAlert } from 'lucide-react';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import ICON_SIZES from '../../constants/iconSizes';
 import './style.css';
 
@@ -60,7 +60,7 @@ export default function Input({
         />
         {error && (
           <span className="input-error-icon" title={error}>
-            <TriangleAlert size={ICON_SIZES.sm} />
+            <FaExclamationTriangle size={ICON_SIZES.sm} />
           </span>
         )}
       </div>

@@ -21,7 +21,8 @@ export default function PageTransition({ children, className = '' }) {
         duration: 0.25,
         ease: 'easeOut'
       }}
-      className={className}
+      className={`w-full ${className}`}
+      style={{ minHeight: '100dvh' }}
     >
       {children}
     </motion.div>

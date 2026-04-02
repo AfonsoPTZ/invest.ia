@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TrendingUp } from "lucide-react";
+import { FaChartLine } from "react-icons/fa";
 import { motion } from "motion/react";
 import { login } from "../../services/authService";
 import { validateLoginForm } from "../../validators/authValidator";
@@ -142,7 +142,7 @@ function Login() {
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                <div className="logo-icon"><TrendingUp size={32} /></div>
+                <div className="logo-icon"><FaChartLine size={48} /></div>
               </motion.div>
               <h1 className="auth-title">
                 <span className="invest-text">Invest</span>

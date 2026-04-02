@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, Car, UtensilsCrossed, Banknote, Target } from "lucide-react";
+import { FaShoppingCart, FaCar, FaUtensils, FaMoneyBill, FaTag } from "react-icons/fa";
 import { motion } from "motion/react";
 import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
@@ -44,8 +44,8 @@ function Expense() {
               transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Smart Spending <Target size={ICON_SIZES.lg} className="hero-icon" /></h1>
-                <p className="hero-subtitle">
+                <h1 className="hero-title">Smart Spending <FaTag size={ICON_SIZES.lg} className="hero-icon" /></h1>
+                <p className="hero-subtitle text-center">
                   Monitor your spending and optimize your budget for better financial health
                 </p>
               </div>
@@ -59,34 +59,34 @@ function Expense() {
               transition={{ delay: 0.2, duration: 0.25 }}
             >
             <div className="section-header">
-              <h2 className="section-title">Expense Breakdown 📉</h2>
+              <h2 className="section-title">Expense Breakdown</h2>
               <p className="section-description">Analyze your spending by category</p>
             </div>
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><ShoppingCart size={ICON_SIZES.md} /></div>
+                  <div className="stat-icon"><FaShoppingCart size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Retail</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Shopping expenses</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><Car size={ICON_SIZES.md} /></div>
+                  <div className="stat-icon"><FaCar size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Transportation</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Travel expenses</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><UtensilsCrossed size={ICON_SIZES.md} /></div>
+                  <div className="stat-icon"><FaUtensils size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Dining & Food</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">Food & restaurants</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><Banknote size={ICON_SIZES.md} /></div>
+                  <div className="stat-icon"><FaMoneyBill size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Total Monthly</p>
                   <p className="stat-value">$0.00</p>
                   <p className="stat-meta">All expenses combined</p>

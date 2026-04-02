@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Wrench } from "lucide-react";
+import { FaWrench } from "react-icons/fa";
 import { motion } from "motion/react";
 import ICON_SIZES from "../../constants/iconSizes";
 import LogViewer from "../../components/LogViewer";
@@ -43,8 +43,8 @@ export default function Logs() {
               transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">System Diagnostics <Wrench size={ICON_SIZES.lg} className="hero-icon" /></h1>
-                <p className="hero-subtitle">
+                <h1 className="hero-title">System Diagnostics <FaWrench size={ICON_SIZES.lg} className="hero-icon" /></h1>
+                <p className="hero-subtitle text-center">
                   Real-time debugging: Monitor application performance and troubleshoot issues
                 </p>
               </div>

@@ -1,5 +1,5 @@
 import { cn } from '../../lib/utils';
-import { CheckCircle2, CircleAlert, Info, TriangleAlert } from 'lucide-react';
+import { FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
 import ICON_SIZES from '../../constants/iconSizes';
 import './style.css';
 
@@ -26,10 +26,10 @@ export default function Alert({
   ...props 
 }) {
   const icons = {
-    error: <CircleAlert size={ICON_SIZES.md} />,
-    success: <CheckCircle2 size={ICON_SIZES.md} />,
-    info: <Info size={ICON_SIZES.md} />,
-    warning: <TriangleAlert size={ICON_SIZES.md} />
+    error: <FaExclamationCircle size={ICON_SIZES.md} />,
+    success: <FaCheckCircle size={ICON_SIZES.md} />,
+    info: <FaInfoCircle size={ICON_SIZES.md} />,
+    warning: <FaExclamationTriangle size={ICON_SIZES.md} />
   };
 
   return (

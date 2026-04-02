@@ -7,16 +7,16 @@
 
 export const ICON_SIZES = {
   // Small icons for compact UI (labels, badges, etc)
-  sm: 16,
+  sm: 18,
   
   // Medium icons for general UI (inputs, buttons, alerts, social)
-  md: 20,
+  md: 24,
   
   // Large icons for prominent display (hero titles, sections)
-  lg: 24,
+  lg: 28,
   
   // Extra large icons for decorative/important elements
-  xl: 32,
+  xl: 40,
 };
 
 export default ICON_SIZES;
