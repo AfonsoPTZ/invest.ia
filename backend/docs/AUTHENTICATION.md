@@ -1,142 +1,256 @@
-# Authentication & Authorization
+# Authentication System
 
 ## Overview
 
-Authentication system uses **JWT (JSON Web Tokens)** for stateless session management. After login, users receive a token that they include in API requests.
+Complete auth system with JWT tokens and email verification (OTP).
 
-**Systems:**
-- **Authentication (AuthN):** Verify who you are (via credentials)
-- **Authorization (AuthZ):** Verify what you can do (via token)
-
----
+```
+Registration → Email Verification (OTP) → Login → JWT Token → Protected Routes
+```
 
 ## Authentication Flow
 
-```
-1. User enters email + password
-   ↓
-2. Backend validates credentials
-   ↓
-3. If valid → generate JWT token
-   ↓
-4. Return token to frontend
-   ↓
-5. Frontend stores token in localStorage
-   ↓
-6. Frontend includes token in subsequent requests
-   ↓
-7. Backend validates token in middleware
+### 1. User Registration with OTP
+
+**Endpoint:** `POST /api/auth/register-with-otp`
+
+```json
+// Request
+{
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "cpf": "12345678901",
+  "phone": "11999999999",
+  "password": "SecurePass@123"
+}
+
+// Response 201
+{
+  "data": {
+    "message": "User registered. Check your email for OTP code.",
+    "userId": 1,
+    "email": "joao@example.com"
+  }
+}
 ```
 
----
+**Flow:**
+1. Controller validates input
+2. Service checks if email/cpf/phone already exist
+3. Service hashes password with bcrypt
+4. Service creates user in database (emailVerified = false)
+5. Service generates 6-digit OTP
+6. OTP hashed with bcrypt (never plaintext)
+7. OTP sent via email (Nodemailer)
+8. Return userId + email
+
+### 2. Email Verification with OTP
+
+**Endpoint:** `POST /api/auth/verify-email`
+
+```json
+// Request
+{
+  "userId": 1,
+  "otpCode": "123456"
+}
+
+// Response 200
+{
+  "data": {
+    "id": 1,
+    "name": "João Silva",
+    "email": "joao@example.com",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+**Flow:**
+1. Controller validates request
+2. Service fetches user by ID
+3. Service checks if OTP expired (5 minute window)
+4. Service compares OTP with stored hash (bcrypt)
+5. Service increments attempt counter
+6. If 3 failed attempts → lock for 15 minutes
+7. On success: mark email as verified + clear OTP
+8. Generate JWT token
+9. Return user + token
+
+**OTP Rules:**
+- Length: 6 digits
+- Expiration: 5 minutes
+- Max attempts: 3
+- Lockout: 15 minutes after exceeded attempts
+
+### 3. Login
+
+**Endpoint:** `POST /api/auth/login`
+
+```json
+// Request
+{
+  "email": "joao@example.com",
+  "password": "SecurePass@123"
+}
+
+// Response 200
+{
+  "data": {
+    "id": 1,
+    "name": "João Silva",
+    "email": "joao@example.com",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+
+// Error if email not verified (403)
+{
+  "error": "Email not verified. Check your inbox for OTP code."
+}
+```
+
+**Flow:**
+1. Controller validates email + password
+2. Service finds user by email
+3. Service checks if email is verified (must be verified to login)
+4. Service compares password with stored hash (bcrypt)
+5. Service generates JWT token
+6. Return user + token
+
+### 4. Logout
+
+**Endpoint:** `POST /api/auth/logout`
+
+```
+Headers: Authorization: Bearer <token>
+
+Response 200
+{
+  "message": "Logged out successfully"
+}
+```
+
+**Flow:**
+1. Frontend deletes JWT from localStorage
+2. Optional: Backend could track blacklisted tokens (future enhancement)
 
 ## JWT (JSON Web Tokens)
 
 ### Structure
 
-JWT has 3 parts separated by dots:
-
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 eyJzdWIiOjEyMzQ1Njc4OTAsIm5hbWUiOiJKb2huIERvZSIsImVtYWlsIjoiam9obkBleGFtcGxlLmNvbSJ9.
 TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+
+Header . Payload . Signature
 ```
 
 **Parts:**
-1. **Header:** Algorithm & token type
-2. **Payload:** User data (claims)
-3. **Signature:** HMAC-SHA256 signature for verification
+1. **Header:** Algorithm (HS256) & token type (JWT)
+2. **Payload:** User claims (id, email, iat, exp)
+3. **Signature:** HMAC-SHA256 verification
 
 ### Token Payload
 
 ```javascript
 {
-  "sub": 1,              // Subject (user ID)
+  "sub": 1,              // User ID
   "email": "user@test.com",
   "iat": 1234567890,     // Issued at (Unix timestamp)
-  "exp": 1234571490,     // Expires at (Unix timestamp)
+  "exp": 1234571490,     // Expires at (1 hour from now)
   "iss": "invest-ia",    // Issuer
   "aud": "invest-ia-app" // Audience
 }
 ```
 
-### Key Properties
+### Token Lifecycle
 
-| Property | Purpose | Value |
-|----------|---------|-------|
-| `sub` | User identifier | User ID (database) |
-| `email` | User email | Email address |
-| `iat` | Issue timestamp | Current time |
-| `exp` | Expiration timestamp | iat + duration |
-| `iss` | Issuer | API server name |
-| `aud` | Audience | Application name |
+1. **Generated** after successful login or email verification
+2. **Stored** by frontend in localStorage
+3. **Sent** with every API request: `Authorization: Bearer <token>`
+4. **Validated** by auth middleware on protected routes
+5. **Expires** after 1 hour (configurable in JWT_EXPIRATION)
+6. **Refreshed** by logging in again
 
----
+## Services
 
-## Token Service
+### Token Service (`src/services/auth/token.service.js`)
 
-**File:** `src/services/auth/token.service.js`
-
-### Generate Token
-
+**Generate Token:**
 ```javascript
 async generateToken(user) {
-  try {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60), // 24 hours
-      iss: "invest-ia",
-      aud: "invest-ia-app"
-    };
-    
-    const token = jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { algorithm: "HS256" }
-    );
-    
-    logger.info({ userId: user.id }, "Token generated");
-    return token;
-  } catch (error) {
-    logger.error({ error: error.message }, "Token generation failed");
-    throw error;
-  }
+  const payload = {
+    sub: user.id,
+    email: user.email,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + (60 * 60),  // 1 hour
+    iss: "invest-ia",
+    aud: "invest-ia-app"
+  };
+  
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { algorithm: "HS256" });
+  return token;
+}
+```
+
+**Verify Token:**
+```javascript
+async verifyToken(token) {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
+  return decoded;
 }
 ```
 
 **Configuration:**
-- **Secret Key:** From `process.env.JWT_SECRET` (must be complex!)
-- **Algorithm:** HS256 (HMAC-SHA256)
-- **Expiration:** 24 hours (standard for web apps)
+- Secret: From `process.env.JWT_SECRET` (must be 32+ chars)
+- Algorithm: HS256 (HMAC-SHA256)
+- Expiration: 1 hour (configurable)
 
-### Verify Token
+### Login Service (`src/services/auth/login.service.js`)
 
 ```javascript
-async verifyToken(token) {
-  try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET,
-      { algorithms: ["HS256"] }
-    );
-    
-    logger.debug({ userId: decoded.sub }, "Token verified");
-    return decoded;
-  } catch (error) {
-    logger.warn({ error: error.message }, "Token verification failed");
-    throw new Error("Invalid or expired token");
+async loginUser(email, password) {
+  // 1. Find user
+  const user = await userRepository.findByEmail(email);
+  
+  // 2. Check email verified
+  if (!user.emailVerified) {
+    throw new Error("Email not verified");
   }
+  
+  // 3. Verify password
+  const isValid = await passwordService.comparePasswords(password, user.passwordHash);
+  
+  // 4. Generate token
+  const token = await tokenService.generateToken(user);
+  
+  return { user, token };
 }
 ```
 
-**Verification checks:**
-- Signature validity
-- Expiration time
-- Secret key match
+### Password Service (`src/services/auth/password.service.js`)
 
----
+**Hash Password:**
+```javascript
+async hashPassword(plainPassword) {
+  return await bcrypt.hash(plainPassword, 10);  // 10 salt rounds
+}
+```
+
+**Compare Password:**
+```javascript
+async comparePasswords(plainPassword, hash) {
+  return await bcrypt.compare(plainPassword, hash);
+}
+```
+
+**Bcrypt properties:**
+- One-way hash (can't decrypt)
+- Different hash each time (random salt)
+- Timing-attack resistant
+- Standard for password hashing
 
 ## Authentication Middleware
 
@@ -145,329 +259,70 @@ async verifyToken(token) {
 ```javascript
 const authMiddleware = (request, response, next) => {
   try {
-    // Extract token from header
+    // 1. Extract token from header
     const authHeader = request.headers.authorization;
-    
     if (!authHeader) {
-      logger.warn({ path: request.path }, "Missing authorization header");
-      return response.status(401).json({
-        error: "Missing authorization header",
-        status: 401
-      });
+      return response.status(401).json({ error: "Missing authorization header" });
     }
     
-    // Format: "Bearer <token>"
+    // 2. Check "Bearer" format
     const parts = authHeader.split(" ");
-    
     if (parts.length !== 2 || parts[0] !== "Bearer") {
-      logger.warn({ path: request.path }, "Invalid authorization format");
-      return response.status(401).json({
-        error: "Invalid authorization format. Use: Bearer <token>",
-        status: 401
-      });
+      return response.status(401).json({ error: "Invalid authorization format" });
     }
     
     const token = parts[1];
     
-    // Verify token
+    // 3. Verify token
     jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
       if (error) {
-        logger.warn({ error: error.message }, "Token verification failed");
-        return response.status(401).json({
-          error: "Invalid or expired token",
-          status: 401
-        });
+        return response.status(401).json({ error: "Invalid or expired token" });
       }
       
-      // Attach user data to request
-      request.user = {
-        id: decoded.sub,
-        email: decoded.email
-      };
-      
-      logger.debug({ userId: decoded.sub }, "User authenticated");
+      // 4. Attach user to request
+      request.user = { id: decoded.sub, email: decoded.email };
       next();
     });
   } catch (error) {
-    logger.error({ error: error.message }, "Auth middleware error");
-    response.status(500).json({
-      error: "Internal server error",
-      status: 500
-    });
+    response.status(500).json({ error: "Internal server error" });
   }
 };
-
-module.exports = authMiddleware;
 ```
 
-**Flow:**
-1. Check authorization header exists
-2. Parse "Bearer <token>" format
-3. Verify JWT signature
-4. Extract user info
-5. Attach to request.user
-6. Call next() to proceed
-
----
-
-## Login Service
-
-**File:** `src/services/auth/login.service.js`
-
+**Usage on protected routes:**
 ```javascript
-class LoginService {
-  async loginUser(email, password) {
-    try {
-      logger.info({ email }, "Login attempt");
-      
-      // 1. Find user
-      const user = await userRepository.findByEmail(email);
-      
-      if (!user) {
-        logger.warn({ email }, "Email not found");
-        throw new Error("Email not found");
-      }
-      
-      // 2. Check email verified
-      if (!user.emailVerified) {
-        logger.warn({ email }, "Email not verified");
-        throw new Error("Email not verified. Please verify your email.");
-      }
-      
-      // 3. Verify password
-      const isPasswordValid = await passwordService.comparePasswords(
-        password,
-        user.passwordHash
-      );
-      
-      if (!isPasswordValid) {
-        logger.warn({ email }, "Invalid password");
-        throw new Error("Invalid password");
-      }
-      
-      // 4. Generate token
-      const token = await tokenService.generateToken(user);
-      
-      logger.info({ userId: user.id, email }, "Login successful");
-      
-      return {
-        user: {
-          id: user.id,
-          email: user.email,
-          fullName: user.fullName
-        },
-        token
-      };
-    } catch (error) {
-      logger.error({ error: error.message, email }, "Login failed");
-      throw error;
-    }
-  }
-}
-
-module.exports = new LoginService();
+router.get("/dashboard", authMiddleware, dashboardController.getDashboard);
 ```
 
-**Validations:**
-1. User exists
-2. Email verified
-3. Password correct
-
-**Returns:**
-- User object (no sensitive data)
-- JWT token
-
----
-
-## Logout Service
-
-**File:** `src/services/auth/logout.service.js`
-
-```javascript
-class LogoutService {
-  async logoutUser(userId) {
-    try {
-      logger.info({ userId }, "User logout");
-      
-      // JWT is stateless, no server-side logout needed
-      // Frontend just discards the token
-      
-      // (Optional) Could track logged-out tokens for extra security:
-      // await tokenBlacklistRepository.addToken(token, expiration);
-      
-      return { message: "Logged out successfully" };
-    } catch (error) {
-      logger.error({ error: error.message, userId }, "Logout failed");
-      throw error;
-    }
-  }
-}
-
-module.exports = new LogoutService();
-```
-
-**Note:** JWT logout is simple because tokens are stateless. Frontend just deletes the token.
-
-**Future enhancement:** Could implement token blacklist for immediate logout revocation.
-
----
-
-## Password Service
-
-**File:** `src/services/auth/password.service.js`
-
-### Hash Password
-
-```javascript
-async hashPassword(plainPassword) {
-  try {
-    const saltRounds = 10;
-    const hash = await bcrypt.hash(plainPassword, saltRounds);
-    return hash;
-  } catch (error) {
-    logger.error({ error: error.message }, "Password hashing failed");
-    throw error;
-  }
-}
-```
-
-**Bcrypt properties:**
-- Salt rounds: 10 (cryptographically secure)
-- One-way hash (can't decrypt)
-- Different hash each time (random salt)
-
-### Compare Password
-
-```javascript
-async comparePasswords(plainPassword, hash) {
-  try {
-    const isValid = await bcrypt.compare(plainPassword, hash);
-    return isValid;
-  } catch (error) {
-    logger.error({ error: error.message }, "Password comparison failed");
-    throw error;
-  }
-}
-```
-
-**Prevents timing attacks:** bcrypt comparison time is constant regardless of match
-
----
-
-## Login Controller
-
-**File:** `src/controllers/authController.js`
-
-```javascript
-async login(request, response, next) {
-  try {
-    const { email, password } = request.body;
-    
-    logger.info({ email }, "Login request");
-    
-    // Validate input
-    const validation = authValidator.validateLogin(email, password);
-    if (!validation.isValid) {
-      return response.status(400).json({
-        error: validation.errors.join(", "),
-        status: 400
-      });
-    }
-    
-    // Login user
-    const { user, token } = await loginService.loginUser(email, password);
-    
-    // Set secure HTTP-only cookie
-    response.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    });
-    
-    logger.info({ userId: user.id }, "Login successful");
-    
-    response.status(200).json({
-      message: "Login successful",
-      user,
-      token, // Also return token for localStorage (optional)
-      status: 200
-    });
-  } catch (error) {
-    logger.error({ error: error.message }, "Login failed");
-    next(error);
-  }
-}
-```
-
-**Response includes:**
-- Token (put in Authorization header)
-- User data (for frontend state)
-- Message (for UX feedback)
-
----
-
-## Logout Controller
-
-```javascript
-async logout(request, response, next) {
-  try {
-    const userId = request.user.id;
-    
-    logger.info({ userId }, "Logout request");
-    
-    // Call logout service
-    await logoutService.logoutUser(userId);
-    
-    // Clear cookie
-    response.clearCookie("token");
-    
-    logger.info({ userId }, "Logout successful");
-    
-    response.status(200).json({
-      message: "Logged out successfully",
-      status: 200
-    });
-  } catch (error) {
-    logger.error({ error: error.message }, "Logout failed");
-    next(error);
-  }
-}
-```
-
----
-
-## Frontend Authentication
+## Frontend Token Management
 
 **File:** `src/services/authService.js`
 
 ### Store Token
-
 ```javascript
-const authService = {
-  // Save token after login
-  setToken(token) {
-    localStorage.setItem("authToken", token);
-  },
-  
-  // Get token for API calls
-  getToken() {
-    return localStorage.getItem("authToken");
-  },
-  
-  // Remove token on logout
-  clearToken() {
-    localStorage.removeItem("authToken");
-  }
-};
+export function setToken(token) {
+  localStorage.setItem("token", token);
+}
 ```
 
-### API Calls with Token
-
+### Get Token
 ```javascript
-// In every API request, add Authorization header
-const makeAuthenticatedRequest = async (url, options = {}) => {
-  const token = authService.getToken();
+export function getToken() {
+  return localStorage.getItem("token");
+}
+```
+
+### Clear Token
+```javascript
+export function clearToken() {
+  localStorage.removeItem("token");
+}
+```
+
+### Add to API Requests
+```javascript
+async function makeAuthenticatedRequest(url, options = {}) {
+  const token = getToken();
   
   const headers = {
     "Content-Type": "application/json",
@@ -478,114 +333,24 @@ const makeAuthenticatedRequest = async (url, options = {}) => {
     headers.Authorization = `Bearer ${token}`;
   }
   
-  const response = await fetch(url, {
-    ...options,
-    headers
-  });
-  
+  const response = await fetch(url, { ...options, headers });
   return response.json();
-};
-```
-
-### Login Endpoint
-
-```javascript
-async login(email, password) {
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
-  
-  const data = await response.json();
-  
-  if (response.ok) {
-    authService.setToken(data.token);
-    return data.user;
-  }
-  
-  throw new Error(data.error);
 }
 ```
-
-### Logout Endpoint
-
-```javascript
-async logout() {
-  const response = await fetch("/api/auth/logout", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${authService.getToken()}`
-    }
-  });
-  
-  if (response.ok) {
-    authService.clearToken();
-    navigate("/auth/login");
-  }
-}
-```
-
----
-
-## Auth Routes
-
-**File:** `src/routes/authRoutes.js`
-
-```javascript
-const express = require("express");
-const router = express.Router();
-const authController = require("../controllers/authController");
-const authMiddleware = require("../middlewares/auth.middleware");
-
-// Public routes (no auth required)
-router.post("/register", authController.register);
-router.post("/login", authController.login);
-router.post("/verify-otp", authController.verifyOtp);
-
-// Protected routes (auth required)
-router.post("/logout", authMiddleware, authController.logout);
-router.get("/profile", authMiddleware, authController.getProfile);
-
-module.exports = router;
-```
-
----
-
-## Protected Routes
-
-To protect a route, use `authMiddleware`:
-
-```javascript
-// Routes that require authentication
-router.get("/api/perfil-financeiro", 
-  authMiddleware,  // ← Check authentication
-  perfilFinanceiroController.getAllProfiles
-);
-
-router.post("/api/perfil-financeiro",
-  authMiddleware,  // ← Check authentication
-  validatorMiddleware,
-  perfilFinanceiroController.createProfile
-);
-```
-
-**If user not authenticated:**
-- Status: 401 Unauthorized
-- Error: "Invalid or expired token"
-
----
 
 ## Environment Variables
 
-**File:** `.env`
+**Required in `.env`:**
 
 ```ini
 # JWT Configuration
 JWT_SECRET=your_super_secret_key_min_32_chars_xxxxxxxxxxxxxxxxxxxxxxxx
-JWT_EXPIRES_IN=24h
+JWT_EXPIRATION=1h
 
 # Email Configuration (for OTP)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_SECURE=false
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password
 
@@ -595,253 +360,100 @@ NODE_ENV=development
 DATABASE_URL=mysql://user:password@localhost:3306/invest_ia
 ```
 
-**⚠️ Security:**
+**⚠️ Security Notes:**
 - Never commit `.env` file
-- Make `JWT_SECRET` at least 32 characters
+- JWT_SECRET must be at least 32 characters
 - Use strong, random secret (not "secretkey")
-- Use App Password for Gmail, not account password
+- Use Gmail App Password, not account password
 
----
-
-## Token Refresh (Future Enhancement)
-
-Current system uses fixed 24-hour expiration. For better UX, implement refresh tokens:
+## Protected Routes Example
 
 ```javascript
-// Long-lived token to get new access tokens
-// Would need separate endpoint: POST /api/auth/refresh
-async refreshToken(refreshToken) {
-  // Verify refresh token
-  // Generate new access token
-  // Return new token
-}
+// Requires authentication
+router.get("/api/financial-profile", 
+  authMiddleware,  // ← Check JWT token first
+  financialProfileController.getProfile
+);
+
+router.post("/api/financial-profile",
+  authMiddleware,  // ← Check JWT token first
+  validationRules,
+  validatorMiddleware,
+  financialProfileController.createProfile
+);
 ```
 
----
+**If user not authenticated:**
+- Status: 401 Unauthorized
+- Error: "Invalid or expired token"
+
+## Database Schema
+
+**users table:**
+
+```sql
+id                  INT PRIMARY KEY AUTO_INCREMENT
+name                VARCHAR(150) NOT NULL
+email               VARCHAR(150) NOT NULL UNIQUE
+cpf                 CHAR(11) NOT NULL UNIQUE
+phone               VARCHAR(20) NOT NULL UNIQUE
+password_hash       VARCHAR(255) NOT NULL
+email_verified      BOOLEAN DEFAULT FALSE
+otp_code_hash       VARCHAR(255) NULL
+otp_expires_at      DATETIME NULL
+otp_attempts        INT DEFAULT 0
+created_at          DATETIME DEFAULT CURRENT_TIMESTAMP
+updated_at          DATETIME DEFAULT CURRENT_TIMESTAMP
+```
 
 ## Security Best Practices
 
-✅ **DO:**
-- Use HTTPS in production
-- Keep JWT_SECRET secure and long
-- Set short token expiration (24h)
-- Validate token in every protected endpoint
-- Include CORS headers appropriately
-- Hash passwords with bcrypt
-- Log auth attempts
+✅ **Implemented:**
+- Passwords hashed with bcrypt (salt: 10)
+- OTP stored as bcrypt hash (never plaintext)
+- JWT signed with strong secret
+- Email verification before login access
+- OTP rate limiting (3 attempts → 15min lockout)
+- CORS middleware configured
+- Input sanitization via validators
 
-❌ **DON'T:**
-- Store tokens in cookies without httpOnly flag
-- Expose JWT_SECRET in code or .env version control
-- Use weak passwords or defaults
-- Skip email verification
-- Trust client-side validation alone
-- Expose user ID in token payload if sensitive
-- Log sensitive data (passwords, tokens)
+⚠️ **For Production:**
+- Use HTTPS only (secure: true in cookies)
+- Implement token refresh rotation
+- Add IP-based rate limiting
+- Store JWT_SECRET in secrets vault (not .env)
+- Enable 2FA (two-factor authentication)
+- Add audit logging for sensitive operations
 
----
+## Common Issues
 
-## Testing Authentication
-
-### Backend Unit Tests
-
-```javascript
-describe("Auth Service", () => {
-  
-  test("should login with valid credentials", async () => {
-    const result = await loginService.loginUser(
-      "test@test.com",
-      "password123"
-    );
-    
-    expect(result.token).toBeDefined();
-    expect(result.user.email).toBe("test@test.com");
-  });
-
-  test("should fail login if email not found", async () => {
-    expect(() =>
-      loginService.loginUser("notfound@test.com", "password")
-    ).toThrow("Email not found");
-  });
-
-  test("should fail login if email not verified", async () => {
-    // User exists but emailVerified = false
-    expect(() =>
-      loginService.loginUser("unverified@test.com", "password")
-    ).toThrow("Email not verified");
-  });
-
-  test("should fail login with wrong password", async () => {
-    expect(() =>
-      loginService.loginUser("test@test.com", "wrongpassword")
-    ).toThrow("Invalid password");
-  });
-});
-```
-
-### Frontend Integration Tests
-
-```javascript
-describe("Auth Flow", () => {
-  
-  test("should login and store token", async () => {
-    const user = await authService.login(
-      "test@test.com",
-      "password123"
-    );
-    
-    expect(localStorage.getItem("authToken")).toBeDefined();
-    expect(user.email).toBe("test@test.com");
-  });
-
-  test("should add token to API requests", async () => {
-    authService.setToken("test-token");
-    
-    const request = await makeAuthenticatedRequest("/api/users");
-    
-    expect(request.headers.Authorization).toBe("Bearer test-token");
-  });
-
-  test("should logout and clear token", async () => {
-    authService.setToken("test-token");
-    await authService.logout();
-    
-    expect(localStorage.getItem("authToken")).toBeNull();
-  });
-});
-```
-
----
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| "Invalid or expired token" | Token expired | User needs to login again |
+| "Invalid authorization format" | Wrong header format | Use `Authorization: Bearer <token>` |
+| "Email not verified" | User didn't verify OTP | User must verify OTP first |
+| "Invalid password" | Wrong password | Check password is correct |
+| "Email already registered" | Duplicate email | Use different email |
 
 ## API Reference
 
 ### Register Endpoint
+**POST** `/api/auth/register-with-otp`
+**Access:** Public
 
-**POST** `/api/auth/register`
-
-**Request:**
-```json
-{
-  "fullName": "John Doe",
-  "email": "john@example.com",
-  "password": "securePassword123"
-}
-```
-
-**Response (Success):**
-```json
-{
-  "message": "Registration successful. OTP sent to email.",
-  "email": "john@example.com",
-  "status": 201
-}
-```
-
----
+### Verify Email Endpoint
+**POST** `/api/auth/verify-email`
+**Access:** Public
 
 ### Login Endpoint
-
 **POST** `/api/auth/login`
-
-**Request:**
-```json
-{
-  "email": "john@example.com",
-  "password": "securePassword123"
-}
-```
-
-**Response (Success):**
-```json
-{
-  "message": "Login successful",
-  "user": {
-    "id": 1,
-    "email": "john@example.com",
-    "fullName": "John Doe"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "status": 200
-}
-```
-
----
-
-### Verify OTP Endpoint
-
-**POST** `/api/auth/verify-otp`
-
-**Request:**
-```json
-{
-  "email": "john@example.com",
-  "otp": "123456"
-}
-```
-
-**Response (Success):**
-```json
-{
-  "message": "Email verified successfully",
-  "status": 200
-}
-```
-
----
+**Access:** Public
 
 ### Logout Endpoint
-
 **POST** `/api/auth/logout`
+**Access:** Protected (requires JWT)
 
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
-**Response (Success):**
-```json
-{
-  "message": "Logged out successfully",
-  "status": 200
-}
-```
-
----
-
-## Common Issues
-
-### Token Expired
-
-**Error:** "Invalid or expired token"
-
-**Solution:** User needs to login again → Get new token
-
-### Invalid Token Format
-
-**Error:** "Invalid authorization format. Use: Bearer <token>"
-
-**Solution:** Ensure header format is exactly: `Authorization: Bearer <token>`
-
-### Email Not Verified
-
-**Error:** "Email not verified. Please verify your email."
-
-**Solution:** User must verify OTP first before logging in
-
-### Wrong Password
-
-**Error:** "Invalid password"
-
-**Solution:** Check password is correct (case-sensitive)
-
----
-
-## Summary
-
-- **Registration:** Email + Password → User created (emailVerified=false) → OTP sent
-- **Email Verification:** OTP → Email verified → Can login
-- **Login:** Email + Password → JWT token returned
-- **Protected Endpoints:** Require "Authorization: Bearer <token>" header
-- **Logout:** Frontend deletes token
-- **Token Expiration:** 24 hours (can be adjusted)
-- **Security:** HTTPS, httpOnly cookies, bcrypt passwords, JWT signature
+### Protected Route Pattern
+**Any Route**
+**Headers:** `Authorization: Bearer <jwt_token>`
+**Access:** Protected (requires JWT)

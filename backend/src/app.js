@@ -9,6 +9,7 @@ const dashboardRoutes = require("./routes/dashboard.routes");
 const loggerMiddleware = require("./middlewares/logger.middleware");
 const errorMiddleware = require("./middlewares/error.middleware");
 const notFoundMiddleware = require("./middlewares/notFound.middleware");
+const logger = require("./utils/logger");
 
 const app = express();
 
@@ -16,7 +17,7 @@ const app = express();
 app.use(loggerMiddleware);
 
 if (!process.env.CORS_ORIGIN) {
-  console.warn("WARNING: CORS_ORIGIN not defined in .env. Using http://localhost:5173 as fallback for development.");
+  logger.warn("WARNING: CORS_ORIGIN not defined in .env. Using http://localhost:5173 as fallback for development.");
 }
 
 app.use(cors({

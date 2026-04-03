@@ -1,25 +1,25 @@
 import { useNavigate } from "react-router-dom";
-import { FaWallet, FaBuilding, FaGem, FaLock, FaGift } from "react-icons/fa";
+import { FaBriefcase, FaChartLine, FaBullseye, FaBalanceScale, FaArrowUp } from "react-icons/fa";
 import { motion } from "motion/react";
 import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
-import Button from "../../components/Button";
-import AnimatedCard from "../../components/AnimatedCard";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import PageTransition from "../../components/PageTransition";
+import Button from "../../components/button";
+import AnimatedCard from "../../components/animatedcard";
+import Navbar from "../../components/navbar";
+import Footer from "../../components/footer";
+import PageTransition from "../../components/pagetransition";
 import "../../styles/app.css";
 
 /**
- * Assets Page
+ * Investments Page
  * 
- * Displays user assets and property management
+ * Displays user investment portfolio and management tools
  * Part of the main 4-section dashboard
  * 
  * @component
  */
-function Assets() {
+function Investments() {
   const navigate = useNavigate();
   const { user } = useAuthUser();
 
@@ -44,9 +44,18 @@ function Assets() {
               transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Your Wealth <FaGem size={ICON_SIZES.lg} className="hero-icon" /></h1>
+                <h1 className="hero-title">
+                  Growth Opportunities 
+                  <motion.span
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    style={{ display: 'inline-block', marginLeft: '8px' }}
+                  >
+                    <FaChartLine size={ICON_SIZES.lg} className="hero-icon" />
+                  </motion.span>
+                </h1>
                 <p className="hero-subtitle text-center">
-                  Organize and protect your valuable assets with confidence
+                  Explore and manage your investment portfolio with detailed insights
                 </p>
               </div>
             </motion.div>
@@ -58,38 +67,38 @@ function Assets() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.25 }}
             >
-            <div className="section-header">
-              <h2 className="section-title">Asset Portfolio</h2>
-              <p className="section-description">Track your valuable possessions and properties</p>
-            </div>
+              <div className="section-header">
+                <h2 className="section-title">Portfolio Analysis</h2>
+                <p className="section-description">Your investment performance at a glance</p>
+              </div>
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><FaWallet size={ICON_SIZES.md} /></div>
-                  <p className="stat-label">Net Worth</p>
+                  <div className="stat-icon"><FaBriefcase size={ICON_SIZES.md} /></div>
+                  <p className="stat-label">Portfolio Value</p>
                   <p className="stat-value">$0.00</p>
-                  <p className="stat-meta">Total asset value</p>
+                  <p className="stat-meta">Total invested amount</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><FaBuilding size={ICON_SIZES.md} /></div>
-                  <p className="stat-label">Real Estate</p>
-                  <p className="stat-value">0</p>
-                  <p className="stat-meta">Properties owned</p>
+                  <div className="stat-icon"><FaArrowUp size={ICON_SIZES.md} /></div>
+                  <p className="stat-label">ROI Performance</p>
+                  <p className="stat-value">0%</p>
+                  <p className="stat-meta">Return on investment</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><FaGem size={ICON_SIZES.md} /></div>
-                  <p className="stat-label">Collections</p>
-                  <p className="stat-value">$0.00</p>
-                  <p className="stat-meta">Collectibles value</p>
+                  <div className="stat-icon"><FaBullseye size={ICON_SIZES.md} /></div>
+                  <p className="stat-label">Active Positions</p>
+                  <p className="stat-value">0</p>
+                  <p className="stat-meta">Currently investing in</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><FaLock size={ICON_SIZES.md} /></div>
-                  <p className="stat-label">Protection</p>
+                  <div className="stat-icon"><FaBalanceScale size={ICON_SIZES.md} /></div>
+                  <p className="stat-label">Risk Profile</p>
                   <p className="stat-value">—</p>
-                  <p className="stat-meta">Insurance status</p>
+                  <p className="stat-meta">Portfolio risk level</p>
                 </AnimatedCard>
               </div>
             </motion.div>
@@ -99,7 +108,7 @@ function Assets() {
               style={{ marginTop: '40px' }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.5 }}
             >
               <Button type="secondary" onClick={() => navigate('/dashboard')}>
                 ← Back to Dashboard
@@ -129,4 +138,4 @@ function Assets() {
   );
 }
 
-export default Assets;
+export default Investments;

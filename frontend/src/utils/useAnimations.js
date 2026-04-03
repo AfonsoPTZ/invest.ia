@@ -23,22 +23,6 @@ export function useAnimateOnMount(animationClass = 'animate-fade-in', delay = 0)
   return ref;
 }
 
-/**
- * Custom hook for staggered animations on multiple elements
- * @param {string} selector - CSS selector for elements to animate
- * @param {string} animationClass - CSS animation class to apply
- * @param {number} staggerDelay - Delay between each element in milliseconds
- */
-export function useStaggerAnimation(selector, animationClass = 'animate-slide-up', staggerDelay = 100) {
-  useEffect(() => {
-    const elements = document.querySelectorAll(selector);
-    elements.forEach((element, index) => {
-      setTimeout(() => {
-        element.classList.add(animationClass);
-      }, index * staggerDelay);
-    });
-  }, [selector, animationClass, staggerDelay]);
-}
 
 /**
  * Custom hook for observing when elements enter viewport

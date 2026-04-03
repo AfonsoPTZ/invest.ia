@@ -13,13 +13,15 @@
   },
   "license": "ISC",
   "scripts": {
-    "dev": "npm run dev --workspace=backend & npm run dev --workspace=frontend",
+    "dev": "npm run dev --workspaces",
     "dev:backend": "npm run dev --workspace=backend",
     "dev:frontend": "npm run dev --workspace=frontend",
+    "start:backend": "npm run start --workspace=backend",
+    "start:frontend": "npm run dev --workspace=frontend",
     "build:backend": "npm run build --workspace=backend",
     "build:frontend": "npm run build --workspace=frontend",
     "build": "npm run build --workspaces",
-    "install:all": "npm install && npm install --workspace=backend && npm install --workspace=frontend"
+    "install:all": "npm install --workspaces"
   },
   "workspaces": [
     "backend",

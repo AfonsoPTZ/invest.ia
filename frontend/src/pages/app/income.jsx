@@ -1,25 +1,25 @@
 import { useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaCar, FaUtensils, FaMoneyBill, FaTag } from "react-icons/fa";
+import { FaBriefcase, FaGift, FaChartBar, FaDollarSign, FaRocket } from "react-icons/fa";
 import { motion } from "motion/react";
 import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { useAuthUser } from "../../utils/useAuthUser";
-import Button from "../../components/Button";
-import AnimatedCard from "../../components/AnimatedCard";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import PageTransition from "../../components/PageTransition";
+import Button from "../../components/button";
+import AnimatedCard from "../../components/animatedcard";
+import Navbar from "../../components/navbar";
+import Footer from "../../components/footer";
+import PageTransition from "../../components/pagetransition";
 import "../../styles/app.css";
 
 /**
- * Expense Page
+ * Income Page
  * 
- * Displays user expenses tracking and management
+ * Displays user income streams and management
  * Part of the main 4-section dashboard
  * 
  * @component
  */
-function Expense() {
+function Income() {
   const navigate = useNavigate();
   const { user } = useAuthUser();
 
@@ -44,9 +44,9 @@ function Expense() {
               transition={{ duration: 0.25 }}
             >
               <div className="hero-content">
-                <h1 className="hero-title">Smart Spending <FaTag size={ICON_SIZES.lg} className="hero-icon" /></h1>
+                <h1 className="hero-title">Your Earnings <FaRocket size={ICON_SIZES.lg} className="hero-icon" /></h1>
                 <p className="hero-subtitle text-center">
-                  Monitor your spending and optimize your budget for better financial health
+                  Track all your income streams and maximize your earning potential
                 </p>
               </div>
             </motion.div>
@@ -59,37 +59,37 @@ function Expense() {
               transition={{ delay: 0.2, duration: 0.25 }}
             >
             <div className="section-header">
-              <h2 className="section-title">Expense Breakdown</h2>
-              <p className="section-description">Analyze your spending by category</p>
+              <h2 className="section-title">Income Streams</h2>
+              <p className="section-description">Overview of all your earning sources</p>
             </div>
 
               <div className="stats-grid">
                 <AnimatedCard delay={0} className="stat-card">
-                  <div className="stat-icon"><FaShoppingCart size={ICON_SIZES.md} /></div>
-                  <p className="stat-label">Retail</p>
+                  <div className="stat-icon"><FaBriefcase size={ICON_SIZES.md} /></div>
+                  <p className="stat-label">Primary Income</p>
                   <p className="stat-value">$0.00</p>
-                  <p className="stat-meta">Shopping expenses</p>
+                  <p className="stat-meta">Main job salary</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.1} className="stat-card">
-                  <div className="stat-icon"><FaCar size={ICON_SIZES.md} /></div>
-                  <p className="stat-label">Transportation</p>
+                  <div className="stat-icon"><FaGift size={ICON_SIZES.md} /></div>
+                  <p className="stat-label">Bonuses & Rewards</p>
                   <p className="stat-value">$0.00</p>
-                  <p className="stat-meta">Travel expenses</p>
+                  <p className="stat-meta">Extra earnings</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.2} className="stat-card">
-                  <div className="stat-icon"><FaUtensils size={ICON_SIZES.md} /></div>
-                  <p className="stat-label">Dining & Food</p>
+                  <div className="stat-icon"><FaChartBar size={ICON_SIZES.md} /></div>
+                  <p className="stat-label">Side Income</p>
                   <p className="stat-value">$0.00</p>
-                  <p className="stat-meta">Food & restaurants</p>
+                  <p className="stat-meta">Secondary sources</p>
                 </AnimatedCard>
 
                 <AnimatedCard delay={0.3} className="stat-card">
-                  <div className="stat-icon"><FaMoneyBill size={ICON_SIZES.md} /></div>
+                  <div className="stat-icon"><FaDollarSign size={ICON_SIZES.md} /></div>
                   <p className="stat-label">Total Monthly</p>
                   <p className="stat-value">$0.00</p>
-                  <p className="stat-meta">All expenses combined</p>
+                  <p className="stat-meta">All income combined</p>
                 </AnimatedCard>
               </div>
             </motion.div>
@@ -129,4 +129,4 @@ function Expense() {
   );
 }
 
-export default Expense;
+export default Income;

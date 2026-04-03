@@ -64,46 +64,6 @@ export async function getExpenses() {
   }
 }
 
-/**
- * Get single expense by ID
- * 
- * @async
- * @param {string|number} id - Expense ID
- * @returns {Promise<Object>} Expense object
- * @throws {Error} If not authenticated or API error
- */
-export async function getExpense(id) {
-  const token = localStorage.getItem("token");
-
-  try {
-    if (!token) {
-      logger.warn({}, "ExpenseService: Token not found");
-      throw new Error("Token not found");
-    }
-
-    logger.debug({ id }, "ExpenseService: Fetching expense");
-
-    const response = await fetch(`${API_URL}/despesas/${id}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      logger.warn({ id }, `ExpenseService: getExpense failed - ${data.message}`);
-      throw new Error(data.message || "Error fetching expense");
-    }
-
-    logger.info({ id }, "ExpenseService: Expense fetched successfully");
-
-    return data.data;
-  } catch (error) {
-    logger.error({ error: error.message }, "ExpenseService: Error fetching expense");
-    throw error;
-  }
-}
 
 /**
  * Create new expense

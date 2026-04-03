@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { FaWrench } from "react-icons/fa";
 import { motion } from "motion/react";
 import ICON_SIZES from "../../constants/iconSizes";
-import LogViewer from "../../components/LogViewer";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import Button from "../../components/Button";
-import PageTransition from "../../components/PageTransition";
+import LogViewer from "../../components/logviewer";
+import Navbar from "../../components/navbar";
+import Footer from "../../components/footer";
+import Button from "../../components/button";
+import PageTransition from "../../components/pagetransition";
 import "../../styles/app.css";
 
 /**

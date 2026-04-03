@@ -1,6 +1,7 @@
 // Prisma Client Configuration - Simple Local MySQL Setup
 const { PrismaClient } = require("@prisma/client");
 require("dotenv").config();
+const logger = require("../utils/logger");
 
 // Simplest possible initialization
 const prisma = new PrismaClient();
@@ -9,9 +10,9 @@ const prisma = new PrismaClient();
 async function testDatabaseConnection() {
   try {
     await prisma.$connect();
-    console.log("✅ Database connected successfully");
+    logger.info("✅ Database connected successfully");
   } catch (error) {
-    console.error("❌ Error connecting to database:", error.message);
+    logger.error({ error: error.message }, "❌ Error connecting to database");
   }
 }
 

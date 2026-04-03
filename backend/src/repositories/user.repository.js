@@ -1,7 +1,7 @@
 const prisma = require("../config/db");
 const logger = require("../utils/logger");
 
-class AuthRepository {
+class UserRepository {
   async findByEmail(email) {
     try {
       logger.debug({ email }, "Searching user by email");
@@ -153,4 +153,4 @@ class AuthRepository {
   }
 }
 
-module.exports = new AuthRepository();
+module.exports = new UserRepository();

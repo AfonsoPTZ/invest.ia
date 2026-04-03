@@ -5,18 +5,18 @@ import "./styles/globals.css";
 import "./styles/animations.css";
 
 // Auth Pages
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import VerifyOtp from "./pages/auth/VerifyOtp";
-import FinancialProfile from "./pages/auth/FinancialProfile";
+import Login from "./pages/auth/login";
+import Register from "./pages/auth/register";
+import VerifyOtp from "./pages/auth/verifyotp";
+import FinancialProfile from "./pages/auth/financialprofile";
 
 // App Pages
-import Dashboard from "./pages/app/Dashboard";
-import Logs from "./pages/app/Logs";
-import Investments from "./pages/app/Investments";
-import Assets from "./pages/app/Assets";
-import Income from "./pages/app/Income";
-import Expense from "./pages/app/Expense";
+import Dashboard from "./pages/app/dashboard";
+import Logs from "./pages/app/logs";
+import Investments from "./pages/app/investments";
+import Assets from "./pages/app/assets";
+import Income from "./pages/app/income";
+import Expense from "./pages/app/expense";
 
 function App() {
   return (
