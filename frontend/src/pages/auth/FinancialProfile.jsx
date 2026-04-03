@@ -299,9 +299,9 @@ export default function FinancialProfile() {
             {formData.has_monthly_income && (
               <motion.div 
                 className="form-group"
-                initial={{ opacity: 0, y: 10, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: -10, height: 0 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
                 <Input
@@ -335,9 +335,9 @@ export default function FinancialProfile() {
             {formData.has_initial_balance && (
               <motion.div 
                 className="form-group"
-                initial={{ opacity: 0, y: 10, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: -10, height: 0 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
                 <Input
