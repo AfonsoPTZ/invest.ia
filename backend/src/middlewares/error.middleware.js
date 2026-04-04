@@ -1,11 +1,16 @@
 // Error Middleware - Centralized error handling with logging
+// Supports: AppError (with statusCode) and native Error (defaults to 500)
 const logger = require("../utils/logger");
+const env = require("../config/env");
 
 /**
  * Middleware de erro centralizado
- * Registra o erro e retorna resposta padronizada
+ * Captura erros de AppError ou Error genérico
+ * Registra o erro com contexto completo
+ * Retorna resposta padronizada
  */
 function errorMiddleware(error, request, response, next) {
+  // AppError: has statusCode | Generic Error: defaults to 500
   const statusCode = error.statusCode || 500;
   const message = error.message || "Internal Server Error";
 
@@ -25,7 +30,7 @@ function errorMiddleware(error, request, response, next) {
     status: "error",
     statusCode,
     message,
-    ...(process.env.NODE_ENV === "development" && { stack: error.stack })
+    ...(env.NODE_ENV === "development" && { stack: error.stack })
   });
 }
 

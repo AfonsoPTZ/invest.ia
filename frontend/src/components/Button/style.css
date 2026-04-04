@@ -1,0 +1,96 @@
+.btn {
+  padding: 11px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-default);
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--gradient-primary-hover);
+  box-shadow: 0 6px 20px rgba(185, 28, 28, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.2);
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: #404040;
+  color: var(--color-text-light);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #525252;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.15);
+  transform: translateY(-2px);
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+}
+
+.btn-secondary:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Danger Button */
+.btn-danger {
+  background-color: var(--color-error);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--color-primary);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+}
+
+.btn-danger:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}

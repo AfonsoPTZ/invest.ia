@@ -274,22 +274,6 @@
   color: #ffffff;
 }
 
-.stat-icon.balance {
-  font-size: 32px;
-}
-
-.stat-icon.income {
-  font-size: 32px;
-}
-
-.stat-icon.expenses {
-  font-size: 32px;
-}
-
-.stat-icon.assets {
-  font-size: 32px;
-}
-
 .stat-label {
   font-size: 12px;
   font-weight: 700;

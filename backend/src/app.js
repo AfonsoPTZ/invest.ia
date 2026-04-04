@@ -1,7 +1,8 @@
 // Express Configuration
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const helmet = require("helmet");
+const env = require("./config/env");
 
 const authRoutes = require("./routes/auth.routes");
 const financialProfileRoutes = require("./routes/financial-profile.routes");
@@ -9,6 +10,7 @@ const dashboardRoutes = require("./routes/dashboard.routes");
 const loggerMiddleware = require("./middlewares/logger.middleware");
 const errorMiddleware = require("./middlewares/error.middleware");
 const notFoundMiddleware = require("./middlewares/notFound.middleware");
+const { globalRateLimiter, authPublicRateLimiter, financialProfileRateLimiter, dashboardRateLimiter } = require("./middlewares/rate-limit.middleware");
 const logger = require("./utils/logger");
 
 const app = express();
@@ -16,21 +18,25 @@ const app = express();
 // Middlewares de logging (primeiro middleware)
 app.use(loggerMiddleware);
 
-if (!process.env.CORS_ORIGIN) {
-  logger.warn("WARNING: CORS_ORIGIN not defined in .env. Using http://localhost:5173 as fallback for development.");
-}
+// Security middleware - HTTP headers
+app.use(helmet());
 
+// CORS configuration (validated in config/env.js)
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  origin: env.CORS_ORIGIN,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/financial-profile", financialProfileRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+// Apply global rate limit to all routes
+app.use(globalRateLimiter);
+
+// Apply route-specific rate limiters
+app.use("/api/auth", authPublicRateLimiter, authRoutes);
+app.use("/api/financial-profile", financialProfileRateLimiter, financialProfileRoutes);
+app.use("/api/dashboard", dashboardRateLimiter, dashboardRoutes);
 
 // Middlewares de erro (últimos middlewares)
 app.use(notFoundMiddleware);

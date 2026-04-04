@@ -117,7 +117,14 @@ async function sendVerificationSuccessEmail(email, userName) {
   }
 }
 
-module.exports = {
-  sendOtpEmail,
-  sendVerificationSuccessEmail
-};
+class EmailService {
+  async sendOtpEmail(email, otp) {
+    return sendOtpEmail(email, otp);
+  }
+
+  async sendVerificationSuccessEmail(email, userName) {
+    return sendVerificationSuccessEmail(email, userName);
+  }
+}
+
+module.exports = new EmailService();

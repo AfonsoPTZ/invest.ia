@@ -1,6 +1,6 @@
 // Verify Email Service - Confirmação de email com OTP
-const { verifyEmailWithOtp, resendVerificationCode } = require("./email-verification.service");
-const { generateTempToken } = require("./token.service");
+const emailVerificationService = require("./email-verification.service");
+const tokenService = require("./token.service");
 const authRepository = require("../../repositories/user.repository");
 const logger = require("../../utils/logger");
 
@@ -16,7 +16,7 @@ async function confirmEmailWithOtp(userId, otpCode) {
     logger.info({ userId }, "VerifyEmailService: Confirming email with OTP");
 
     // Verificar OTP
-    const verification = await verifyEmailWithOtp(userId, otpCode);
+    const verification = await emailVerificationService.verifyEmailWithOtp(userId, otpCode);
 
     if (!verification.isValid) {
       logger.warn({ userId }, "VerifyEmailService: OTP verification failed");
@@ -35,7 +35,7 @@ async function confirmEmailWithOtp(userId, otpCode) {
     }
 
     // Gerar token temporário para completar perfil financeiro
-    const tempToken = generateTempToken(userId, user.email);
+    const tempToken = tokenService.generateTempToken(userId, user.email);
 
     logger.info({ userId }, "VerifyEmailService: Email confirmed successfully with temporary token generated");
 
@@ -67,7 +67,7 @@ async function resendOtpCode(userId) {
       throw new Error("User not found");
     }
 
-    await resendVerificationCode(userId, user.email);
+    await emailVerificationService.resendVerificationCode(userId, user.email);
 
     logger.info({ userId }, "VerifyEmailService: OTP code resent successfully");
 
@@ -82,7 +82,14 @@ async function resendOtpCode(userId) {
   }
 }
 
-module.exports = {
-  confirmEmailWithOtp,
-  resendOtpCode
-};
+class VerifyEmailService {
+  async confirmEmailWithOtp(userId, otpCode) {
+    return confirmEmailWithOtp(userId, otpCode);
+  }
+
+  async resendOtpCode(userId) {
+    return resendOtpCode(userId);
+  }
+}
+
+module.exports = new VerifyEmailService();

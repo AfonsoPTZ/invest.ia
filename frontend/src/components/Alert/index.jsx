@@ -1,0 +1,62 @@
+import { cn } from '../../lib/utils';
+import { FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
+import ICON_SIZES from '../../constants/iconSizes';
+import './style.css';
+
+/**
+ * Alert Component
+ * 
+ * Inline alert message for displaying feedback
+ * Used in forms and validation contexts
+ * 
+ * Note: For temporary notifications, use sonner toasts instead
+ * This component is for persistent inline alerts
+ * 
+ * Props:
+ * - type: 'error' | 'success' | 'info' | 'warning' (default: 'info')
+ * - children: alert content
+ * - onClose: optional function to close alert
+ * - className: additional CSS classes
+ */
+export default function Alert({ 
+  type = 'info', 
+  children, 
+  onClose,
+  className = '', 
+  ...props 
+}) {
+  const icons = {
+    error: <FaExclamationCircle size={ICON_SIZES.md} />,
+    success: <FaCheckCircle size={ICON_SIZES.md} />,
+    info: <FaInfoCircle size={ICON_SIZES.md} />,
+    warning: <FaExclamationTriangle size={ICON_SIZES.md} />
+  };
+
+  return (
+    <div 
+      className={cn(
+        'alert',
+        `alert-${type}`,
+        className
+      )}
+      role={type === 'error' ? 'alert' : 'status'}
+      {...props}
+    >
+      <span className="alert-icon" aria-hidden="true">
+        {icons[type]}
+      </span>
+      <div className="alert-content">
+        {children}
+      </div>
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="alert-close"
+          aria-label="Close alert"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+}

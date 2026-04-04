@@ -5,11 +5,11 @@ import { toast } from "sonner";
 import { register } from "../../services/authService";
 import { validateRegisterForm } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
-import Button from "../../components/button";
-import Input from "../../components/input";
-import Alert from "../../components/alert";
-import Card from "../../components/card";
-import PageTransition from "../../components/pagetransition";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
+import Alert from "../../components/Alert";
+import Card from "../../components/Card";
+import PageTransition from "../../components/PageTransition";
 import "../../styles/auth.css";
 import "../../styles/forms.css";
 

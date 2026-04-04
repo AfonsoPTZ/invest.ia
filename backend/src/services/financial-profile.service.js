@@ -4,6 +4,7 @@
 const financialProfileRepository = require("../repositories/financial-profile.repository");
 const userRepository = require("../repositories/user.repository");
 const logger = require("../utils/logger");
+const AppError = require("../utils/AppError");
 
 class FinancialProfileService {
   // Create user financial profile
@@ -15,14 +16,14 @@ class FinancialProfileService {
       // Step 1: Validate userId
       if (!userId) {
         logger.warn({}, "Service: User ID not provided");
-        throw new Error("User ID is required");
+        throw new AppError("User ID is required", 400);
       }
 
       // Step 2: Verify user exists in repository
       const user = await userRepository.findById(userId);
       if (!user) {
         logger.warn({ userId }, "Service: User not found for profile creation");
-        throw new Error("User not found");
+        throw new AppError("User not found", 404);
       }
 
       // Step 3: Create or update profile via repository
@@ -32,7 +33,7 @@ class FinancialProfileService {
 
     } catch (error) {
       logger.error({ error: error.message, userId }, "Service: Error creating financial profile");
-      throw new Error(error.message);
+      throw error;
     }
   }
 
@@ -44,14 +45,14 @@ class FinancialProfileService {
       // Step 1: Validate userId
       if (!userId) {
         logger.warn({}, "Service: User ID not provided");
-        throw new Error("User ID is required");
+        throw new AppError("User ID is required", 400);
       }
 
       // Step 2: Fetch profile from repository
       const profile = await financialProfileRepository.findByUserId(userId);
       if (!profile) {
         logger.warn({ userId }, "Service: Financial profile not found");
-        throw new Error("Financial profile not found");
+        throw new AppError("Financial profile not found", 404);
       }
 
       logger.debug({ userId }, "Service: Financial profile fetched successfully");
@@ -60,7 +61,7 @@ class FinancialProfileService {
 
     } catch (error) {
       logger.error({ error: error.message, userId }, "Service: Error fetching financial profile");
-      throw new Error(error.message);
+      throw error;
     }
   }
 }

@@ -138,11 +138,22 @@ async function markEmailAsVerified(userId) {
   }
 }
 
-module.exports = {
-  generateAndSaveOtp,
-  verifyOtp,
-  clearOtp,
-  markEmailAsVerified,
-  OTP_EXPIRATION_MINUTES,
-  OTP_MAX_ATTEMPTS
-};
+class OtpService {
+  async generateAndSaveOtp(userId) {
+    return generateAndSaveOtp(userId);
+  }
+
+  async verifyOtp(userId, otpCode) {
+    return verifyOtp(userId, otpCode);
+  }
+
+  async clearOtp(userId) {
+    return clearOtp(userId);
+  }
+
+  async markEmailAsVerified(userId) {
+    return markEmailAsVerified(userId);
+  }
+}
+
+module.exports = new OtpService();

@@ -1,6 +1,6 @@
 // Email Verification Service - Fluxo de verificação de email
-const { sendOtpEmail } = require("./email.service");
-const { generateAndSaveOtp, verifyOtp, clearOtp, markEmailAsVerified } = require("./otp.service");
+const emailService = require("./email.service");
+const otpService = require("./otp.service");
 const logger = require("../../utils/logger");
 
 /**
@@ -14,10 +14,10 @@ async function sendVerificationCode(userId, email) {
     logger.info({ userId, email }, "EmailVerificationService: Sending verification code");
 
     // Gerar e salvar OTP
-    const otp = await generateAndSaveOtp(userId);
+    const otp = await otpService.generateAndSaveOtp(userId);
 
     // Enviar OTP por email
-    await sendOtpEmail(email, otp);
+    await emailService.sendOtpEmail(email, otp);
 
     logger.info({ userId, email }, "EmailVerificationService: Verification code sent successfully");
   } catch (error) {
@@ -37,17 +37,17 @@ async function verifyEmailWithOtp(userId, otpCode) {
     logger.debug({ userId }, "EmailVerificationService: Verifying email with OTP");
 
     // Validar OTP
-    const verification = await verifyOtp(userId, otpCode);
+    const verification = await otpService.verifyOtp(userId, otpCode);
 
     if (!verification.isValid) {
       return verification;
     }
 
     // Marcar email como verificado
-    await markEmailAsVerified(userId);
+    await otpService.markEmailAsVerified(userId);
 
     // Limpar OTP
-    await clearOtp(userId);
+    await otpService.clearOtp(userId);
 
     logger.info({ userId }, "EmailVerificationService: Email verified successfully");
     return {
@@ -72,10 +72,10 @@ async function resendVerificationCode(userId, email) {
     logger.info({ userId, email }, "EmailVerificationService: Resending verification code");
 
     // Gerar novo OTP
-    const otp = await generateAndSaveOtp(userId);
+    const otp = await otpService.generateAndSaveOtp(userId);
 
     // Enviar OTP por email
-    await sendOtpEmail(email, otp);
+    await emailService.sendOtpEmail(email, otp);
 
     logger.info({ userId, email }, "EmailVerificationService: Verification code resent successfully");
   } catch (error) {
@@ -84,8 +84,18 @@ async function resendVerificationCode(userId, email) {
   }
 }
 
-module.exports = {
-  sendVerificationCode,
-  verifyEmailWithOtp,
-  resendVerificationCode
-};
+class EmailVerificationService {
+  async sendVerificationCode(userId, email) {
+    return sendVerificationCode(userId, email);
+  }
+
+  async verifyEmailWithOtp(userId, otpCode) {
+    return verifyEmailWithOtp(userId, otpCode);
+  }
+
+  async resendVerificationCode(userId, email) {
+    return resendVerificationCode(userId, email);
+  }
+}
+
+module.exports = new EmailVerificationService();

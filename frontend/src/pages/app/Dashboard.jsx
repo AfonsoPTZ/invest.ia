@@ -6,12 +6,12 @@ import ICON_SIZES from "../../constants/iconSizes";
 import { logout } from "../../services/authService";
 import { getDashboardName, getDashboardData } from "../../services/dashboardService";
 import { useIntersectionAnimation } from "../../utils/useAnimations";
-import Card from "../../components/card";
-import Alert from "../../components/alert";
-import AnimatedCard from "../../components/animatedcard";
-import Navbar from "../../components/navbar";
-import Footer from "../../components/footer";
-import PageTransition from "../../components/pagetransition";
+import Card from "../../components/Card";
+import Alert from "../../components/Alert";
+import AnimatedCard from "../../components/AnimatedCard";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import PageTransition from "../../components/PageTransition";
 import "../../styles/app.css";
 
 /**

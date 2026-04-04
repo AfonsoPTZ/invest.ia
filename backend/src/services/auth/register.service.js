@@ -1,8 +1,9 @@
 // Register Service - Cadastro de usuário
 const bcrypt = require("bcryptjs");
 const authRepository = require("../../repositories/user.repository");
-const { sendVerificationCode } = require("./email-verification.service");
+const emailVerificationService = require("./email-verification.service");
 const logger = require("../../utils/logger");
+const AppError = require("../../utils/AppError");
 
 const HASH_ROUNDS = 10;
 
@@ -24,17 +25,17 @@ async function registerUser(name, email, cpf, phone, password) {
     // Verificar duplicatas
     if (await authRepository.emailExists(email)) {
       logger.warn({ email }, "RegisterService: Email already registered");
-      throw new Error("Email already registered");
+      throw new AppError("Email already registered", 409);
     }
 
     if (await authRepository.cpfExists(cpf)) {
       logger.warn({ cpf }, "RegisterService: CPF already registered");
-      throw new Error("CPF already registered");
+      throw new AppError("CPF already registered", 409);
     }
 
     if (await authRepository.phoneExists(phone)) {
       logger.warn({ phone }, "RegisterService: Phone already registered");
-      throw new Error("Phone already registered");
+      throw new AppError("Phone already registered", 409);
     }
 
     // Hash de senha e criar usuário
@@ -51,7 +52,7 @@ async function registerUser(name, email, cpf, phone, password) {
 
     // Enviar código de verificação
     try {
-      await sendVerificationCode(newUser.id, email);
+      await emailVerificationService.sendVerificationCode(newUser.id, email);
       logger.info({ userId: newUser.id }, "RegisterService: Verification code sent");
     } catch (emailError) {
       logger.error({ error: emailError.message, userId: newUser.id }, "RegisterService: Error sending verification code");
@@ -65,10 +66,14 @@ async function registerUser(name, email, cpf, phone, password) {
 
   } catch (error) {
     logger.error({ error: error.message, email }, "RegisterService: Error during registration");
-    throw new Error(error.message);
+    throw error;
   }
 }
 
-module.exports = {
-  registerUser
-};
+class RegisterService {
+  async registerUser(name, email, cpf, phone, password) {
+    return registerUser(name, email, cpf, phone, password);
+  }
+}
+
+module.exports = new RegisterService();

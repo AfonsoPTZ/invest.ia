@@ -3,11 +3,9 @@ const bcrypt = require("bcryptjs");
 const tokenService = require("./token.service");
 const authRepository = require("../../repositories/user.repository");
 const logger = require("../../utils/logger");
+const AppError = require("../../utils/AppError");
 
-// Validar que tokenService tem a função generateToken
-if (!tokenService || !tokenService.generateToken) {
-  throw new Error("TokenService não carregou corretamente - generateToken não existe");
-}
+// Validação de tokenService não é mais necessária (é instância de classe)
 
 /**
  * Autenticar usuário com email e senha
@@ -23,20 +21,20 @@ async function loginUser(email, password) {
     const user = await authRepository.findByEmail(email);
     if (!user) {
       logger.warn({ email }, "LoginService: User not found");
-      throw new Error("Email ou senha incorretos");
+      throw new AppError("Email ou senha incorretos", 401);
     }
 
     // Verificar senha
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
     if (!passwordMatch) {
       logger.warn({ email }, "LoginService: Incorrect password");
-      throw new Error("Email ou senha incorretos");
+      throw new AppError("Email ou senha incorretos", 401);
     }
 
     // Verificar se email foi verificado
     if (!user.emailVerified) {
       logger.warn({ email }, "LoginService: Email not verified");
-      throw new Error("Please verify your email before logging in");
+      throw new AppError("Please verify your email before logging in", 403);
     }
 
     logger.info({ userId: user.id, userEmail: user.email, userObj: user }, "LoginService: User object before token generation");
@@ -59,6 +57,10 @@ async function loginUser(email, password) {
   }
 }
 
-module.exports = {
-  loginUser
-};
+class LoginService {
+  async loginUser(email, password) {
+    return loginUser(email, password);
+  }
+}
+
+module.exports = new LoginService();
