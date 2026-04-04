@@ -1,200 +1,152 @@
 # 💸 Invest_IA
 
-Sistema de Gestão Financeira com Inteligência Artificial.
+**Sistema Inteligente de Gestão Financeira Pessoal**
+
+Uma aplicação web moderna para registro e análise de finanças pessoais com sugestões inteligentes baseadas em IA.
 
 ---
 
-## 🎯 Sobre o Projeto
+## 🎯 O Projeto
 
-O **Invest_IA** é uma aplicação web que permite ao usuário:
-
-* Registrar ganhos e despesas
-* Acompanhar saldo financeiro em tempo real
-* Gerenciar investimentos e patrimônio
-* Definir metas financeiras
-* Visualizar resumos mensais
-* Receber sugestões inteligentes com base em IA
+O **Invest_IA** permite que você:
+- 📊 Registre receitas e despesas
+- 💰 Acompanhe seu saldo em tempo real
+- 🎯 Defina metas financeiras
+- 🤖 Receba sugestões inteligentes com IA
+- 📈 Analise padrões de consumo
 
 ---
 
 ## 🧠 Diferencial
 
-A IA do sistema não funciona apenas como chat.
+A IA não é apenas um chat. Ela analisa seu comportamento financeiro para sugerir economia, identificar gastos excessivos e recomendar investimentos baseados no seu perfil.
 
-Ela analisa o comportamento financeiro do usuário para gerar sugestões como:
-
-* Identificação de gastos excessivos
-* Padrões de consumo
-* Sugestões de economia
-* Sugestões de investimento baseadas em perfil e contexto
-
-> ⚠️ A IA fornece sugestões informativas, não aconselhamento financeiro definitivo.
+> ⚠️ As sugestões são informativas, não constituem aconselhamento financeiro profissional.
 
 ---
 
-## 📦 Estrutura do Projeto
+## 📦 Estrutura
 
 ```
 invest_ia/
-├─ frontend/              # React + Vite
-│  ├─ src/
-│  │  ├─ components/      # Componentes React
-│  │  ├─ pages/           # Páginas da aplicação
-│  │  ├─ services/        # Serviços (API calls)
-│  │  ├─ assets/          # Imagens, ícones, estilos
-│  │  ├─ App.jsx
-│  │  └─ main.jsx
-│  ├─ public/
-│  ├─ .env.example
-│  └─ package.json
-│
-├─ backend/               # Node.js + Express
-│  ├─ src/
-│  │  ├─ config/          # Configurações
-│  │  ├─ controllers/     # Controladores
-│  │  ├─ middlewares/     # Middlewares
-│  │  ├─ models/          # Modelos de dados
-│  │  ├─ repositories/    # Camada de dados
-│  │  ├─ routes/          # Rotas da API
-│  │  ├─ services/        # Lógica de negócio
-│  │  ├─ utils/           # Utilitários
-│  │  ├─ validators/      # Validações
-│  │  ├─ app.js
-│  │  └─ server.js
-│  ├─ db/
-│  │  ├─ schema.sql       # Estrutura do BD
-│  │  └─ seed.sql         # Dados iniciais
-│  ├─ .env.example
-│  └─ package.json
-│
-├─ docs/                  # Documentação
-├─ .gitignore
+├─ frontend/          # React + Vite + Tailwind
+├─ backend/           # Node.js + Express + Prisma
+├─ docs/              # Documentação
 └─ README.md
 ```
+
+Veja os READMEs em `frontend/docs` e `backend/docs` para detalhes completos.
 
 ---
 
 ## ⚙️ Tecnologias
 
-### Frontend
-* React
-* Vite
-* JavaScript
+**Frontend:** React, Vite, Tailwind CSS
 
-### Backend
-* Node.js
-* Express
-* MySQL/MariaDB
+**Backend:** Node.js, Express, Prisma, MySQL
 
-### Outros
-* Git & GitHub
-* Arquitetura em camadas (Controller, Service, Repository)
+**Autenticação:** JWT, OTP por email, bcrypt
+
+**Arquitetura:** MVC com Services, DTOs, Repositories
 
 ---
 
-## 🚀 Como Rodar o Projeto
+## 🚀 Quick Start
 
-### 1. Clonar Repositório
+### Pré-requisitos
+- Node.js v18+
+- MySQL/MariaDB
+- Git
+
+### Setup
 
 ```bash
+# Clone e entre na pasta
 git clone https://github.com/SEU-USUARIO/invest_ia.git
 cd invest_ia
-```
 
----
-
-### 2. Rodar Backend
-
-```bash
+# Backend
 cd backend
 cp .env.example .env
 npm install
-npm run dev
-```
+npx prisma generate
+npm run dev  # Roda em http://localhost:3000
 
-Servidor disponível em: `http://localhost:3000`
-
----
-
-### 3. Rodar Frontend
-
-```bash
+# Frontend (em outro terminal)
 cd frontend
 cp .env.example .env
 npm install
-npm run dev
+npm run dev  # Roda em http://localhost:5173
 ```
-
-Aplicação disponível em: `http://localhost:5173`
 
 ---
 
 ## 🔐 Variáveis de Ambiente
 
-### Backend (`backend/.env`)
-
-```
+### Backend (.env)
+```env
 PORT=3000
 NODE_ENV=development
-
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=invest_ia
-DB_PORT=3306
+DATABASE_URL="mysql://root:password@localhost:3306/invest_ia"
+JWT_SECRET=sua_chave_secreta_aqui
+JWT_EXPIRE=7d
+EMAIL_FROM=seu_email@gmail.com
+GEMINI_API_KEY=sua_chave_api_gemini
 ```
 
----
-
-### Frontend (`frontend/.env`)
-
-```
+### Frontend (.env)
+```env
 VITE_API_URL=http://localhost:3000/api
 VITE_NODE_ENV=development
 ```
 
----
-
-## 📌 Funcionalidades (em desenvolvimento)
-
-* [ ] Cadastro de usuário
-* [ ] Registro de ganhos
-* [ ] Registro de despesas
-* [ ] Cálculo automático de saldo
-* [ ] Dashboard financeiro
-* [ ] Análise com IA
-* [ ] Sugestões inteligentes
+> Nunca comite arquivos .env - use .env.example como template
 
 ---
 
-## 📚 Objetivo
+## ✨ Funcionalidades
 
-Este projeto foi desenvolvido com foco em:
-
-* Arquitetura de sistemas escalável
-* Boas práticas de desenvolvimento
-* Integração entre frontend e backend
-* Uso de IA em aplicações reais
-
----
-
-## ⭐ Status
-
-🚧 Em desenvolvimento
+✅ Autenticação com JWT e OTP  
+✅ Dashboard financeiro  
+✅ Registro de receitas e despesas  
+✅ Perfil financeiro do usuário  
+✅ Rate limiting e segurança  
+🔄 Sugestões com IA (em desenvolvimento)  
+⏳ Relatórios e análises (planejado)  
+⏳ Gráficos e charts (planejado)  
 
 ---
 
-## 📖 Documentação
+## � Documentação
 
-Veja a pasta [docs](./docs) para documentação detalhada.
+Para informações detalhadas, consulte:
+
+- [Backend Docs](./backend/docs) - Arquitetura, autenticação, validators
+- [Frontend Docs](./frontend/docs) - Componentes, serviços
+- [Database Schema](./backend/docs/DATABASE_SCHEMA.md)
+- [API Routes](./backend/src/routes)
 
 ---
 
-## 📋 Requisitos
+## 🌟 Status
 
-* Node.js 16+
-* npm ou yarn
-* MySQL/MariaDB
+🚧 **Em desenvolvimento ativo** (~70% pronto)
+
+---
+
+## 🤝 Contribuindo
+
+1. Fork o repositório
+2. Crie uma branch (`git checkout -b feature/sua-feature`)
+3. Commit suas mudanças (`git commit -m 'Add sua-feature'`)
+4. Push para a branch (`git push origin feature/sua-feature`)
+5. Abra um Pull Request
+
+---
+
+## 📄 Licença
+
+MIT License - veja [LICENSE](./LICENSE) para detalhes
 
 ---
 
@@ -202,11 +154,5 @@ Veja a pasta [docs](./docs) para documentação detalhada.
 
 **Afonso B. Plentz**
 
-* GitHub: https://github.com/AfonsoPTZ
-* LinkedIn: https://www.linkedin.com/in/afonsoplentz/
-
----
-
-## 📄 Licença
-
-MIT
+- GitHub: [AfonsoPTZ](https://github.com/AfonsoPTZ)
+- LinkedIn: [afonsoplentz](https://www.linkedin.com/in/afonsoplentz/)
