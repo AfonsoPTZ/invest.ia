@@ -57,4 +57,4 @@ class FinancialProfileDTO {
   }
 }
 
-module.exports = FinancialProfileDTO;
+export default FinancialProfileDTO;

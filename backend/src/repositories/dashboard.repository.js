@@ -1,5 +1,5 @@
-const prisma = require("../config/db");
-const logger = require("../utils/logger");
+import prisma from "../config/db.js";
+import logger from "../utils/logger.js";
 
 class DashboardRepository {
   async getUserById(userId) {
@@ -100,4 +100,4 @@ class DashboardRepository {
   }
 }
 
-module.exports = new DashboardRepository();
+export default new DashboardRepository();

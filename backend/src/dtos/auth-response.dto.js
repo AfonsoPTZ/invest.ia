@@ -30,4 +30,4 @@ class AuthResponseDTO {
   }
 }
 
-module.exports = AuthResponseDTO;
+export default AuthResponseDTO;

@@ -1,6 +1,6 @@
 // Email Service - Gerencia envio de emails
-const nodemailer = require("nodemailer");
-const logger = require("../../utils/logger");
+import nodemailer from "nodemailer";
+import logger from "../../utils/logger.js";
 
 /**
  * Configuração do transporter de email
@@ -127,4 +127,4 @@ class EmailService {
   }
 }
 
-module.exports = new EmailService();
+export default new EmailService();

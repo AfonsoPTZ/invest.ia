@@ -69,4 +69,4 @@ class FinancialProfileEntity {
   }
 }
 
-module.exports = FinancialProfileEntity;
+export default FinancialProfileEntity;

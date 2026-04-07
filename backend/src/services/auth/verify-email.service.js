@@ -1,8 +1,8 @@
 // Verify Email Service - Confirmação de email com OTP
-const emailVerificationService = require("./email-verification.service");
-const tokenService = require("./token.service");
-const authRepository = require("../../repositories/user.repository");
-const logger = require("../../utils/logger");
+import emailVerificationService from "./email-verification.service.js";
+import tokenService from "./token.service.js";
+import authRepository from "../../repositories/user.repository.js";
+import logger from "../../utils/logger.js";
 
 /**
  * Confirmar email com código OTP
@@ -92,4 +92,4 @@ class VerifyEmailService {
   }
 }
 
-module.exports = new VerifyEmailService();
+export default new VerifyEmailService();

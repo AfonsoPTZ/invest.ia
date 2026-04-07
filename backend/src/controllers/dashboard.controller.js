@@ -1,5 +1,6 @@
 // Dashboard Controller - Simple request/response handler for dashboard GET endpoints
-const dashboardService = require("../services/dashboard.service");
+import dashboardService from "../services/dashboard.service.js";
+import DashboardResponseDTO from "../dtos/dashboard-response.dto.js";
 
 class DashboardController {
   /**
@@ -18,9 +19,12 @@ class DashboardController {
 
       const dashboardData = await dashboardService.getDashboardData(userId);
 
+      // Transform with output DTO
+      const dashboardResponseDTO = DashboardResponseDTO.fromDashboardData(dashboardData);
+
       return response.status(200).json({
         status: "success",
-        data: dashboardData
+        data: dashboardResponseDTO.toJSON()
       });
 
     } catch (error) {
@@ -47,9 +51,12 @@ class DashboardController {
 
       const userData = await dashboardService.getUserName(userId);
 
+      // Transform with output DTO
+      const dashboardResponseDTO = DashboardResponseDTO.fromUserData(userData);
+
       return response.status(200).json({
         status: "success",
-        data: userData
+        data: dashboardResponseDTO.toJSON()
       });
 
     } catch (error) {
@@ -76,9 +83,12 @@ class DashboardController {
 
       const investmentData = await dashboardService.getInvestmentData(userId);
 
+      // Transform with output DTO
+      const dashboardResponseDTO = DashboardResponseDTO.fromInvestmentData(investmentData);
+
       return response.status(200).json({
         status: "success",
-        data: investmentData
+        data: dashboardResponseDTO.toJSON()
       });
 
     } catch (error) {
@@ -90,4 +100,4 @@ class DashboardController {
   }
 }
 
-module.exports = new DashboardController();
+export default new DashboardController();

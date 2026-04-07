@@ -1,5 +1,5 @@
-const prisma = require("../config/db");
-const logger = require("../utils/logger");
+import prisma from "../config/db.js";
+import logger from "../utils/logger.js";
 
 class UserRepository {
   async findByEmail(email) {
@@ -153,4 +153,4 @@ class UserRepository {
   }
 }
 
-module.exports = new UserRepository();
+export default new UserRepository();

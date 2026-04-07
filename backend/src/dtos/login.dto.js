@@ -26,4 +26,4 @@ class LoginDTO {
   }
 }
 
-module.exports = LoginDTO;
+export default LoginDTO;

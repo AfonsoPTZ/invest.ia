@@ -32,4 +32,4 @@ function validateOtpFormat(otp) {
   }
 }
 
-module.exports = { validateOtpFormat };
+export { validateOtpFormat };

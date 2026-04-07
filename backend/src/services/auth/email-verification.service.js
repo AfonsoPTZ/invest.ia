@@ -1,7 +1,7 @@
 // Email Verification Service - Fluxo de verificação de email
-const emailService = require("./email.service");
-const otpService = require("./otp.service");
-const logger = require("../../utils/logger");
+import emailService from "./email.service.js";
+import otpService from "./otp.service.js";
+import logger from "../../utils/logger.js";
 
 /**
  * Enviar OTP para verificação de email
@@ -98,4 +98,4 @@ class EmailVerificationService {
   }
 }
 
-module.exports = new EmailVerificationService();
+export default new EmailVerificationService();

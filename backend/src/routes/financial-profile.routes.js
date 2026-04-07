@@ -1,10 +1,10 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const financialProfileController = require("../controllers/financial-profile.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-const validatorMiddleware = require("../middlewares/validator.middleware");
-const financialProfileValidator = require("../validators/financial-profile.validator");
+import financialProfileController from "../controllers/financial-profile.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+import validatorMiddleware from "../middlewares/validator.middleware.js";
+import { validateFinancialProfileRegistration } from "../validators/financial-profile.validator.js";
 
 /**
  * Rotas de perfil financeiro
@@ -14,7 +14,7 @@ const financialProfileValidator = require("../validators/financial-profile.valid
 
 // Validator wrapper for financial profile creation
 const validateFinancialProfileCreation = (data) => {
-  return financialProfileValidator.validateFinancialProfileRegistration(
+  return validateFinancialProfileRegistration(
     data.monthly_income,
     data.initial_balance,
     data.has_investments,
@@ -39,4 +39,4 @@ router.get(
   financialProfileController.get
 );
 
-module.exports = router;
+export default router;

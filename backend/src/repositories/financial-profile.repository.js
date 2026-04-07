@@ -1,5 +1,5 @@
-const prisma = require("../config/db");
-const logger = require("../utils/logger");
+import prisma from "../config/db.js";
+import logger from "../utils/logger.js";
 
 class FinancialProfileRepository {
   async create(userId, profileData) {
@@ -129,4 +129,4 @@ class FinancialProfileRepository {
   }
 }
 
-module.exports = new FinancialProfileRepository();
+export default new FinancialProfileRepository();

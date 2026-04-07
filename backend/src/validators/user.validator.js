@@ -3,9 +3,9 @@
 // - cpf-cnpj-validator (CPF algorithm)
 // - libphonenumber-js (Brazilian phone with DDD)
 
-const { isEmail } = require("validator");
-const { cpf: validateCPFLib } = require("cpf-cnpj-validator");
-const { parsePhoneNumber, isValidPhoneNumber } = require("libphonenumber-js");
+import validator from "validator";
+import { cpf as validateCPFLib } from "cpf-cnpj-validator";
+import { parsePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
 
 // CPF validation using cpf-cnpj-validator library
 function validateCPF(cpf) {
@@ -53,8 +53,8 @@ function validateEmail(email) {
 
   const trimmedEmail = email.trim().toLowerCase();
 
-  // Use express-validator isEmail
-  if (!isEmail(trimmedEmail)) {
+  // Use validator.isEmail
+  if (!validator.isEmail(trimmedEmail)) {
     return {
       isValid: false,
       error: "Email format is invalid"
@@ -393,7 +393,7 @@ function validateResendOtp(userId) {
   };
 }
 
-module.exports = {
+export {
   validateCPF,
   validateEmail,
   validatePhone,

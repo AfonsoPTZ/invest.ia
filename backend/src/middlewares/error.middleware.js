@@ -1,7 +1,7 @@
 // Error Middleware - Centralized error handling with logging
 // Supports: AppError (with statusCode) and native Error (defaults to 500)
-const logger = require("../utils/logger");
-const env = require("../config/env");
+import logger from "../utils/logger.js";
+import * as env from "../config/env.js";
 
 /**
  * Middleware de erro centralizado
@@ -34,4 +34,4 @@ function errorMiddleware(error, request, response, next) {
   });
 }
 
-module.exports = errorMiddleware;
+export default errorMiddleware;

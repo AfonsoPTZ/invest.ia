@@ -3,7 +3,7 @@
 // Se validação falhar: retorna erro
 // Se validação passar: chama controller
 
-const logger = require("../utils/logger");
+import logger from "../utils/logger.js";
 
 /**
  * Generic validator middleware
@@ -54,4 +54,4 @@ function validatorMiddleware(validatorFunction, validationType = "validation") {
   };
 }
 
-module.exports = validatorMiddleware;
+export default validatorMiddleware;

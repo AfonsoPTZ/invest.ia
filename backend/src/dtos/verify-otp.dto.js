@@ -27,4 +27,4 @@ class VerifyOtpDTO {
   }
 }
 
-module.exports = VerifyOtpDTO;
+export default VerifyOtpDTO;

@@ -1,7 +1,6 @@
 // Rate Limiting Middleware - DoS and brute force protection
-const rateLimit = require("express-rate-limit");
-const { ipKeyGenerator } = require("express-rate-limit");
-const logger = require("../utils/logger");
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
+import logger from "../utils/logger.js";
 
 /**
  * Global Rate Limiter
@@ -130,7 +129,7 @@ const dashboardRateLimiter = rateLimit({
   }
 });
 
-module.exports = {
+export {
   globalRateLimiter,
   authPublicRateLimiter,
   financialProfileRateLimiter,

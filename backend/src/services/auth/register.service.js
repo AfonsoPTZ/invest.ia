@@ -1,9 +1,9 @@
 // Register Service - Cadastro de usuário
-const bcrypt = require("bcryptjs");
-const authRepository = require("../../repositories/user.repository");
-const emailVerificationService = require("./email-verification.service");
-const logger = require("../../utils/logger");
-const AppError = require("../../utils/AppError");
+import bcrypt from "bcryptjs";
+import authRepository from "../../repositories/user.repository.js";
+import emailVerificationService from "./email-verification.service.js";
+import logger from "../../utils/logger.js";
+import AppError from "../../utils/AppError.js";
 
 const HASH_ROUNDS = 10;
 
@@ -76,4 +76,4 @@ class RegisterService {
   }
 }
 
-module.exports = new RegisterService();
+export default new RegisterService();

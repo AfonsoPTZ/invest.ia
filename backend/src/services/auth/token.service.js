@@ -1,6 +1,6 @@
 // Token Service - JWT generation and validation
-const jwt = require("jsonwebtoken");
-const logger = require("../../utils/logger");
+import jwt from "jsonwebtoken";
+import logger from "../../utils/logger.js";
 
 // Definir secrets usando variáveis de ambiente (obrigatório)
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -111,4 +111,4 @@ class TokenService {
   }
 }
 
-module.exports = new TokenService();
+export default new TokenService();

@@ -1,9 +1,8 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const dashboardController = require("../controllers/dashboard.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-const dashboardValidator = require("../validators/dashboard.validator");
+import dashboardController from "../controllers/dashboard.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 /**
  * Dashboard Routes - All GET only
@@ -32,4 +31,4 @@ router.get(
   dashboardController.getInvestments
 );
 
-module.exports = router;
+export default router;

@@ -53,4 +53,4 @@ class UserEntity {
   }
 }
 
-module.exports = UserEntity;
+export default UserEntity;

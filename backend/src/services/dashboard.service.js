@@ -1,7 +1,7 @@
 // Dashboard Service - Doorkeeper pattern
 // Orchestrates: Repository calls for dashboard data
-const dashboardRepository = require("../repositories/dashboard.repository");
-const logger = require("../utils/logger");
+import dashboardRepository from "../repositories/dashboard.repository.js";
+import logger from "../utils/logger.js";
 
 class DashboardService {
   /**
@@ -95,4 +95,4 @@ class DashboardService {
   }
 }
 
-module.exports = new DashboardService();
+export default new DashboardService();

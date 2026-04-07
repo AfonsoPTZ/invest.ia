@@ -1,8 +1,8 @@
 // OTP Service - Gerencia código OTP
-const bcrypt = require("bcryptjs");
-const authRepository = require("../../repositories/user.repository");
-const { generateOtp } = require("../../utils/generate-otp");
-const logger = require("../../utils/logger");
+import bcrypt from "bcryptjs";
+import authRepository from "../../repositories/user.repository.js";
+import { generateOtp } from "../../utils/generate-otp.js";
+import logger from "../../utils/logger.js";
 
 const OTP_EXPIRATION_MINUTES = 5;
 const OTP_MAX_ATTEMPTS = 3;
@@ -156,4 +156,4 @@ class OtpService {
   }
 }
 
-module.exports = new OtpService();
+export default new OtpService();

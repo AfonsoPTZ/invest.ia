@@ -1,5 +1,5 @@
 // Logger Configuration - Pino setup
-const pino = require("pino");
+import pino from "pino";
 
 /**
  * Configuração centralizada do logger Pino
@@ -22,4 +22,4 @@ const logger = pino(
   }
 );
 
-module.exports = logger;
+export default logger;

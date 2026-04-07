@@ -1,6 +1,6 @@
 // Logger Middleware - HTTP request/response logging with Pino
-const pinoHttp = require("pino-http");
-const logger = require("../utils/logger");
+import pinoHttp from "pino-http";
+import logger from "../utils/logger.js";
 
 /**
  * Middleware de logging HTTP usando pino-http
@@ -24,4 +24,4 @@ const loggerMiddleware = pinoHttp(
   }
 );
 
-module.exports = loggerMiddleware;
+export default loggerMiddleware;

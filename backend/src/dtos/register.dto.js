@@ -33,4 +33,4 @@ class RegisterDTO {
   }
 }
 
-module.exports = RegisterDTO;
+export default RegisterDTO;

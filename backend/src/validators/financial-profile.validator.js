@@ -260,7 +260,7 @@ function validateFinancialProfileRegistration(
   };
 }
 
-module.exports = {
+export {
   validateMonthlyIncome,
   validateInitialBalance,
   validateHasInvestments,

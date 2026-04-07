@@ -1,10 +1,10 @@
 // Financial Profile Service - Doorkeeper pattern
 // Orchestrates: Repositories
 // Dados já vêm validados do middleware
-const financialProfileRepository = require("../repositories/financial-profile.repository");
-const userRepository = require("../repositories/user.repository");
-const logger = require("../utils/logger");
-const AppError = require("../utils/AppError");
+import financialProfileRepository from "../repositories/financial-profile.repository.js";
+import userRepository from "../repositories/user.repository.js";
+import logger from "../utils/logger.js";
+import AppError from "../utils/AppError.js";
 
 class FinancialProfileService {
   // Create user financial profile
@@ -66,4 +66,4 @@ class FinancialProfileService {
   }
 }
 
-module.exports = new FinancialProfileService();
+export default new FinancialProfileService();

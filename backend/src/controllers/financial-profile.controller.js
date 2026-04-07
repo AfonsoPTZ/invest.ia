@@ -1,5 +1,7 @@
 // Financial Profile Controller - Simple request/response handler
-const financialProfileService = require("../services/financial-profile.service");
+import financialProfileService from "../services/financial-profile.service.js";
+import FinancialProfileDTO from "../dtos/financial-profile.dto.js";
+import FinancialProfileResponseDTO from "../dtos/financial-profile-response.dto.js";
 
 class FinancialProfileController {
   // Create financial profile
@@ -14,13 +16,18 @@ class FinancialProfileController {
         });
       }
 
-      // Data already validated by middleware
-      const profile = await financialProfileService.createProfile(userId, request.validatedData || request.body);
+      // Criar DTO dos dados validados pelo middleware
+      const profileDTO = FinancialProfileDTO.fromRequest(request.validatedData || request.body);
+      
+      const profile = await financialProfileService.createProfile(userId, profileDTO.toJSON());
+
+      // Transform with output DTO to standardize response
+      const profileResponseDTO = FinancialProfileResponseDTO.fromProfile(profile);
 
       return response.status(201).json({
         status: "success",
         message: "Financial profile created successfully",
-        profile
+        profile: profileResponseDTO.toJSON()
       });
 
     } catch (error) {
@@ -39,9 +46,12 @@ class FinancialProfileController {
       // Service handles all validation
       const profile = await financialProfileService.getProfile(userId);
 
+      // Transform with output DTO to standardize response
+      const profileResponseDTO = FinancialProfileResponseDTO.fromProfile(profile);
+
       return response.status(200).json({
         status: "success",
-        profile
+        profile: profileResponseDTO.toJSON()
       });
 
     } catch (error) {
@@ -53,4 +63,4 @@ class FinancialProfileController {
   }
 }
 
-module.exports = new FinancialProfileController();
+export default new FinancialProfileController();

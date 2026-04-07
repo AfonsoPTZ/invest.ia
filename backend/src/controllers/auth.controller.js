@@ -1,10 +1,12 @@
 // Authentication Controller - Simple request/response handler
-const registerService = require("../services/auth/register.service");
-const loginService = require("../services/auth/login.service");
-const verifyEmailService = require("../services/auth/verify-email.service");
-const RegisterDTO = require("../dtos/register.dto");
-const LoginDTO = require("../dtos/login.dto");
-const VerifyOtpDTO = require("../dtos/verify-otp.dto");
+import registerService from "../services/auth/register.service.js";
+import loginService from "../services/auth/login.service.js";
+import verifyEmailService from "../services/auth/verify-email.service.js";
+import RegisterDTO from "../dtos/register.dto.js";
+import LoginDTO from "../dtos/login.dto.js";
+import VerifyOtpDTO from "../dtos/verify-otp.dto.js";
+import AuthResponseDTO from "../dtos/auth-response.dto.js";
+import UserResponseDTO from "../dtos/user-response.dto.js";
 
 class AuthController {
   // Register new user
@@ -43,15 +45,14 @@ class AuthController {
 
       const loginResult = await loginService.loginUser(loginDTO.email, loginDTO.password);
 
+      // Usar AuthResponseDTO para formatar a resposta
+      const authResponseDTO = AuthResponseDTO.fromUser(loginResult, loginResult.token);
+
       return response.status(200).json({
         status: "success",
         message: "Login successful",
-        user: {
-          id: loginResult.id,
-          name: loginResult.name,
-          email: loginResult.email
-        },
-        token: loginResult.token
+        user: authResponseDTO.toJSON(),
+        token: authResponseDTO.token
       });
 
     } catch (error) {
@@ -84,9 +85,12 @@ class AuthController {
     try {
       const userId = request.user?.id;
 
+      // Transform user data with output DTO to filter sensitive fields
+      const userResponseDTO = UserResponseDTO.fromUser(request.user);
+
       return response.status(200).json({
         status: "success",
-        user: request.user
+        user: userResponseDTO.toJSON()
       });
     } catch (error) {
       return response.status(500).json({
@@ -137,13 +141,13 @@ class AuthController {
 
       if (!result.success) {
         return response.status(400).json({
-          success: false,
+          status: "error",
           message: result.message
         });
       }
 
       return response.status(200).json({
-        success: true,
+        status: "success",
         message: result.message,
         token: result.token,
         redirectUrl: result.redirectUrl
@@ -151,7 +155,7 @@ class AuthController {
 
     } catch (error) {
       return response.status(400).json({
-        success: false,
+        status: "error",
         message: error.message
       });
     }
@@ -165,11 +169,14 @@ class AuthController {
 
       const result = await verifyEmailService.resendOtpCode(userId);
 
-      return response.status(200).json(result);
+      return response.status(200).json({
+        status: "success",
+        message: result.message
+      });
 
     } catch (error) {
       return response.status(400).json({
-        success: false,
+        status: "error",
         message: error.message
       });
     }
@@ -179,4 +186,4 @@ class AuthController {
 // Export controller instance
 const authController = new AuthController();
 
-module.exports = authController;
+export default authController;

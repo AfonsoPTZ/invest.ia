@@ -1,5 +1,5 @@
 // Not Found Middleware - 404 handler with logging
-const logger = require("../utils/logger");
+import logger from "../utils/logger.js";
 
 /**
  * Middleware para rotas não encontradas
@@ -25,4 +25,4 @@ function notFoundMiddleware(request, response) {
   });
 }
 
-module.exports = notFoundMiddleware;
+export default notFoundMiddleware;

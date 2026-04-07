@@ -1,6 +1,6 @@
 // JWT Authentication Middleware
-const tokenService = require("../services/auth/token.service");
-const logger = require("../utils/logger");
+import tokenService from "../services/auth/token.service.js";
+import logger from "../utils/logger.js";
 
 function authMiddleware(request, response, next) {
   const authorizationHeader = request.headers.authorization;
@@ -58,4 +58,4 @@ function authMiddleware(request, response, next) {
   }
 }
 
-module.exports = authMiddleware;
+export default authMiddleware;

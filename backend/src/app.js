@@ -1,17 +1,17 @@
 // Express Configuration
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const env = require("./config/env");
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import * as env from "./config/env.js";
 
-const authRoutes = require("./routes/auth.routes");
-const financialProfileRoutes = require("./routes/financial-profile.routes");
-const dashboardRoutes = require("./routes/dashboard.routes");
-const loggerMiddleware = require("./middlewares/logger.middleware");
-const errorMiddleware = require("./middlewares/error.middleware");
-const notFoundMiddleware = require("./middlewares/notFound.middleware");
-const { globalRateLimiter, authPublicRateLimiter, financialProfileRateLimiter, dashboardRateLimiter } = require("./middlewares/rate-limit.middleware");
-const logger = require("./utils/logger");
+import authRoutes from "./routes/auth.routes.js";
+import financialProfileRoutes from "./routes/financial-profile.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+import loggerMiddleware from "./middlewares/logger.middleware.js";
+import errorMiddleware from "./middlewares/error.middleware.js";
+import notFoundMiddleware from "./middlewares/notFound.middleware.js";
+import { globalRateLimiter, authPublicRateLimiter, financialProfileRateLimiter, dashboardRateLimiter } from "./middlewares/rate-limit.middleware.js";
+import logger from "./utils/logger.js";
 
 const app = express();
 
@@ -42,4 +42,4 @@ app.use("/api/dashboard", dashboardRateLimiter, dashboardRoutes);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
-module.exports = app;
+export default app;

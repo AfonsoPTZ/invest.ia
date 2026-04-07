@@ -28,4 +28,4 @@ class TokenEntity {
   }
 }
 
-module.exports = TokenEntity;
+export default TokenEntity;

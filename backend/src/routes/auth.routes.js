@@ -1,15 +1,15 @@
 // Authentication Routes
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const authController = require("../controllers/auth.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-const validatorMiddleware = require("../middlewares/validator.middleware");
-const userValidator = require("../validators/user.validator");
+import authController from "../controllers/auth.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+import validatorMiddleware from "../middlewares/validator.middleware.js";
+import { validateUserRegistration, validateUserLogin, validateOtpVerification, validateResendOtp } from "../validators/user.validator.js";
 
 // Helper: wrap userValidator functions to accept data object
 const validateRegistrationWithOtp = (data) => {
-  return userValidator.validateUserRegistration(
+  return validateUserRegistration(
     data.name,
     data.email,
     data.cpf,
@@ -19,18 +19,18 @@ const validateRegistrationWithOtp = (data) => {
 };
 
 // Helper: wrap login validator
-const validateLogin = (data) => {
-  return userValidator.validateUserLogin(data.email, data.password);
+const validateLoginHelper = (data) => {
+  return validateUserLogin(data.email, data.password);
 };
 
 // Helper: wrap OTP verification validator
-const validateOtpVerification = (data) => {
-  return userValidator.validateOtpVerification(data.userId, data.otpCode);
+const validateOtpVerificationHelper = (data) => {
+  return validateOtpVerification(data.userId, data.otpCode);
 };
 
 // Helper: wrap resend OTP validator
-const validateResendOtp = (data) => {
-  return userValidator.validateResendOtp(data.userId);
+const validateResendOtpHelper = (data) => {
+  return validateResendOtp(data.userId);
 };
 
 // Public routes with validation middleware
@@ -42,7 +42,7 @@ router.post(
 
 router.post(
   "/login",
-  validatorMiddleware(validateLogin, "User Login"),
+  validatorMiddleware(validateLoginHelper, "User Login"),
   authController.login.bind(authController)
 );
 
@@ -54,13 +54,13 @@ router.post(
 
 router.post(
   "/verify-email",
-  validatorMiddleware(validateOtpVerification, "Email Verification"),
+  validatorMiddleware(validateOtpVerificationHelper, "Email Verification"),
   authController.verifyEmail.bind(authController)
 );
 
 router.post(
   "/resend-otp",
-  validatorMiddleware(validateResendOtp, "Resend OTP"),
+  validatorMiddleware(validateResendOtpHelper, "Resend OTP"),
   authController.resendOtp.bind(authController)
 );
 
@@ -77,4 +77,4 @@ router.get(
   authController.getMe.bind(authController)
 );
 
-module.exports = router;
+export default router;

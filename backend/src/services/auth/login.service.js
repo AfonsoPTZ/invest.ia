@@ -1,9 +1,9 @@
 // Login Service - Autenticação de usuário
-const bcrypt = require("bcryptjs");
-const tokenService = require("./token.service");
-const authRepository = require("../../repositories/user.repository");
-const logger = require("../../utils/logger");
-const AppError = require("../../utils/AppError");
+import bcrypt from "bcryptjs";
+import tokenService from "./token.service.js";
+import authRepository from "../../repositories/user.repository.js";
+import logger from "../../utils/logger.js";
+import AppError from "../../utils/AppError.js";
 
 // Validação de tokenService não é mais necessária (é instância de classe)
 
@@ -63,4 +63,4 @@ class LoginService {
   }
 }
 
-module.exports = new LoginService();
+export default new LoginService();

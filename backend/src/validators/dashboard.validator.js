@@ -40,6 +40,6 @@ function validateDashboardUserId(data, userId) {
   };
 }
 
-module.exports = {
+export {
   validateDashboardUserId
 };

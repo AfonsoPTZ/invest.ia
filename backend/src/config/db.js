@@ -1,7 +1,6 @@
 // Prisma Client Configuration - Simple Local MySQL Setup
-const { PrismaClient } = require("@prisma/client");
-require("dotenv").config();
-const logger = require("../utils/logger");
+import { PrismaClient } from "@prisma/client";
+import logger from "../utils/logger.js";
 
 // Simplest possible initialization
 const prisma = new PrismaClient();
@@ -24,4 +23,4 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-module.exports = prisma;
+export default prisma;
