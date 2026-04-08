@@ -21,11 +21,30 @@ app.use(loggerMiddleware);
 // Security middleware - HTTP headers
 app.use(helmet());
 
-// CORS configuration (validated in config/env.js)
+// CORS configuration with dynamic origin handling
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "http://127.0.0.1:3000",
+  env.CORS_ORIGIN
+];
+
 app.use(cors({
-  origin: env.CORS_ORIGIN,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS not allowed for origin: ${origin}`));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  maxAge: 86400
 }));
 
 app.use(express.json());
