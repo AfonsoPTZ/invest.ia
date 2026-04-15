@@ -1,10 +1,12 @@
-import { useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChartLine } from "react-icons/fa";
 import { motion } from "motion/react";
 import { login } from "../../services/authService";
 import { validateLoginForm } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
+import { useFormState } from "../../utils/useFormState";
+import type { FieldErrorMap } from "../../types/api";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
@@ -13,7 +15,7 @@ import PageTransition from "../../components/PageTransition";
 import "../../styles/auth.css";
 
 /**
- * Login Page
+ * Login Page (TypeScript)
  * 
  * User authentication form. Collects email and password.
  * Frontend validation: basic email and required field checks
@@ -29,23 +31,33 @@ import "../../styles/auth.css";
  * 
  * @component
  */
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
+function Login(): React.ReactElement {
+  // Form state management (centralized hook)
+  const { 
+    error, 
+    setError, 
+    success, 
+    setSuccess, 
+    fieldErrors, 
+    setFieldErrors, 
+    isLoading, 
+    setIsLoading 
+  } = useFormState();
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
   
   // Apply fade in animation to card
   const cardRef = useAnimateOnMount('animate-scale-in', 100);
 
   /**
    * Map error message to field names
+   * @param errorMessage - Error message from validation
+   * @returns Field name that should show the error, or null if not field-specific
    */
-  const mapErrorToFields = (errorMessage) => {
-    const errorMap = {
+  const mapErrorToFields = (errorMessage: string): keyof FieldErrorMap | null => {
+    const errorMap: Record<string, keyof FieldErrorMap> = {
       'Email is required': 'email',
       'Please enter a valid email': 'email',
       'Password is required': 'password'
@@ -56,26 +68,26 @@ function Login() {
   /**
    * Handle email change - update state and clear field error
    */
-  const handleEmailChange = (event) => {
+  const handleEmailChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setEmail(event.target.value);
     setError("");
-    setFieldErrors(prev => ({ ...prev, email: "" }));
+    setFieldErrors({ ...fieldErrors, email: "" });
   };
 
   /**
    * Handle password change - update state and clear field error
    */
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setPassword(event.target.value);
     setError("");
-    setFieldErrors(prev => ({ ...prev, password: "" }));
+    setFieldErrors({ ...fieldErrors, password: "" });
   };
 
   /**
    * Handle form submission
    * Validates inputs locally, then calls login service
    */
-  async function handleFormSubmit(event) {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     setError("");
     setSuccess("");
@@ -87,10 +99,7 @@ function Login() {
       setError(validationError);
       const fieldName = mapErrorToFields(validationError);
       if (fieldName) {
-        setFieldErrors(prev => ({
-          ...prev,
-          [fieldName]: validationError
-        }));
+        setFieldErrors({ ...fieldErrors, [fieldName]: validationError });
       }
       return;
     }
@@ -104,13 +113,13 @@ function Login() {
       
       setTimeout(() => navigate("/dashboard"), 1500);
     } catch (catchError) {
-      const errorMsg = catchError.message;
+      const errorMsg = catchError instanceof Error ? catchError.message : "An unknown error occurred";
       setError(errorMsg);
       setSuccess("");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <PageTransition>
@@ -126,7 +135,7 @@ function Login() {
             src="/panda-login-top.png" 
             alt="Invest_IA Mascot"
             className="auth-panda-image"
-            onError={(e) => e.target.style.display = 'none'}
+            onError={(e) => (e.currentTarget as HTMLImageElement).style.display = 'none'}
           />
         </motion.div>
 
@@ -195,15 +204,17 @@ function Login() {
               />
             </motion.div>
 
-            {error && <Alert type="error">{error}</Alert>}
+            {error && <Alert type="error" onClose={() => setError("")}>{error}</Alert>}
 
-            {success && <Alert type="success">{success}</Alert>}
+            {success && <Alert type="success" onClose={() => setSuccess("")}>{success}</Alert>}
 
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Button type="primary" className="btn-full" disabled={isLoading} isLoading={isLoading}>
+              <Button type="primary" className="btn-full" disabled={isLoading} isLoading={isLoading} onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                if (isLoading) e.preventDefault();
+              }}>
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </motion.div>

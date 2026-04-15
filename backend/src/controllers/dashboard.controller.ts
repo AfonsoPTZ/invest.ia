@@ -13,8 +13,9 @@ class DashboardController {
 
       if (!userId) {
         return response.status(400).json({
-          status: "error",
-          message: "User identification failed"
+          success: false,
+          message: "User identification failed",
+          error: "User identification failed"
         });
       }
 
@@ -24,15 +25,17 @@ class DashboardController {
       const dashboardResponseDTO: any = DashboardResponseDTO.fromDashboardData(dashboardData);
 
       return response.status(200).json({
-        status: "success",
+        success: true,
+        message: "Dashboard data retrieved successfully",
         data: dashboardResponseDTO.toJSON()
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(404).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -46,8 +49,9 @@ class DashboardController {
 
       if (!userId) {
         return response.status(400).json({
-          status: "error",
-          message: "User identification failed"
+          success: false,
+          message: "User identification failed",
+          error: "User identification failed"
         });
       }
 
@@ -57,15 +61,17 @@ class DashboardController {
       const dashboardResponseDTO: any = DashboardResponseDTO.fromUserData(userData);
 
       return response.status(200).json({
-        status: "success",
+        success: true,
+        message: "User name retrieved successfully",
         data: dashboardResponseDTO.toJSON()
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(404).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -79,8 +85,9 @@ class DashboardController {
 
       if (!userId) {
         return response.status(400).json({
-          status: "error",
-          message: "User identification failed"
+          success: false,
+          message: "User identification failed",
+          error: "User identification failed"
         });
       }
 
@@ -90,15 +97,17 @@ class DashboardController {
       const dashboardResponseDTO: any = DashboardResponseDTO.fromInvestmentData(investmentData);
 
       return response.status(200).json({
-        status: "success",
+        success: true,
+        message: "Investment data retrieved successfully",
         data: dashboardResponseDTO.toJSON()
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(404).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }

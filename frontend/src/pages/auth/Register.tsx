@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { register } from "../../services/authService";
 import { validateRegisterForm } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
+import { useFormState } from "../../utils/useFormState";
+import type { FieldErrorMap } from "../../types/api";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Alert from "../../components/Alert";
@@ -14,7 +16,19 @@ import "../../styles/auth.css";
 import "../../styles/forms.css";
 
 /**
- * Register Page
+ * Registration Form Data
+ */
+interface RegisterFormData {
+  name: string;
+  email: string;
+  cpf: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+}
+
+/**
+ * Register Page (TypeScript)
  * 
  * User registration form. Collects name, email, CPF, phone, and password.
  * Frontend validation: required fields, format checks, password confirmation
@@ -30,9 +44,22 @@ import "../../styles/forms.css";
  * 
  * @component
  */
-export default function Register() {
+function Register(): React.ReactElement {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  
+  // Form state management (centralized hook)
+  const { 
+    error, 
+    setError, 
+    success, 
+    setSuccess, 
+    fieldErrors, 
+    setFieldErrors, 
+    isLoading, 
+    setIsLoading 
+  } = useFormState();
+
+  const [formData, setFormData] = useState<RegisterFormData>({
     name: "",
     email: "",
     cpf: "",
@@ -40,13 +67,9 @@ export default function Register() {
     password: "",
     confirmPassword: ""
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
   
   // Ref for scrolling to alert when success/error message appears
-  const alertRef = useRef(null);
+  const alertRef = useRef<HTMLDivElement>(null);
 
   // Apply scale in animation to card
   const cardRef = useAnimateOnMount('animate-scale-in', 100);
@@ -70,9 +93,11 @@ export default function Register() {
 
   /**
    * Map error message to field names
+   * @param errorMessage - Error message from validation
+   * @returns Field name that should show the error, or null
    */
-  const mapErrorToFields = (errorMessage) => {
-    const errorMap = {
+  const mapErrorToFields = (errorMessage: string): keyof FieldErrorMap | null => {
+    const errorMap: Record<string, keyof FieldErrorMap> = {
       'Name is required': 'name',
       'Email is required': 'email',
       'Please enter a valid email': 'email',
@@ -88,8 +113,10 @@ export default function Register() {
 
   /**
    * Format phone to (DDD) XXXXX-XXXX
+   * @param value - Input value from phone field
+   * @returns Formatted phone number
    */
-  const formatPhone = (value) => {
+  const formatPhone = (value: string): string => {
     const digitsOnly = (value || '').replace(/\D/g, '').slice(0, 11);
     if (digitsOnly.length === 0) return '';
     if (digitsOnly.length <= 2) return `(${digitsOnly}`;
@@ -99,8 +126,10 @@ export default function Register() {
 
   /**
    * Format CPF to XXX.XXX.XXX-XX
+   * @param value - Input value from CPF field
+   * @returns Formatted CPF
    */
-  const formatCPF = (value) => {
+  const formatCPF = (value: string): string => {
     const digitsOnly = (value || '').replace(/\D/g, '').slice(0, 11);
     if (digitsOnly.length === 0) return '';
     if (digitsOnly.length <= 3) return digitsOnly;
@@ -112,8 +141,8 @@ export default function Register() {
   /**
    * Handle input change - update form state and clear field errors
    */
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = event.currentTarget;
     let displayValue = value;
     
     // For phone and CPF: only accept digits and apply real-time formatting
@@ -136,17 +165,14 @@ export default function Register() {
     
     setError("");
     // Clear error for this field when user starts typing
-    setFieldErrors(prev => ({
-      ...prev,
-      [name]: ""
-    }));
+    setFieldErrors({ ...fieldErrors, [name]: "" });
   };
 
   /**
    * Handle form submission
    * Validates locally, then sends registration request
    */
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     setError("");
 
@@ -167,10 +193,7 @@ export default function Register() {
       setError(validationError);
       const fieldName = mapErrorToFields(validationError);
       if (fieldName) {
-        setFieldErrors(prev => ({
-          ...prev,
-          [fieldName]: validationError
-        }));
+        setFieldErrors({ ...fieldErrors, [fieldName]: validationError });
       }
       return;
     }
@@ -199,7 +222,7 @@ export default function Register() {
       }, 1500);
 
     } catch (err) {
-      const errorMsg = err.message || "Unexpected error. Please try again.";
+      const errorMsg = err instanceof Error ? err.message : "Unexpected error. Please try again.";
       setError(errorMsg);
       setSuccess("");
     } finally {
@@ -241,7 +264,7 @@ export default function Register() {
             src="/panda-login-top.png" 
             alt="Invest_IA Mascot"
             className="auth-panda-image"
-            onError={(e) => e.target.style.display = 'none'}
+            onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
           />
         </motion.div>
 
@@ -281,13 +304,13 @@ export default function Register() {
           
           {error && (
             <div ref={alertRef}>
-              <Alert type="error">{error}</Alert>
+              <Alert type="error" onClose={() => setError("")}>{error}</Alert>
             </div>
           )}
 
           {success && (
             <div ref={alertRef}>
-              <Alert type="success">{success}</Alert>
+              <Alert type="success" onClose={() => setSuccess("")}>{success}</Alert>
             </div>
           )}
 
@@ -394,6 +417,10 @@ export default function Register() {
                 className="btn-full"
                 disabled={isLoading}
                 isLoading={isLoading}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  // Form submission is handled by form onSubmit
+                  if (isLoading) e.preventDefault();
+                }}
               >
                 {isLoading ? "Creating Account..." : "Continue to Verification"}
               </Button>
@@ -415,4 +442,6 @@ export default function Register() {
     </PageTransition>
   );
 }
+
+export default Register;
 

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../services/authService';
+import { logout } from '../services/authService.ts';
 
 /**
  * Custom hook for logout functionality

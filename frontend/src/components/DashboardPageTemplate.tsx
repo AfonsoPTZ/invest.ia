@@ -1,4 +1,6 @@
+import React from 'react';
 import { motion } from 'motion/react';
+import type { DashboardPageTemplateProps } from '../types/api';
 import Button from './Button/index';
 import AnimatedCard from './AnimatedCard/index';
 import Navbar from './Navbar/index';
@@ -8,19 +10,12 @@ import { ANIMATION_HERO, ANIMATION_CONTENT, ANIMATION_ACTION, ANIMATION_FLOAT, A
 import '../styles/app.css';
 
 /**
- * Dashboard Page Template Component
+ * Dashboard Page Template Component (TypeScript)
  * 
  * Reusable template for dashboard pages (Investments, Assets, Income, Expense)
  * Eliminates code duplication across similar pages
  * 
- * Props:
- * - title: Page title (e.g., "Growth Opportunities")
- * - subtitle: Page subtitle (e.g., "Explore and manage your investment portfolio")
- * - icon: Icon component for hero section (e.g., <FaChartLine />)
- * - stats: Array of stat objects with { icon, label, value, meta } 
- * - userEmail: User's email for navbar
- * - onLogout: Logout handler function
- * - onBackClick: Function to navigate back to dashboard
+ * Props: See DashboardPageTemplateProps interface
  * 
  * Usage:
  * 
@@ -30,8 +25,8 @@ import '../styles/app.css';
  *   const handleBack = () => navigate('/dashboard');
  *   
  *   const stats = [
- *     { icon: <FaBriefcase />, label: 'Portfolio Value', value: '$0.00', meta: 'Total invested' },
- *     { icon: <FaArrowUp />, label: 'ROI Performance', value: '0%', meta: 'Return on investment' }
+ *     { id: '1', icon: <FaBriefcase />, label: 'Portfolio Value', value: '$0.00', meta: 'Total invested' },
+ *     { id: '2', icon: <FaArrowUp />, label: 'ROI Performance', value: '0%', meta: 'Return on investment' }
  *   ];
  *   
  *   return (
@@ -47,7 +42,7 @@ import '../styles/app.css';
  *   );
  * }
  */
-export default function DashboardPageTemplate({
+function DashboardPageTemplate({
   title,
   subtitle,
   icon,
@@ -55,7 +50,7 @@ export default function DashboardPageTemplate({
   userEmail,
   onLogout,
   onBackClick
-}) {
+}: DashboardPageTemplateProps): React.ReactElement {
   return (
     <PageTransition>
       <div className="app-layout">
@@ -98,14 +93,14 @@ export default function DashboardPageTemplate({
                 <div className="stats-grid">
                   {stats.map((stat, index) => (
                     <AnimatedCard 
-                      key={index}
+                      key={stat.id || index}
                       delay={ANIMATION_CARD_DELAYS[index] || 0} 
                       className="stat-card"
                     >
                       <div className="stat-icon">{stat.icon}</div>
                       <p className="stat-label">{stat.label}</p>
                       <p className="stat-value">{stat.value}</p>
-                      <p className="stat-meta">{stat.meta}</p>
+                      <p className="stat-meta">{stat.trend || ''}</p>
                     </AnimatedCard>
                   ))}
                 </div>
@@ -129,3 +124,5 @@ export default function DashboardPageTemplate({
     </PageTransition>
   );
 }
+
+export default DashboardPageTemplate;

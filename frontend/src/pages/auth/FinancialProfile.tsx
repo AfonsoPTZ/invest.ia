@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ChangeEvent, FormEvent, ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "motion/react";
+import type { FinancialProfileFormData, FieldErrorMap } from "../../types/api";
 import { createFinancialProfile } from "../../services/financialProfileService";
 import { validateFinancialProfileForm } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
@@ -38,20 +39,20 @@ import "../../styles/auth.css";
  * 
  * @component
  */
-export default function FinancialProfile() {
+export default function FinancialProfile(): ReactElement {
   const navigate = useNavigate();
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [success, setSuccess] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrorMap>({});
+  const [success, setSuccess] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Ref for scrolling to alert when success/error message appears
-  const alertRef = useRef(null);
+  const alertRef = useRef<HTMLDivElement | null>(null);
 
   // Apply scale in animation to card
   const cardRef = useAnimateOnMount('animate-scale-in', 100);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FinancialProfileFormData>({
     monthly_income: "",
     has_monthly_income: true,
     initial_balance: "",
@@ -97,20 +98,20 @@ export default function FinancialProfile() {
   /**
    * Map error message to field names
    */
-  const mapErrorToFields = (errorMessage) => {
-    const errorMap = {
+  const mapErrorToFields = (errorMessage: string): keyof FieldErrorMap | null => {
+    const errorMap: Record<string, keyof FieldErrorMap> = {
       'Please select a financial goal': 'financial_goal',
       'Please enter a valid monthly income': 'monthly_income',
       'Please enter a valid initial balance': 'initial_balance'
     };
-    return errorMap[errorMessage] || null;
+    return errorMap[errorMessage] as keyof FieldErrorMap || null;
   };
 
   /**
    * Handle form input changes - update state based on input type
    */
-  const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value, type, checked } = event.target as HTMLInputElement;
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value
@@ -127,7 +128,7 @@ export default function FinancialProfile() {
    * Submit financial profile
    * Validates locally, then sends to backend
    */
-  const handleFormSubmit = async (event) => {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     setError("");
     setFieldErrors({});
@@ -182,8 +183,8 @@ export default function FinancialProfile() {
       }, 2000);
 
     } catch (catchError) {
-      logger.error({ error: catchError.message }, "FinancialProfile: Error on profile submission");
-      setError(catchError.message);
+      logger.error({ error: catchError instanceof Error ? catchError.message : "Unknown error" }, "FinancialProfile: Error on profile submission");
+      setError(catchError instanceof Error ? catchError.message : "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -223,7 +224,7 @@ export default function FinancialProfile() {
             src="/panda-login-top.png" 
             alt="Invest_IA Mascot"
             className="auth-panda-image"
-            onError={(e) => e.target.style.display = 'none'}
+            onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
           />
         </motion.div>
 
@@ -265,13 +266,13 @@ export default function FinancialProfile() {
 
           {error && (
             <div ref={alertRef}>
-              <Alert type="error">{error}</Alert>
+              <Alert type="error" onClose={() => setError("")}>{error}</Alert>
             </div>
           )}
 
           {success && (
             <div ref={alertRef}>
-              <Alert type="success">{success}</Alert>
+              <Alert type="success" onClose={() => setSuccess("")}>{success}</Alert>
             </div>
           )}
 
@@ -433,6 +434,9 @@ export default function FinancialProfile() {
                 className="btn-full"
                 disabled={isLoading}
                 isLoading={isLoading}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  if (isLoading) e.preventDefault();
+                }}
               >
                 {isLoading ? "Completing Setup..." : "Complete Registration"}
               </Button>

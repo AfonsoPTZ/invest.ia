@@ -27,16 +27,19 @@ class AuthController {
       );
 
       return response.status(201).json({
-        status: "success",
+        success: true,
         message: registerResult.message,
-        userId: registerResult.userId
+        data: {
+          userId: registerResult.userId
+        }
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(400).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -55,17 +58,20 @@ class AuthController {
       const authResponseDTO: any = AuthResponseDTO.fromUser(loginResult, loginResult.token);
 
       return response.status(200).json({
-        status: "success",
+        success: true,
         message: "Login successful",
-        user: authResponseDTO.toJSON(),
-        token: authResponseDTO.token
+        data: {
+          ...authResponseDTO.toJSON(),
+          token: authResponseDTO.token
+        }
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(401).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -78,14 +84,15 @@ class AuthController {
       const userId: number = (request as any).user?.id;
 
       return response.status(200).json({
-        status: "success",
+        success: true,
         message: "Logout successful"
       });
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(500).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -101,14 +108,16 @@ class AuthController {
       const userResponseDTO: any = UserResponseDTO.fromUser((request as any).user);
 
       return response.status(200).json({
-        status: "success",
-        user: userResponseDTO.toJSON()
+        success: true,
+        message: "User data retrieved successfully",
+        data: userResponseDTO.toJSON()
       });
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(500).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -130,16 +139,19 @@ class AuthController {
       );
 
       return response.status(201).json({
-        status: "success",
-        userId: result.userId,
-        message: result.message
+        success: true,
+        message: result.message,
+        data: {
+          userId: result.userId
+        }
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(400).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -159,23 +171,27 @@ class AuthController {
 
       if (!result.success) {
         return response.status(400).json({
-          status: "error",
-          message: result.message
+          success: false,
+          message: result.message,
+          error: result.message
         });
       }
 
       return response.status(200).json({
-        status: "success",
+        success: true,
         message: result.message,
-        token: result.token,
-        redirectUrl: result.redirectUrl
+        data: {
+          token: result.token,
+          redirectUrl: result.redirectUrl
+        }
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(400).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -191,15 +207,16 @@ class AuthController {
       const result: any = await verifyEmailService.resendOtpCode(userId);
 
       return response.status(200).json({
-        status: "success",
+        success: true,
         message: result.message
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(400).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }

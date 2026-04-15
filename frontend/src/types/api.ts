@@ -11,6 +11,8 @@
  * - Common: Shared types, enums, utility types
  */
 
+import React from 'react';
+
 /**
  * ==================== COMMON TYPES ====================
  */
@@ -295,6 +297,111 @@ export enum FinancialGoal {
   SAVINGS = 'savings',
   WEALTH_BUILD = 'wealth_building',
   OTHER = 'other'
+}
+
+/**
+ * ==================== COMPONENT PROPS ====================
+ */
+
+/** Statistical card data for dashboard displays */
+export interface StatCard {
+  id: string;
+  label: string;
+  value: string | number;
+  icon?: React.ReactNode;
+  trend?: 'up' | 'down' | 'neutral';
+  trendValue?: number | string;
+}
+
+/** Dashboard page template props (shared by multiple pages) */
+export interface DashboardPageTemplateProps {
+  /** Page heading */
+  title: string;
+  /** Subheading or description */
+  subtitle?: string;
+  /** Icon/visual element for page header */
+  icon?: React.ReactNode;
+  /** Statistics cards to display */
+  stats?: StatCard[];
+  /** User email for navbar */
+  userEmail: string;
+  /** Callback for logout action */
+  onLogout: () => void;
+  /** Optional callback for back button */
+  onBackClick?: () => void;
+  /** Child content to render */
+  children?: React.ReactNode;
+  /** Custom class name */
+  className?: string;
+  /** Whether to show header */
+  showHeader?: boolean;
+}
+
+/** Reusable button component props */
+export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
+  /** Button style variant */
+  type?: 'primary' | 'secondary' | 'danger';
+  /** Button size */
+  size?: 'sm' | 'md' | 'lg';
+  /** Show loading spinner */
+  isLoading?: boolean;
+  /** Button content */
+  children: React.ReactNode;
+  /** Custom class name */
+  className?: string;
+}
+
+/** Form input component props */
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  /** Label text */
+  label?: string;
+  /** Error message to display */
+  error?: string;
+  /** Custom class name */
+  className?: string;
+  /** Icon element */
+  icon?: React.ReactNode;
+}
+
+/** Alert/notification component props */
+export interface AlertProps {
+  /** Alert type */
+  type: 'error' | 'success' | 'info' | 'warning';
+  /** Alert content */
+  children: React.ReactNode;
+  /** Callback when alert is closed */
+  onClose?: () => void;
+  /** Custom class name */
+  className?: string;
+  /** Auto-hide duration in milliseconds */
+  autoHideDuration?: number;
+}
+
+/**
+ * ==================== FORM STATE TYPES ====================
+ */
+
+/** Field-level error mapping */
+export type FieldErrorMap = Record<string, string>;
+
+/** Financial profile form data shape */
+export interface FinancialProfileFormData {
+  monthly_income: string;
+  has_monthly_income: boolean;
+  initial_balance: string;
+  has_initial_balance: boolean;
+  has_investments: boolean;
+  has_assets: boolean;
+  financial_goal: string;
+  behavior_profile: 'conservative' | 'moderate' | 'aggressive';
+}
+
+/** Generic form state for auth pages */
+export interface FormState {
+  error: string;
+  success: string;
+  fieldErrors: FieldErrorMap;
+  isLoading: boolean;
 }
 
 /**

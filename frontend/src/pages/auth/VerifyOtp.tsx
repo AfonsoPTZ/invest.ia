@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { ChangeEvent, FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { motion } from "motion/react";
@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { verifyEmail, resendOtp } from "../../services/authService";
 import { validateOTPCode } from "../../validators/authValidator";
 import { useAnimateOnMount } from "../../utils/useAnimations";
+import { useFormState } from "../../utils/useFormState";
+import type { FieldErrorMap } from "../../types/api";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
@@ -15,7 +17,7 @@ import "../../styles/auth.css";
 import "../../styles/forms.css";
 
 /**
- * Email OTP Verification Page
+ * Email OTP Verification Page (TypeScript)
  * 
  * User enters 6-digit OTP code sent to their email during registration
  * Frontend validation: code length (6 digits)
@@ -31,22 +33,30 @@ import "../../styles/forms.css";
  * 
  * @component
  */
-export default function VerifyOtp() {
+function VerifyOtp(): React.ReactElement {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const userId = location.state?.userId;
-  const email = location.state?.email;
+  const userId = location.state?.userId as string | number;
+  const email = location.state?.email as string;
 
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [success, setSuccess] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [canResend, setCanResend] = useState(false);
-  const [resendTimer, setResendTimer] = useState(0);
+  // Form state management (centralized hook)
+  const { 
+    error, 
+    setError, 
+    success, 
+    setSuccess, 
+    fieldErrors, 
+    setFieldErrors, 
+    isLoading, 
+    setIsLoading 
+  } = useFormState();
+
+  const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
+  const [canResend, setCanResend] = useState<boolean>(false);
+  const [resendTimer, setResendTimer] = useState<number>(0);
   
-  const inputRefs = useRef([]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const cardRef = useAnimateOnMount('animate-scale-in', 100);
 
   /**
@@ -60,9 +70,11 @@ export default function VerifyOtp() {
 
   /**
    * Map error message to field names
+   * @param errorMessage - Error message from validation
+   * @returns Field name or null
    */
-  const mapErrorToFields = (errorMessage) => {
-    const errorMap = {
+  const mapErrorToFields = (errorMessage: string): keyof FieldErrorMap | null => {
+    const errorMap: Record<string, keyof FieldErrorMap> = {
       'OTP code is required': 'otp',
       'OTP code must be 6 digits': 'otp'
     };
@@ -89,8 +101,10 @@ export default function VerifyOtp() {
   /**
    * Handle individual OTP digit input
    * Only allows digits, auto-focus to next input
+   * @param index - Position in OTP array
+   * @param value - Input value
    */
-  const handleOtpChange = (index, value) => {
+  const handleOtpChange = (index: number, value: string): void => {
     // Only allow digits
     if (!/^\d*$/.test(value)) return;
 
@@ -98,7 +112,7 @@ export default function VerifyOtp() {
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
     setError("");
-    setFieldErrors(prev => ({ ...prev, otp: "" }));
+    setFieldErrors({ ...fieldErrors, otp: "" });
 
     // Auto-focus next input
     if (value && index < 5) {
@@ -108,8 +122,10 @@ export default function VerifyOtp() {
 
   /**
    * Handle backspace to focus previous input
+   * @param index - Position in OTP array
+   * @param e - Keyboard event
    */
-  const handleKeyDown = (index, e) => {
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === "Backspace" && otp[index] === "" && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -119,7 +135,7 @@ export default function VerifyOtp() {
    * Submit OTP code for verification
    * Validates code locally, then sends to backend
    */
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
     const otpCode = otp.join("");
@@ -130,10 +146,7 @@ export default function VerifyOtp() {
       setError(validationError);
       const fieldName = mapErrorToFields(validationError);
       if (fieldName) {
-        setFieldErrors(prev => ({
-          ...prev,
-          [fieldName]: validationError
-        }));
+        setFieldErrors({ ...fieldErrors, [fieldName]: validationError });
       }
       return;
     }
@@ -148,9 +161,9 @@ export default function VerifyOtp() {
       const data = await verifyEmail(userId, otpCode);
 
       // Store temporary token and userId for next page
-      if (data.token) {
-        sessionStorage.setItem("tempProfileToken", data.token);
-        sessionStorage.setItem("userId", userId);
+      if (data.tempProfileToken) {
+        sessionStorage.setItem("tempProfileToken", data.tempProfileToken);
+        sessionStorage.setItem("userId", userId as string);
 
         logger.info({ userId }, "VerifyOtp: Temporary token stored. Redirecting to financial profile");
       }
@@ -163,15 +176,16 @@ export default function VerifyOtp() {
         navigate("/financial-profile", { 
           replace: true,
           state: { 
-            token: data.token,
+            token: data.tempProfileToken,
             userId 
           }
         });
       }, 1500);
 
     } catch (err) {
-      logger.error({ userId, error: err.message }, "VerifyOtp: Error on email verification");
-      setError(err.message);
+      const errorMsg = err instanceof Error ? err.message : "An unexpected error occurred";
+      logger.error({ userId, error: errorMsg }, "VerifyOtp: Error on email verification");
+      setError(errorMsg);
       setOtp(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
     } finally {
@@ -183,7 +197,7 @@ export default function VerifyOtp() {
    * Resend OTP code to registered email
    * Implements 30-second cooldown
    */
-  const handleResendOtp = async () => {
+  const handleResendOtp = async (): Promise<void> => {
     setIsLoading(true);
     setError("");
 
@@ -201,8 +215,9 @@ export default function VerifyOtp() {
       inputRefs.current[0]?.focus();
 
     } catch (err) {
-      logger.error({ userId, error: err.message }, "VerifyOtp: Error resending OTP");
-      setError(err.message);
+      const errorMsg = err instanceof Error ? err.message : "Failed to resend OTP";
+      logger.error({ userId, error: errorMsg }, "VerifyOtp: Error resending OTP");
+      setError(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -222,7 +237,7 @@ export default function VerifyOtp() {
             src="/panda-login-top.png" 
             alt="Invest_IA Mascot"
             className="auth-panda-image"
-            onError={(e) => e.target.style.display = 'none'}
+            onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
           />
         </motion.div>
 
@@ -263,11 +278,11 @@ export default function VerifyOtp() {
           </motion.div>
 
           {error && (
-            <Alert type="error">{error}</Alert>
+            <Alert type="error" onClose={() => setError("")}>{error}</Alert>
           )}
 
           {success && (
-            <Alert type="success">{success}</Alert>
+            <Alert type="success" onClose={() => setSuccess("")}>{success}</Alert>
           )}
 
           <motion.form 
@@ -288,9 +303,11 @@ export default function VerifyOtp() {
                 {otp.map((digit, index) => (
                   <motion.input
                     key={index}
-                    ref={(el) => inputRefs.current[index] = el}
+                    ref={(el) => {
+                      if (el !== null) inputRefs.current[index] = el;
+                    }}
                     type="text"
-                    maxLength="1"
+                    maxLength={1}
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
@@ -316,6 +333,9 @@ export default function VerifyOtp() {
                 className="btn-full"
                 disabled={isLoading || otp.join("").length !== 6}
                 isLoading={isLoading}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  if (isLoading) e.preventDefault();
+                }}
               >
                 {isLoading ? "Verifying..." : "Verify Code"}
               </Button>
@@ -352,3 +372,5 @@ export default function VerifyOtp() {
     </PageTransition>
   );
 }
+
+export default VerifyOtp;

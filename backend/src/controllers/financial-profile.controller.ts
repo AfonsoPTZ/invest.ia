@@ -14,8 +14,9 @@ class FinancialProfileController {
 
       if (!userId) {
         return response.status(400).json({
-          status: "error",
-          message: "User identification failed"
+          success: false,
+          message: "User identification failed",
+          error: "User identification failed"
         });
       }
 
@@ -28,16 +29,17 @@ class FinancialProfileController {
       const profileResponseDTO: any = FinancialProfileResponseDTO.fromProfile(profile);
 
       return response.status(201).json({
-        status: "success",
+        success: true,
         message: "Financial profile created successfully",
-        profile: profileResponseDTO.toJSON()
+        data: profileResponseDTO.toJSON()
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(400).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
@@ -57,15 +59,17 @@ class FinancialProfileController {
       const profileResponseDTO: any = FinancialProfileResponseDTO.fromProfile(profile);
 
       return response.status(200).json({
-        status: "success",
-        profile: profileResponseDTO.toJSON()
+        success: true,
+        message: "Financial profile retrieved successfully",
+        data: profileResponseDTO.toJSON()
       });
 
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       return response.status(404).json({
-        status: "error",
-        message: errorMessage
+        success: false,
+        message: errorMessage,
+        error: errorMessage
       });
     }
   }
