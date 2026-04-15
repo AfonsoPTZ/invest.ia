@@ -1,5 +1,6 @@
 // Email Service - Gerencia envio de emails
 import nodemailer from "nodemailer";
+import AppError from "../../utils/AppError.js";
 import logger from "../../utils/logger.js";
 
 /**
@@ -65,7 +66,7 @@ async function sendOtpEmail(email: string, otp: string): Promise<boolean> {
   } catch (error) {
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, email }, "EmailService: Error sending OTP email");
-    throw new Error(`Erro ao enviar email: ${errorMessage}`);
+    throw new AppError(`Error sending OTP email: ${errorMessage}`, 500);
   }
 }
 
@@ -109,7 +110,7 @@ async function sendVerificationSuccessEmail(email: string, userName: string): Pr
   } catch (error) {
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, email }, "EmailService: Error sending verification email");
-    throw new Error(`Erro ao enviar email de verificação: ${errorMessage}`);
+    throw new AppError(`Error sending verification email: ${errorMessage}`, 500);
   }
 }
 

@@ -2,6 +2,7 @@
 import emailVerificationService from "./email-verification.service.js";
 import tokenService from "./token.service.js";
 import authRepository from "../../repositories/user.repository.js";
+import AppError from "../../utils/AppError.js";
 import logger from "../../utils/logger.js";
 
 /**
@@ -46,7 +47,7 @@ async function confirmEmailWithOtp(userId: number, otpCode: string): Promise<ICo
     const user: any = await authRepository.findById(userId);
     if (!user) {
       logger.warn({ userId }, "VerifyEmailService: User not found after OTP verification");
-      throw new Error("User not found");
+      throw new AppError("User not found", 404);
     }
 
     // Gerar token temporário para completar perfil financeiro
@@ -62,9 +63,10 @@ async function confirmEmailWithOtp(userId: number, otpCode: string): Promise<ICo
     };
 
   } catch (error) {
+    if (error instanceof AppError) throw error;
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId }, "VerifyEmailService: Error confirming email");
-    throw new Error(errorMessage);
+    throw new AppError(errorMessage, 500);
   }
 }
 
@@ -91,9 +93,10 @@ async function resendOtpCode(userId: number): Promise<IResendResult> {
     };
 
   } catch (error) {
+    if (error instanceof AppError) throw error;
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId }, "VerifyEmailService: Error resending OTP");
-    throw new Error(errorMessage);
+    throw new AppError(errorMessage, 500);
   }
 }
 

@@ -79,17 +79,9 @@ class FinancialProfileRepository {
 
   async findByUserId(userId: number): Promise<IProfileResponse | null> {
     try {
-      logger.debug({ userId }, "Searching financial profile by user ID");
-      
       const profile = await prisma.financialProfile.findUnique({ where: { userId } });
       
-      if (!profile) {
-        logger.debug({ userId }, "Financial profile not found");
-        return null;
-      }
-      
-      logger.debug({ userId }, "Financial profile found");
-      return this._toApiFormat(profile);
+      return profile ? this._toApiFormat(profile) : null;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, userId }, "Error searching financial profile");
@@ -97,24 +89,6 @@ class FinancialProfileRepository {
     }
   }
 
-  async createOrUpdate(userId: number, profileData: IProfileData): Promise<IProfileResponse | IProfileBuildResponse> {
-    try {
-      const existing = await this.findByUserId(userId);
-      
-      if (existing) {
-        logger.info({ userId }, "Profile exists, updating");
-        await this.update(userId, profileData);
-        return this._buildResponse(userId, profileData, existing.id);
-      }
-      
-      logger.info({ userId }, "Profile does not exist, creating");
-      return await this.create(userId, profileData);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error({ error: errorMessage, userId }, "Error in createOrUpdate");
-      throw new Error(`Error in createOrUpdate: ${errorMessage}`);
-    }
-  }
 
   async update(userId: number, profileData: IProfileData): Promise<boolean> {
     try {

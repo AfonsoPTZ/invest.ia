@@ -37,7 +37,6 @@ interface IOtpData {
 class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     try {
-      logger.debug({ email }, "Searching user by email");
       return await prisma.user.findUnique({ where: { email } });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -48,12 +47,31 @@ class UserRepository {
 
   async findById(id: number): Promise<User | null> {
     try {
-      logger.debug({ id }, "Searching user by ID");
       return await prisma.user.findUnique({ where: { id } });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, id }, "Error searching user by ID");
       throw new Error(`Erro ao buscar usuário por ID: ${errorMessage}`);
+    }
+  }
+
+  async findByCpf(cpf: string): Promise<User | null> {
+    try {
+      return await prisma.user.findUnique({ where: { cpf } });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error({ error: errorMessage, cpf }, "Error searching user by CPF");
+      throw new Error(`Erro ao buscar usuário por CPF: ${errorMessage}`);
+    }
+  }
+
+  async findByPhone(phone: string): Promise<User | null> {
+    try {
+      return await prisma.user.findUnique({ where: { phone } });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error({ error: errorMessage, phone }, "Error searching user by phone");
+      throw new Error(`Erro ao buscar usuário por telefone: ${errorMessage}`);
     }
   }
 
@@ -82,41 +100,6 @@ class UserRepository {
     }
   }
 
-  async emailExists(email: string): Promise<boolean> {
-    try {
-      logger.debug({ email }, "Checking if email exists");
-      const user = await prisma.user.findUnique({ where: { email } });
-      return user !== null;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error({ error: errorMessage, email }, "Error checking email existence");
-      throw new Error(`Erro ao verificar email: ${errorMessage}`);
-    }
-  }
-
-  async cpfExists(cpf: string): Promise<boolean> {
-    try {
-      logger.debug({ cpf }, "Checking if CPF exists");
-      const user = await prisma.user.findUnique({ where: { cpf } });
-      return user !== null;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error({ error: errorMessage, cpf }, "Error checking CPF existence");
-      throw new Error(`Erro ao verificar CPF: ${errorMessage}`);
-    }
-  }
-
-  async phoneExists(phone: string): Promise<boolean> {
-    try {
-      logger.debug({ phone }, "Checking if phone exists");
-      const user = await prisma.user.findUnique({ where: { phone } });
-      return user !== null;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error({ error: errorMessage, phone }, "Error checking phone existence");
-      throw new Error(`Error checking phone existence: ${errorMessage}`);
-    }
-  }
 
   async updatePassword(userId: number, passwordHash: string): Promise<boolean> {
     try {
@@ -139,7 +122,6 @@ class UserRepository {
   async updateOtp(userId: number, otpData: IOtpData): Promise<boolean> {
     try {
       const { otpCodeHash, otpExpiresAt, otpAttempts } = otpData;
-      logger.debug({ userId }, "Updating OTP");
 
       const result = await prisma.user.update({
         where: { id: userId },
@@ -150,30 +132,11 @@ class UserRepository {
         }
       });
 
-      logger.debug({ userId }, "OTP updated");
       return result !== null;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, userId }, "Error updating OTP");
       throw new Error(`Erro ao atualizar OTP: ${errorMessage}`);
-    }
-  }
-
-  async incrementOtpAttempts(userId: number): Promise<boolean> {
-    try {
-      logger.debug({ userId }, "Incrementing OTP attempts");
-
-      const result = await prisma.user.update({
-        where: { id: userId },
-        data: { otpAttempts: { increment: 1 } }
-      });
-
-      logger.debug({ userId }, "OTP attempts incremented");
-      return result !== null;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      logger.error({ error: errorMessage, userId }, "Error incrementing OTP attempts");
-      throw new Error(`Erro ao incrementar tentativas: ${errorMessage}`);
     }
   }
 

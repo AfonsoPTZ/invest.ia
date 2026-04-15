@@ -1,13 +1,16 @@
 /**
- * Expense Service
+ * Expense Service (TypeScript)
  * 
- * HTTP client for expense management operations
+ * Centralized HTTP client for expense management operations
+ * Fully typed with API contract interfaces
  * Handles CRUD operations for user expenses
+ * Utilizes frontend logger for debugging
  * 
  * Layer Responsibility:
  * - HTTP communication only (fetch, headers, response handling)
  * - Token retrieval from localStorage
  * - Error transformation to/from API format
+ * - Type-safe API interactions
  * 
  * DO NOT:
  * - Business logic (calculations, filtering)
@@ -18,8 +21,12 @@
  */
 
 import logger from "../utils/logger";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+import { API_URL, getAuthHeaders, getJsonHeaders } from "../config/api";
+import type {
+  Task,
+  CreateTaskRequest,
+  ApiResponse,
+} from "../types/api";
 
 /**
  * Get all expenses for authenticated user
@@ -28,57 +35,54 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
  * Requires valid JWT token
  * 
  * @async
- * @returns {Promise<Object>} { expenses: Array, total: number, ... }
+ * @returns {Promise<Task[]>} Array of expense objects
  * @throws {Error} If not authenticated or API error
  */
-export async function getExpenses() {
+export async function getExpenses(): Promise<Task[]> {
   const token = localStorage.getItem("token");
 
   try {
     if (!token) {
-      logger.warn({}, "ExpenseService: Token not found");
+      logger.warn({}, "ExpenseService: Token not found for getExpenses");
       throw new Error("Token not found");
     }
 
     logger.debug({}, "ExpenseService: Fetching expenses");
 
     const response = await fetch(`${API_URL}/despesas`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: getAuthHeaders(token)
     });
 
-    const data = await response.json();
+    const data: ApiResponse<Task[]> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `ExpenseService: getExpenses failed - ${data.message}`);
       throw new Error(data.message || "Error fetching expenses");
     }
 
     logger.info({}, "ExpenseService: Expenses fetched successfully");
 
-    return data.data;
+    return data.data || [];
   } catch (error) {
-    logger.error({ error: error.message }, "ExpenseService: Error fetching expenses");
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, "ExpenseService: Error fetching expenses");
     throw error;
   }
 }
-
 
 /**
  * Create new expense
  * 
  * @async
- * @param {Object} expenseData - Expense data object
- * @returns {Promise<Object>} Created expense object with ID
+ * @param {CreateTaskRequest} expenseData - Expense data object
+ * @returns {Promise<Task>} Created expense object with ID
  * @throws {Error} If not authenticated, validation failed, or API error
  */
-export async function createExpense(expenseData) {
+export async function createExpense(expenseData: CreateTaskRequest): Promise<Task> {
   const token = localStorage.getItem("token");
 
   try {
     if (!token) {
-      logger.warn({}, "ExpenseService: Token not found");
+      logger.warn({}, "ExpenseService: Token not found for createExpense");
       throw new Error("Token not found");
     }
 
@@ -86,25 +90,22 @@ export async function createExpense(expenseData) {
 
     const response = await fetch(`${API_URL}/despesas`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
+      headers: getJsonHeaders(token),
       body: JSON.stringify(expenseData)
     });
 
-    const data = await response.json();
+    const data: ApiResponse<Task> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `ExpenseService: createExpense failed - ${data.message}`);
       throw new Error(data.message || "Error creating expense");
     }
 
     logger.info({}, "ExpenseService: Expense created successfully");
 
-    return data.data;
+    return data.data as Task;
   } catch (error) {
-    logger.error({ error: error.message }, "ExpenseService: Error creating expense");
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, "ExpenseService: Error creating expense");
     throw error;
   }
 }
@@ -114,16 +115,16 @@ export async function createExpense(expenseData) {
  * 
  * @async
  * @param {string|number} id - Expense ID
- * @param {Object} expenseData - Updated expense data
- * @returns {Promise<Object>} Updated expense object
+ * @param {CreateTaskRequest} expenseData - Updated expense data
+ * @returns {Promise<Task>} Updated expense object
  * @throws {Error} If not authenticated, not found, or API error
  */
-export async function updateExpense(id, expenseData) {
+export async function updateExpense(id: string | number, expenseData: CreateTaskRequest): Promise<Task> {
   const token = localStorage.getItem("token");
 
   try {
     if (!token) {
-      logger.warn({}, "ExpenseService: Token not found");
+      logger.warn({ id }, "ExpenseService: Token not found for updateExpense");
       throw new Error("Token not found");
     }
 
@@ -131,25 +132,22 @@ export async function updateExpense(id, expenseData) {
 
     const response = await fetch(`${API_URL}/despesas/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
+      headers: getJsonHeaders(token),
       body: JSON.stringify(expenseData)
     });
 
-    const data = await response.json();
+    const data: ApiResponse<Task> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ id }, `ExpenseService: updateExpense failed - ${data.message}`);
       throw new Error(data.message || "Error updating expense");
     }
 
     logger.info({ id }, "ExpenseService: Expense updated successfully");
 
-    return data.data;
+    return data.data as Task;
   } catch (error) {
-    logger.error({ error: error.message }, "ExpenseService: Error updating expense");
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, "ExpenseService: Error updating expense");
     throw error;
   }
 }
@@ -162,12 +160,12 @@ export async function updateExpense(id, expenseData) {
  * @returns {Promise<void>}
  * @throws {Error} If not authenticated, not found, or API error
  */
-export async function deleteExpense(id) {
+export async function deleteExpense(id: string | number): Promise<void> {
   const token = localStorage.getItem("token");
 
   try {
     if (!token) {
-      logger.warn({}, "ExpenseService: Token not found");
+      logger.warn({ id }, "ExpenseService: Token not found for deleteExpense");
       throw new Error("Token not found");
     }
 
@@ -175,21 +173,19 @@ export async function deleteExpense(id) {
 
     const response = await fetch(`${API_URL}/despesas/${id}`, {
       method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: getAuthHeaders(token)
     });
 
-    const data = await response.json();
+    const data: ApiResponse<unknown> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ id }, `ExpenseService: deleteExpense failed - ${data.message}`);
       throw new Error(data.message || "Error deleting expense");
     }
 
     logger.info({ id }, "ExpenseService: Expense deleted successfully");
   } catch (error) {
-    logger.error({ error: error.message }, "ExpenseService: Error deleting expense");
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, "ExpenseService: Error deleting expense");
     throw error;
   }
 }

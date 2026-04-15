@@ -1,6 +1,7 @@
 // Token Service - JWT generation and validation
 import jwt from "jsonwebtoken";
 import type { SignOptions } from "jsonwebtoken";
+import AppError from "../../utils/AppError.js";
 import logger from "../../utils/logger.js";
 
 // Definir secrets usando variáveis de ambiente (obrigatório)
@@ -65,7 +66,7 @@ class TokenService {
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, userId }, "TokenService: Error generating JWT");
-      throw new Error("Erro ao gerar token");
+      throw new AppError("Error generating token", 500);
     }
   }
 
@@ -95,7 +96,7 @@ class TokenService {
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage }, "TokenService: Error generating temporary token");
-      throw new Error("Erro ao gerar token temporário");
+      throw new AppError("Error generating temporary token", 500);
     }
   }
 

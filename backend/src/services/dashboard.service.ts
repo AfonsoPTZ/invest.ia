@@ -1,6 +1,7 @@
 // Dashboard Service - Doorkeeper pattern
 // Orchestrates: Repository calls for dashboard data
 import dashboardRepository from "../repositories/dashboard.repository.js";
+import AppError from "../utils/AppError.js";
 import logger from "../utils/logger.js";
 import type { IDashboardUser, IDashboardFinancialProfile, IDashboardData } from "../repositories/dashboard.repository.js";
 
@@ -27,7 +28,7 @@ class DashboardService {
       
       if (!dashboardData) {
         logger.warn({ userId }, "Service: Dashboard data not found");
-        throw new Error("Dashboard data not found");
+        throw new AppError("Dashboard data not found", 404);
       }
 
       logger.info({ userId }, "Service: Dashboard data retrieved successfully");
@@ -38,9 +39,10 @@ class DashboardService {
       };
 
     } catch (error) {
+      if (error instanceof AppError) throw error;
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, userId }, "Service: Error retrieving dashboard data");
-      throw new Error(errorMessage);
+      throw new AppError(errorMessage, 500);
     }
   }
 
@@ -56,7 +58,7 @@ class DashboardService {
       
       if (!user) {
         logger.warn({ userId }, "Service: User not found");
-        throw new Error("User not found");
+        throw new AppError("User not found", 404);
       }
 
       logger.info({ userId }, "Service: User name fetched successfully");
@@ -68,9 +70,10 @@ class DashboardService {
       };
 
     } catch (error) {
+      if (error instanceof AppError) throw error;
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, userId }, "Service: Error fetching user name");
-      throw new Error(errorMessage);
+      throw new AppError(errorMessage, 500);
     }
   }
 
@@ -86,14 +89,14 @@ class DashboardService {
       const user = await dashboardRepository.getUserById(userId);
       if (!user) {
         logger.warn({ userId }, "Service: User not found");
-        throw new Error("User not found");
+        throw new AppError("User not found", 404);
       }
 
       // Fetch financial profile
       const financialProfile = await dashboardRepository.getFinancialProfileByUserId(userId);
       if (!financialProfile) {
         logger.warn({ userId }, "Service: Financial profile not found");
-        throw new Error("Financial profile not found");
+        throw new AppError("Financial profile not found", 404);
       }
 
       logger.info({ userId }, "Service: Investment data fetched successfully");
@@ -101,9 +104,10 @@ class DashboardService {
       return financialProfile;
 
     } catch (error) {
+      if (error instanceof AppError) throw error;
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, userId }, "Service: Error fetching investment data");
-      throw new Error(errorMessage);
+      throw new AppError(errorMessage, 500);
     }
   }
 }

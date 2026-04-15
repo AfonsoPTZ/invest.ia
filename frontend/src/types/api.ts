@@ -22,17 +22,38 @@ export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data?: T;
-  error?: string | Record<string, string>;
-  statusCode?: number;
+  statusCode: number;
 }
 
 /** Standard error response from API */
 export interface ApiErrorResponse {
   success: false;
   message: string;
-  error?: string | Record<string, string>;
-  statusCode?: number;
+  data?: null;
+  statusCode: number;
 }
+
+/** Type guard to check if response is successful */
+export const isApiSuccess = <T>(data: any): data is ApiResponse<T> => {
+  return (
+    typeof data === 'object' &&
+    'success' in data &&
+    data.success === true &&
+    'message' in data &&
+    'statusCode' in data
+  );
+};
+
+/** Type guard to check if response is an error */
+export const isApiError = (data: any): data is ApiErrorResponse => {
+  return (
+    typeof data === 'object' &&
+    'success' in data &&
+    data.success === false &&
+    'message' in data &&
+    'statusCode' in data
+  );
+};
 
 /**
  * ==================== AUTH DOMAIN ====================
@@ -433,14 +454,5 @@ export const isFinancialProfile = (data: any): data is FinancialProfile => {
     'monthly_income' in data &&
     'initial_balance' in data &&
     'behavior_profile' in data
-  );
-};
-
-export const isApiError = (data: any): data is ApiErrorResponse => {
-  return (
-    typeof data === 'object' &&
-    'success' in data &&
-    data.success === false &&
-    'message' in data
   );
 };

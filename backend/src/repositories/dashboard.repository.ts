@@ -42,8 +42,6 @@ interface IDashboardData {
 class DashboardRepository {
   async getUserById(userId: number): Promise<IDashboardUser | null> {
     try {
-      logger.debug({ userId }, "Searching user by ID");
-
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: {
@@ -55,12 +53,6 @@ class DashboardRepository {
         }
       });
 
-      if (!user) {
-        logger.debug({ userId }, "User not found");
-        return null;
-      }
-
-      logger.debug({ userId }, "User found");
       return user;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -71,17 +63,9 @@ class DashboardRepository {
 
   async getFinancialProfileByUserId(userId: number): Promise<IDashboardFinancialProfile | null> {
     try {
-      logger.debug({ userId }, "Searching financial profile");
-
       const profile = await prisma.financialProfile.findUnique({ where: { userId } });
 
-      if (!profile) {
-        logger.debug({ userId }, "Financial profile not found");
-        return null;
-      }
-
-      logger.debug({ userId }, "Financial profile found");
-      return this._toApiFormat(profile);
+      return profile ? this._toApiFormat(profile) : null;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logger.error({ error: errorMessage, userId }, "Error searching financial profile");
@@ -91,7 +75,7 @@ class DashboardRepository {
 
   async getDashboardData(userId: number): Promise<IDashboardData | null> {
     try {
-      logger.debug({ userId }, "Fetching dashboard data");
+      logger.debug({ userId }, "Repository: Fetching dashboard data");
 
       const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -105,13 +89,10 @@ class DashboardRepository {
       });
 
       if (!user) {
-        logger.debug({ userId }, "User not found");
         return null;
       }
 
       const profile = await prisma.financialProfile.findUnique({ where: { userId } });
-
-      logger.debug({ userId }, "Dashboard data fetched");
 
       return {
         user,

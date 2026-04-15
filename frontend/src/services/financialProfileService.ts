@@ -10,14 +10,13 @@
  */
 
 import logger from "../utils/logger";
+import { API_URL, getJsonHeaders, getAuthHeaders } from "../config/api";
 import type {
   FinancialProfile,
   FinancialProfileRequest,
   FinancialProfileResponse,
   ApiResponse
 } from "../types/api";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 /**
  * Create or update user financial profile
@@ -46,16 +45,13 @@ export async function createFinancialProfile(
 
     const response = await fetch(`${API_URL}/financial-profile`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
+      headers: getJsonHeaders(token),
       body: JSON.stringify(profileData)
     });
 
     const data: ApiResponse<FinancialProfileResponse> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `FinancialProfileService: Profile creation failed - ${data.message}`);
       throw new Error(data.message || "Profile creation error");
     }
@@ -94,14 +90,12 @@ export async function getFinancialProfile(): Promise<FinancialProfile> {
     logger.debug({}, "FinancialProfileService: Fetching financial profile");
 
     const response = await fetch(`${API_URL}/financial-profile`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: getAuthHeaders(token)
     });
 
     const data: ApiResponse<FinancialProfile> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `FinancialProfileService: Fetch failed - ${data.message}`);
       throw new Error(data.message || "Fetch profile error");
     }
@@ -150,7 +144,7 @@ export async function updateFinancialProfile(
 
     const data: ApiResponse<FinancialProfile> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `FinancialProfileService: Update failed - ${data.message}`);
       throw new Error(data.message || "Profile update error");
     }
@@ -194,7 +188,7 @@ export async function deleteFinancialProfile(): Promise<void> {
 
     const data: ApiResponse<unknown> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `FinancialProfileService: Delete failed - ${data.message}`);
       throw new Error(data.message || "Profile delete error");
     }

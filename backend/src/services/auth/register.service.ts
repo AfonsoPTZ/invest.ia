@@ -30,21 +30,21 @@ async function registerUser(
     logger.info({ email, cpf }, "RegisterService: Starting user registration");
 
     // Dados já chegam validados do middleware
-    // Verificar duplicatas
-    const emailExists: boolean = await authRepository.emailExists(email);
-    if (emailExists) {
+    // Verificar duplicatas usando findBy* queries
+    const userByEmail = await authRepository.findByEmail(email);
+    if (userByEmail) {
       logger.warn({ email }, "RegisterService: Email already registered");
       throw new AppError("Email already registered", 409);
     }
 
-    const cpfExists: boolean = await authRepository.cpfExists(cpf);
-    if (cpfExists) {
+    const userByCpf = await authRepository.findByCpf(cpf);
+    if (userByCpf) {
       logger.warn({ cpf }, "RegisterService: CPF already registered");
       throw new AppError("CPF already registered", 409);
     }
 
-    const phoneExists: boolean = await authRepository.phoneExists(phone);
-    if (phoneExists) {
+    const userByPhone = await authRepository.findByPhone(phone);
+    if (userByPhone) {
       logger.warn({ phone }, "RegisterService: Phone already registered");
       throw new AppError("Phone already registered", 409);
     }

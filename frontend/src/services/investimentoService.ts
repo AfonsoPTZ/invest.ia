@@ -1,13 +1,16 @@
 /**
- * Investment Service
+ * Investment Service (TypeScript)
  * 
- * HTTP client for investment management operations
+ * Centralized HTTP client for investment management operations
+ * Fully typed with API contract interfaces
  * Handles CRUD operations for user investments
+ * Utilizes frontend logger for debugging
  * 
  * Layer Responsibility:
  * - HTTP communication only (fetch, headers, response handling)
  * - Token retrieval from localStorage
  * - Error transformation to/from API format
+ * - Type-safe API interactions
  * 
  * DO NOT:
  * - Business logic (calculations, analysis)
@@ -18,8 +21,12 @@
  */
 
 import logger from "../utils/logger";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+import { API_URL, getAuthHeaders, getJsonHeaders } from "../config/api";
+import type {
+  Investment,
+  CreateInvestmentRequest,
+  ApiResponse,
+} from "../types/api";
 
 /**
  * Get all investments for authenticated user
@@ -28,58 +35,55 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
  * Requires valid JWT token
  * 
  * @async
- * @returns {Promise<Object>} { investments: Array, total: number, ... }
+ * @returns {Promise<Investment[]>} Array of investment objects
  * @throws {Error} If not authenticated or API error
  */
-export async function getInvestments() {
+export async function getInvestments(): Promise<Investment[]> {
   const token = localStorage.getItem("token");
 
   try {
     if (!token) {
-      logger.warn({}, "InvestmentService: Token not found");
+      logger.warn({}, "InvestmentService: Token not found for getInvestments");
       throw new Error("Token not found");
     }
 
     logger.debug({}, "InvestmentService: Fetching investments");
 
     const response = await fetch(`${API_URL}/investimentos`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: getAuthHeaders(token)
     });
 
-    const data = await response.json();
+    const data: ApiResponse<Investment[]> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `InvestmentService: getInvestments failed - ${data.message}`);
       throw new Error(data.message || "Error fetching investments");
     }
 
     logger.info({}, "InvestmentService: Investments fetched successfully");
 
-    return data.data;
+    return data.data || [];
   } catch (error) {
-    logger.error({ error: error.message }, "InvestmentService: Error fetching investments");
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, "InvestmentService: Error fetching investments");
     throw error;
   }
 }
-
 
 /**
  * Update existing investment
  * 
  * @async
  * @param {string|number} id - Investment ID
- * @param {Object} investmentData - Updated investment data
- * @returns {Promise<Object>} Updated investment object
+ * @param {CreateInvestmentRequest} investmentData - Updated investment data
+ * @returns {Promise<Investment>} Updated investment object
  * @throws {Error} If not authenticated, not found, or API error
  */
-export async function updateInvestment(id, investmentData) {
+export async function updateInvestment(id: string | number, investmentData: CreateInvestmentRequest): Promise<Investment> {
   const token = localStorage.getItem("token");
 
   try {
     if (!token) {
-      logger.warn({}, "InvestmentService: Token not found");
+      logger.warn({ id }, "InvestmentService: Token not found for updateInvestment");
       throw new Error("Token not found");
     }
 
@@ -87,25 +91,22 @@ export async function updateInvestment(id, investmentData) {
 
     const response = await fetch(`${API_URL}/investimentos/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
+      headers: getJsonHeaders(token),
       body: JSON.stringify(investmentData)
     });
 
-    const data = await response.json();
+    const data: ApiResponse<Investment> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ id }, `InvestmentService: updateInvestment failed - ${data.message}`);
       throw new Error(data.message || "Error updating investment");
     }
 
     logger.info({ id }, "InvestmentService: Investment updated successfully");
 
-    return data.data;
+    return data.data as Investment;
   } catch (error) {
-    logger.error({ error: error.message }, "InvestmentService: Error updating investment");
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, "InvestmentService: Error updating investment");
     throw error;
   }
 }
@@ -118,12 +119,12 @@ export async function updateInvestment(id, investmentData) {
  * @returns {Promise<void>}
  * @throws {Error} If not authenticated, not found, or API error
  */
-export async function deleteInvestment(id) {
+export async function deleteInvestment(id: string | number): Promise<void> {
   const token = localStorage.getItem("token");
 
   try {
     if (!token) {
-      logger.warn({}, "InvestmentService: Token not found");
+      logger.warn({ id }, "InvestmentService: Token not found for deleteInvestment");
       throw new Error("Token not found");
     }
 
@@ -131,21 +132,19 @@ export async function deleteInvestment(id) {
 
     const response = await fetch(`${API_URL}/investimentos/${id}`, {
       method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: getAuthHeaders(token)
     });
 
-    const data = await response.json();
+    const data: ApiResponse<unknown> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ id }, `InvestmentService: deleteInvestment failed - ${data.message}`);
       throw new Error(data.message || "Error deleting investment");
     }
 
     logger.info({ id }, "InvestmentService: Investment deleted successfully");
   } catch (error) {
-    logger.error({ error: error.message }, "InvestmentService: Error deleting investment");
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, "InvestmentService: Error deleting investment");
     throw error;
   }
 }

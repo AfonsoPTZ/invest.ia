@@ -3,6 +3,7 @@ const router: Router = Router();
 
 import dashboardController from "../controllers/dashboard.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
+import authContextMiddleware from "../middlewares/auth-context.middleware.js";
 
 /**
  * Dashboard Routes - All GET only
@@ -14,6 +15,7 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 router.get(
   "/",
   authMiddleware,
+  authContextMiddleware,
   (req, res) => dashboardController.getDashboard(req, res)
 );
 
@@ -21,6 +23,7 @@ router.get(
 router.get(
   "/name",
   authMiddleware,
+  authContextMiddleware,
   (req, res) => dashboardController.getUserName(req, res)
 );
 
@@ -28,6 +31,7 @@ router.get(
 router.get(
   "/investments",
   authMiddleware,
+  authContextMiddleware,
   (req, res) => dashboardController.getInvestments(req, res)
 );
 

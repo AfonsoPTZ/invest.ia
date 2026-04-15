@@ -1,6 +1,7 @@
 // Email Verification Service - Fluxo de verificação de email
 import emailService from "./email.service.js";
 import otpService from "./otp.service.js";
+import AppError from "../../utils/AppError.js";
 import logger from "../../utils/logger.js";
 
 /**
@@ -26,9 +27,10 @@ async function sendVerificationCode(userId: number, email: string): Promise<void
 
     logger.info({ userId, email }, "EmailVerificationService: Verification code sent successfully");
   } catch (error) {
+    if (error instanceof AppError) throw error;
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId, email }, "EmailVerificationService: Error sending verification code");
-    throw error;
+    throw new AppError(errorMessage, 500);
   }
 }
 
@@ -59,9 +61,10 @@ async function verifyEmailWithOtp(userId: number, otpCode: string): Promise<IVer
     };
 
   } catch (error) {
+    if (error instanceof AppError) throw error;
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId }, "EmailVerificationService: Error verifying email");
-    throw error;
+    throw new AppError(errorMessage, 500);
   }
 }
 
@@ -80,9 +83,10 @@ async function resendVerificationCode(userId: number, email: string): Promise<vo
 
     logger.info({ userId, email }, "EmailVerificationService: Verification code resent successfully");
   } catch (error) {
+    if (error instanceof AppError) throw error;
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId, email }, "EmailVerificationService: Error resending verification code");
-    throw error;
+    throw new AppError(errorMessage, 500);
   }
 }
 

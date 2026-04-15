@@ -8,108 +8,54 @@ class DashboardController {
    * GET /api/dashboard - Retorna dados completos da dashboard (usuário + investimentos)
    */
   async getDashboard(request: Request, response: Response): Promise<Response> {
-    try {
-      const userId: number = (request as any).user?.id;
+    const userId: number = (request as any).user.id;
 
-      if (!userId) {
-        return response.status(400).json({
-          success: false,
-          message: "User identification failed",
-          error: "User identification failed"
-        });
-      }
+    const dashboardData: any = await dashboardService.getDashboardData(userId);
 
-      const dashboardData: any = await dashboardService.getDashboardData(userId);
+    // Transform with output DTO
+    const dashboardResponseDTO: any = DashboardResponseDTO.fromDashboardData(dashboardData);
 
-      // Transform with output DTO
-      const dashboardResponseDTO: any = DashboardResponseDTO.fromDashboardData(dashboardData);
-
-      return response.status(200).json({
-        success: true,
-        message: "Dashboard data retrieved successfully",
-        data: dashboardResponseDTO.toJSON()
-      });
-
-    } catch (error) {
-      const errorMessage: string = error instanceof Error ? error.message : String(error);
-      return response.status(404).json({
-        success: false,
-        message: errorMessage,
-        error: errorMessage
-      });
-    }
+    return response.status(200).json({
+      success: true,
+      message: "Dashboard data retrieved successfully",
+      data: dashboardResponseDTO.toJSON()
+    });
   }
 
   /**
    * GET /api/dashboard/name - Retorna apenas nome do usuário
    */
   async getUserName(request: Request, response: Response): Promise<Response> {
-    try {
-      const userId: number = (request as any).user?.id;
+    const userId: number = (request as any).user.id;
 
-      if (!userId) {
-        return response.status(400).json({
-          success: false,
-          message: "User identification failed",
-          error: "User identification failed"
-        });
-      }
+    const userData: any = await dashboardService.getUserName(userId);
 
-      const userData: any = await dashboardService.getUserName(userId);
+    // Transform with output DTO
+    const dashboardResponseDTO: any = DashboardResponseDTO.fromUserData(userData);
 
-      // Transform with output DTO
-      const dashboardResponseDTO: any = DashboardResponseDTO.fromUserData(userData);
-
-      return response.status(200).json({
-        success: true,
-        message: "User name retrieved successfully",
-        data: dashboardResponseDTO.toJSON()
-      });
-
-    } catch (error) {
-      const errorMessage: string = error instanceof Error ? error.message : String(error);
-      return response.status(404).json({
-        success: false,
-        message: errorMessage,
-        error: errorMessage
-      });
-    }
+    return response.status(200).json({
+      success: true,
+      message: "User name retrieved successfully",
+      data: dashboardResponseDTO.toJSON()
+    });
   }
 
   /**
    * GET /api/dashboard/investments - Retorna dados de investimentos (perfil financeiro)
    */
   async getInvestments(request: Request, response: Response): Promise<Response> {
-    try {
-      const userId: number = (request as any).user?.id;
+    const userId: number = (request as any).user.id;
 
-      if (!userId) {
-        return response.status(400).json({
-          success: false,
-          message: "User identification failed",
-          error: "User identification failed"
-        });
-      }
+    const investmentData: any = await dashboardService.getInvestmentData(userId);
 
-      const investmentData: any = await dashboardService.getInvestmentData(userId);
+    // Transform with output DTO
+    const dashboardResponseDTO: any = DashboardResponseDTO.fromInvestmentData(investmentData);
 
-      // Transform with output DTO
-      const dashboardResponseDTO: any = DashboardResponseDTO.fromInvestmentData(investmentData);
-
-      return response.status(200).json({
-        success: true,
-        message: "Investment data retrieved successfully",
-        data: dashboardResponseDTO.toJSON()
-      });
-
-    } catch (error) {
-      const errorMessage: string = error instanceof Error ? error.message : String(error);
-      return response.status(404).json({
-        success: false,
-        message: errorMessage,
-        error: errorMessage
-      });
-    }
+    return response.status(200).json({
+      success: true,
+      message: "Investment data retrieved successfully",
+      data: dashboardResponseDTO.toJSON()
+    });
   }
 }
 

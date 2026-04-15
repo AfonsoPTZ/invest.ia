@@ -28,9 +28,10 @@ function errorMiddleware(error: any, request: Request, response: Response, next:
   );
 
   return response.status(statusCode).json({
-    status: "error",
-    statusCode,
+    success: false,
     message,
+    data: null,
+    statusCode,
     ...(env.NODE_ENV === "development" && { stack: error.stack })
   });
 }

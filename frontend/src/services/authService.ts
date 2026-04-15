@@ -21,6 +21,7 @@
  */
 
 import logger from "../utils/logger";
+import { API_URL, getAuthHeaders } from "../config/api";
 import type {
   LoginRequest,
   LoginResponse,
@@ -33,8 +34,6 @@ import type {
   ApiErrorResponse,
   StorageKeys
 } from "../types/api";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 /**
  * User login with email and password
@@ -61,7 +60,7 @@ export async function login(email: string, password: string): Promise<User> {
 
     const data: ApiResponse<LoginResponse> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ email }, `AuthService: Login failed - ${data.message}`);
       throw new Error(data.message || "Login error");
     }
@@ -116,7 +115,7 @@ export async function register(
 
     const data: ApiResponse<RegisterResponse> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ email }, `AuthService: Registration failed - ${data.message}`);
       throw new Error(data.message || "Registration error");
     }
@@ -149,9 +148,7 @@ export async function logout(): Promise<void> {
     if (token) {
       await fetch(`${API_URL}/auth/logout`, {
         method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
+        headers: getAuthHeaders(token)
       });
     }
 
@@ -191,7 +188,7 @@ export async function verifyEmail(userId: string | number, otpCode: string): Pro
 
     const data: ApiResponse<VerifyOtpResponse> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ userId }, `AuthService: Email verification failed - ${data.message}`);
       throw new Error(data.message || "Email verification error");
     }
@@ -236,7 +233,7 @@ export async function resendOtp(userId: string | number): Promise<ApiResponse<un
 
     const data: ApiResponse<unknown> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({ userId }, `AuthService: Resend OTP failed - ${data.message}`);
       throw new Error(data.message || "Resend OTP error");
     }

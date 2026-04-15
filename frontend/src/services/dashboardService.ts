@@ -21,6 +21,7 @@
  */
 
 import logger from "../utils/logger";
+import { API_URL, getAuthHeaders } from "../config/api";
 import type {
   DashboardResponse,
   DashboardNameResponse,
@@ -28,8 +29,6 @@ import type {
   FinancialProfile,
   ApiResponse
 } from "../types/api";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 /**
  * Get user name only
@@ -54,14 +53,12 @@ export async function getDashboardName(): Promise<DashboardNameResponse> {
     logger.debug({}, "DashboardService: Fetching user name");
 
     const response = await fetch(`${API_URL}/dashboard/name`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: getAuthHeaders(token)
     });
 
     const data: ApiResponse<DashboardNameResponse> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `DashboardService: getDashboardName failed - ${data.message}`);
       throw new Error(data.message || "Error fetching user name");
     }
@@ -98,14 +95,12 @@ export async function getDashboardData(): Promise<DashboardResponse> {
     logger.debug({}, "DashboardService: Fetching dashboard data");
 
     const response = await fetch(`${API_URL}/dashboard`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+      headers: getAuthHeaders(token)
     });
 
     const data: ApiResponse<DashboardResponse> = await response.json();
 
-    if (!response.ok) {
+    if (!data.success) {
       logger.warn({}, `DashboardService: getDashboardData failed - ${data.message}`);
       throw new Error(data.message || "Error fetching dashboard data");
     }

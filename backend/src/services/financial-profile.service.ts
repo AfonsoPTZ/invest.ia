@@ -29,9 +29,22 @@ class FinancialProfileService {
         throw new AppError("User not found", 404);
       }
 
-      // Step 3: Create or update profile via repository
-      const profile: any = await financialProfileRepository.createOrUpdate(userId, profileData);
-      logger.info({ userId, profileId: (profile as any).id }, "Service: Financial profile saved successfully");
+      // Step 3: Check if profile exists, create or update
+      const existingProfile = await financialProfileRepository.findByUserId(userId);
+      
+      let profile: any;
+      if (existingProfile) {
+        // Profile exists, update it
+        logger.info({ userId }, "Service: Profile exists, updating");
+        await financialProfileRepository.update(userId, profileData);
+        profile = await financialProfileRepository.findByUserId(userId);
+      } else {
+        // Profile doesn't exist, create it
+        logger.info({ userId }, "Service: Profile does not exist, creating");
+        profile = await financialProfileRepository.create(userId, profileData);
+      }
+
+      logger.info({ userId, profileId: profile.id }, "Service: Financial profile saved successfully");
       return profile;
 
     } catch (error) {

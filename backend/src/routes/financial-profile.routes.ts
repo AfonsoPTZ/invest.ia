@@ -3,6 +3,7 @@ const router: Router = Router();
 
 import financialProfileController from "../controllers/financial-profile.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
+import authContextMiddleware from "../middlewares/auth-context.middleware.js";
 import validatorMiddleware from "../middlewares/validator.middleware.js";
 import { validateFinancialProfileRegistration } from "../validators/financial-profile.validator.js";
 
@@ -28,6 +29,7 @@ const validateFinancialProfileCreation = (data: any): any => {
 router.post(
   "/", 
   authMiddleware,
+  authContextMiddleware,
   validatorMiddleware(validateFinancialProfileCreation, "Financial Profile"),
   (req, res) => financialProfileController.create(req, res)
 );
@@ -36,6 +38,7 @@ router.post(
 router.get(
   "/:usuarioId", 
   authMiddleware,
+  authContextMiddleware,
   (req, res) => financialProfileController.get(req, res)
 );
 

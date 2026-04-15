@@ -1,6 +1,7 @@
 // OTP Service - Gerencia código OTP
 import bcrypt from "bcryptjs";
 import authRepository from "../../repositories/user.repository.js";
+import AppError from "../../utils/AppError.js";
 import { generateOtp } from "../../utils/generate-otp.js";
 import logger from "../../utils/logger.js";
 
@@ -39,7 +40,7 @@ async function generateAndSaveOtp(userId: number): Promise<string> {
   } catch (error) {
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId }, "OtpService: Error generating OTP");
-    throw new Error(`Erro ao gerar OTP: ${errorMessage}`);
+    throw new AppError(`Error generating OTP: ${errorMessage}`, 500);
   }
 }
 
@@ -83,8 +84,10 @@ async function verifyOtp(userId: number, otpCode: string): Promise<IOtpVerificat
     if (!isOtpValid) {
       logger.warn({ userId, attempts: user.otpAttempts + 1 }, "OtpService: Invalid OTP code");
 
-      // Incrementar tentativas
-      await authRepository.incrementOtpAttempts(userId);
+      // Incrementar tentativas usando updateOtp
+      await authRepository.updateOtp(userId, {
+        otpAttempts: (user.otpAttempts || 0) + 1
+      });
 
       const attemptsRemaining: number = OTP_MAX_ATTEMPTS - (user.otpAttempts + 1);
       return {
@@ -99,7 +102,7 @@ async function verifyOtp(userId: number, otpCode: string): Promise<IOtpVerificat
   } catch (error) {
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId }, "OtpService: Error verifying OTP");
-    throw new Error(`Erro ao verificar OTP: ${errorMessage}`);
+    throw new AppError(`Error verifying OTP: ${errorMessage}`, 500);
   }
 }
 
@@ -120,7 +123,7 @@ async function clearOtp(userId: number): Promise<void> {
   } catch (error) {
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId }, "OtpService: Error clearing OTP");
-    throw new Error(`Erro ao limpar OTP: ${errorMessage}`);
+    throw new AppError(`Error clearing OTP: ${errorMessage}`, 500);
   }
 }
 
@@ -137,7 +140,7 @@ async function markEmailAsVerified(userId: number): Promise<void> {
   } catch (error) {
     const errorMessage: string = error instanceof Error ? error.message : String(error);
     logger.error({ error: errorMessage, userId }, "OtpService: Error marking email as verified");
-    throw new Error(`Erro ao marcar email como verificado: ${errorMessage}`);
+    throw new AppError(`Error marking email as verified: ${errorMessage}`, 500);
   }
 }
 
