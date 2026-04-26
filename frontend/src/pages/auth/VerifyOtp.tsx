@@ -160,13 +160,10 @@ function VerifyOtp(): React.ReactElement {
 
       const data = await verifyEmail(userId, otpCode);
 
-      // Store temporary token and userId for next page
-      if (data.tempProfileToken) {
-        sessionStorage.setItem("tempProfileToken", data.tempProfileToken);
-        sessionStorage.setItem("userId", userId as string);
+      // Store userId for reference (token already stored by authService)
+      sessionStorage.setItem("userId", userId as string);
 
-        logger.info({ userId }, "VerifyOtp: Temporary token stored. Redirecting to financial profile");
-      }
+      logger.info({ userId }, "VerifyOtp: Email verified. Token stored. Redirecting to financial profile");
 
       // Show success message
       setSuccess("Email verified successfully! Redirecting to profile...");

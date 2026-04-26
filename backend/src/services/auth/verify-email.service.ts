@@ -11,7 +11,7 @@ import logger from "../../utils/logger.js";
 interface IConfirmEmailResult {
   success: boolean;
   message: string;
-  token?: string | null;
+  tempProfileToken?: string | null;
   redirectUrl?: string;
 }
 
@@ -39,7 +39,7 @@ async function confirmEmailWithOtp(userId: number, otpCode: string): Promise<ICo
       return {
         success: false,
         message: verification.message,
-        token: null
+        tempProfileToken: null
       };
     }
 
@@ -58,7 +58,7 @@ async function confirmEmailWithOtp(userId: number, otpCode: string): Promise<ICo
     return {
       success: true,
       message: "Email verified successfully!",
-      token: tempToken,
+      tempProfileToken: tempToken,
       redirectUrl: "/financial-profile"
     };
 

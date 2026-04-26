@@ -171,7 +171,7 @@ export async function logout(): Promise<void> {
  * @async
  * @param {number} userId - User ID from registration
  * @param {string} otpCode - 6-digit OTP code
- * @returns {Promise<VerifyOtpResponse>} { success, message, token }
+ * @returns {Promise<VerifyOtpResponse>} { success, message, tempProfileToken }
  * @throws {Error} Verification error from API or network
  */
 export async function verifyEmail(userId: string | number, otpCode: string): Promise<VerifyOtpResponse> {
@@ -197,9 +197,11 @@ export async function verifyEmail(userId: string | number, otpCode: string): Pro
 
     // Store temporary profile token for next step
     const verifyResponse = data.data as VerifyOtpResponse;
-    if (verifyResponse.tempProfileToken) {
-      sessionStorage.setItem("tempProfileToken", verifyResponse.tempProfileToken);
+    if (!verifyResponse.tempProfileToken) {
+      logger.error({ userId }, "AuthService: Server did not return tempProfileToken");
+      throw new Error("Invalid server response: missing authentication token");
     }
+    sessionStorage.setItem("tempProfileToken", verifyResponse.tempProfileToken);
 
     return verifyResponse;
   } catch (error) {

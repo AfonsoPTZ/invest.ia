@@ -72,9 +72,9 @@ export default function FinancialProfile(): ReactElement {
     const tempToken = sessionStorage.getItem("tempProfileToken");
 
     if (!tempToken) {
-      logger.warn({}, "FinancialProfile: Temporary token not found");
-      setError("Session expired. Please register again.");
-      setTimeout(() => navigate("/register"), 2000);
+      logger.warn({}, "FinancialProfile: Temporary token not found - user must complete OTP verification first");
+      setError("Session expired. Please complete email verification to continue.");
+      setTimeout(() => navigate("/register", { replace: true }), 2000);
     }
   }, [navigate]);
 

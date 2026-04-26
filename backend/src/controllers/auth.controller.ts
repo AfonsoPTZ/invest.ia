@@ -134,7 +134,7 @@ class AuthController {
       success: true,
       message: result.message,
       data: {
-        token: result.token,
+        tempProfileToken: result.tempProfileToken,
         redirectUrl: result.redirectUrl
       }
     });
